@@ -1,8 +1,6 @@
 import type { Product } from "@/app/_components/ProductCard";
 import { getProductImage } from "@/lib/product-images";
 
-const baseUrl = process.env.NEXT_PUBLIC_API_URL;
-
 interface BackendProduct {
   id: string;
   name: string;
@@ -35,12 +33,11 @@ function transform(p: BackendProduct): Product {
 }
 
 export async function fetchProducts(limit = 8, offset = 0): Promise<ProductsPage> {
-  const url = `${baseUrl}/api/v1/products?limit=${limit}&offset=${offset}`;
-  console.log(`[API] Fetching products from: ${url}`);
+  const base = process.env.NEXT_PUBLIC_API_URL ?? "";
+  const url = `${base}/api/v1/products?limit=${limit}&offset=${offset}`;
   const res = await fetch(url);
   if (!res.ok) throw new Error("Failed to fetch products");
   const data = await res.json();
-  console.log(`[API] Got ${data.items.length} products (total: ${data.total})`);
   return { items: data.items.map(transform), total: data.total, limit: data.limit, offset: data.offset };
 }
 

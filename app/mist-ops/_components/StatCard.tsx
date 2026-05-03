@@ -17,14 +17,14 @@ const tonePalette = {
     glow: "bg-accent/10",
   },
   secondary: {
-    fg: "text-sky-700",
-    bg: "bg-sky-100",
-    glow: "bg-sky-50",
+    fg: "text-primary",
+    bg: "bg-primary/10",
+    glow: "bg-primary/5",
   },
   tertiary: {
-    fg: "text-amber-700",
-    bg: "bg-amber-100",
-    glow: "bg-amber-50",
+    fg: "text-accent-foreground",
+    bg: "bg-accent/20",
+    glow: "bg-accent/10",
   },
 };
 

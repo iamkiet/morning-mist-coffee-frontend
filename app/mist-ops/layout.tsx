@@ -78,9 +78,12 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
         {/* Desktop Header */}
         <div className="hidden lg:flex sticky top-0 z-20 bg-card border-b border-border/30 px-6 py-3 items-center justify-between">
-          <h2 className="text-sm font-medium text-foreground">
-            {user.firstName} {user.lastName}
-          </h2>
+          <div>
+            <p className="text-sm font-medium text-foreground">
+              {user.firstName} {user.lastName}
+            </p>
+            <p className="text-[10px] text-muted-foreground tracking-widest">{user.email}</p>
+          </div>
           <Button size="sm" variant="outline" onClick={logout} className="rounded-none text-xs uppercase tracking-widest gap-2">
             <LogOut className="size-3.5" />
             Logout

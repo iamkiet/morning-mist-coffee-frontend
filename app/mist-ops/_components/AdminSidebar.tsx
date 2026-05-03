@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -12,9 +11,11 @@ import {
   Settings,
   HelpCircle,
   Coffee,
+  ArrowLeft,
   type LucideIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/lib/auth-context";
 
 interface AdminSidebarProps {
   onClose?: () => void;
@@ -35,9 +36,14 @@ const footerNav: { href: string; label: string; icon: LucideIcon }[] = [
 
 export function AdminSidebar({ onClose }: AdminSidebarProps) {
   const pathname = usePathname();
+  const { user } = useAuth();
   const handleLinkClick = () => {
     onClose?.();
   };
+
+  const initials = user
+    ? `${user.firstName[0]}${user.lastName[0]}`.toUpperCase()
+    : "??";
 
   return (
     <aside className="h-full lg:h-screen w-full lg:w-64 lg:fixed lg:left-0 lg:top-0 lg:border-r border-border/30 bg-sidebar flex flex-col p-6 space-y-6 z-40">
@@ -53,19 +59,15 @@ export function AdminSidebar({ onClose }: AdminSidebarProps) {
 
       {/* Profile */}
       <div className="flex items-center gap-3">
-        <Image
-          src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGFL_QIR0eN-BEOcEZHB3iFmxkb3j6dpTy85oKmSIKLljVxfviZy9zBvsLA6p0m9YHGNXOE7HJljksrbP23PRVGHpcgw16v3hAp_whj9YbhZdQLHIsUo6j_7BtUPDoRClDHl87mGLCVhFwT-Pbh5mSmubENzrvvIpBNLBm3UEQbFlSkkBZOcudKBvR71eeDDg3riTRAfSxy9Cmp1AjIsMxVV7SnU25CuA3g9OCjRukJCxtTzI4nnliHuJQCce3-m69KL6Pt86zjZ8"
-          alt="Admin Profile"
-          width={40}
-          height={40}
-          className="rounded-full object-cover border border-border/30"
-        />
-        <div>
-          <p className="text-xs font-medium tracking-wider uppercase text-foreground">
-            Julian Thorne
+        <div className="w-10 h-10 rounded-full bg-muted border border-border/30 flex items-center justify-center text-xs font-semibold text-muted-foreground flex-shrink-0">
+          {initials}
+        </div>
+        <div className="min-w-0">
+          <p className="text-xs font-medium tracking-wider uppercase text-foreground truncate">
+            {user ? `${user.firstName} ${user.lastName}` : "—"}
           </p>
-          <p className="text-[10px] text-muted-foreground uppercase tracking-widest">
-            Morning Mist Coffee Admin
+          <p className="text-[10px] text-muted-foreground tracking-widest truncate">
+            {user?.email ?? ""}
           </p>
         </div>
       </div>
@@ -97,9 +99,6 @@ export function AdminSidebar({ onClose }: AdminSidebarProps) {
 
       {/* Footer actions */}
       <div className="space-y-3 pt-4 border-t border-border/30">
-        <Button className="w-full uppercase tracking-wider text-xs" size="sm">
-          New Batch
-        </Button>
         <div className="space-y-1">
           {footerNav.map((n) => {
             const Icon = n.icon;
@@ -116,6 +115,16 @@ export function AdminSidebar({ onClose }: AdminSidebarProps) {
               </Link>
             );
           })}
+          <Link
+            href="/"
+            onClick={handleLinkClick}
+            className="flex items-center gap-3 text-muted-foreground py-2 px-4 hover:bg-card/50 rounded-lg transition-colors"
+          >
+            <ArrowLeft size={18} />
+            <span className="text-xs tracking-wider uppercase font-medium">
+              Back to Store
+            </span>
+          </Link>
         </div>
       </div>
     </aside>

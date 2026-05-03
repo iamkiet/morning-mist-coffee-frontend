@@ -18,15 +18,15 @@ interface BadgeProps {
 }
 
 const statusCls: Record<Status, string> = {
-  success: "bg-emerald-100 text-emerald-800 border-emerald-300 hover:bg-emerald-200",
-  info: "bg-sky-100 text-sky-800 border-sky-300 hover:bg-sky-200",
-  warning: "bg-amber-100 text-amber-900 border-amber-300 hover:bg-amber-200",
-  neutral: "bg-slate-100 text-slate-700 border-slate-300 hover:bg-slate-200",
-  error: "bg-rose-100 text-rose-800 border-rose-300 hover:bg-rose-200",
+  success: "bg-accent/20 text-accent-foreground border-accent/40 hover:bg-accent/30",
+  info: "bg-primary/10 text-primary border-primary/20 hover:bg-primary/20",
+  warning: "bg-muted text-foreground border-border hover:bg-muted/60",
+  neutral: "bg-muted text-muted-foreground border-border hover:bg-muted/60",
+  error: "bg-card text-destructive border-destructive/30 hover:bg-muted",
   primary: "bg-primary text-primary-foreground border-primary hover:bg-primary/90",
-  purple: "bg-purple-100 text-purple-800 border-purple-300 hover:bg-purple-200",
-  pink: "bg-pink-100 text-pink-800 border-pink-300 hover:bg-pink-200",
-  indigo: "bg-indigo-100 text-indigo-800 border-indigo-300 hover:bg-indigo-200",
+  purple: "bg-muted text-muted-foreground border-border hover:bg-muted/60",
+  pink: "bg-accent/10 text-accent-foreground border-accent/20 hover:bg-accent/20",
+  indigo: "bg-primary/10 text-primary border-primary/20 hover:bg-primary/20",
 };
 
 export function Badge({ children, status = "neutral" }: BadgeProps) {

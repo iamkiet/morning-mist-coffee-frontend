@@ -59,9 +59,9 @@ const activity: {
 ];
 
 const colorMap: Record<ActivityColor, string> = {
-  primary: "bg-emerald-100 text-emerald-700",
-  secondary: "bg-amber-100 text-amber-700",
-  tertiary: "bg-sky-100 text-sky-700",
+  primary: "bg-accent/20 text-accent-foreground",
+  secondary: "bg-muted text-foreground",
+  tertiary: "bg-primary/10 text-primary",
   neutral: "bg-muted text-muted-foreground",
 };
 

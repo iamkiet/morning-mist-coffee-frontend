@@ -8,7 +8,7 @@ const articles = [
   {
     date: "Oct 24, 2024",
     category: "Roastery",
-    categoryClass: "bg-emerald-50 text-emerald-700",
+    categoryClass: "bg-accent/20 text-accent-foreground",
     title: "The Alchemy of the Light Roast",
     body: "Exploring the delicate balance required to preserve floral acidity while developing deep sweetness in Ethiopian heirloom varieties.",
     img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDl_57By8KpPbF48CuhXYe9ODWW8d8uWDvZfhYZoQeLYkz79MIgmvh1HKr4Rby_OSEiVfzRIwcb71cibzA43gmKTHNUCDHReN_i-JuxSeeCwBYarDdduBq90vH-sPci6GoPZAzLl7bNa6eWA_gAb1i0TxzhdS01JtePFdLez5JdN74dWxui5I5HrNUp67xj6PmOEW-veiHDK7dlV_lIXlcgE-Gc3z5FtCXS-HVSgk577c0ZgnDTOSsAEEj7XczFAFwey12jip5ugTw",
@@ -16,7 +16,7 @@ const articles = [
   {
     date: "Oct 18, 2024",
     category: "Brew Rituals",
-    categoryClass: "bg-sky-50 text-sky-700",
+    categoryClass: "bg-primary/10 text-primary",
     title: "Architecture of the Morning Pour",
     body: "A guide to the geometric precision of the V60 method, focusing on temperature stability and the rhythm of the bloom.",
     img: "https://lh3.googleusercontent.com/aida-public/AB6AXuCbRJKd8DDfCjazsjEOCzW3zN3Pm9w2Q3fZ5-As907pXHfEipH9e6cB-1yEDEGRjzCwIBLGBrKctd9x9ow5zUa-tD5XdVB2vqywp-rK4jS8xu8CjIkQ2Ve5v0QNL_cKN9md6EC49P_lZ3TTYUISxXaSOAGcB2MUDKX2CZvMo8bq2wOWue3scAP9QpZMdg8-w3Hn958wofsklLr1gRNDDvCtwfrvwHPSkoSvcIJP5XjOq0JZcukiccNIhhOqa4IDAQAufIWNZ5uG88s",
@@ -24,7 +24,7 @@ const articles = [
   {
     date: "Oct 12, 2024",
     category: "Provenance",
-    categoryClass: "bg-amber-50 text-amber-700",
+    categoryClass: "bg-muted text-muted-foreground",
     title: "Shadow and Soil: The Terroir of Huila",
     body: "Tracing the mineral-rich volcanic soils of Colombia's Huila region and how shade-grown practices alter bean density.",
     img: "https://lh3.googleusercontent.com/aida-public/AB6AXuCbifeXvfG8KnZvU0VFdkZOzhGcFj_kqeiFpZ9wfrggND9sKIPe7bi0WTnff2z16Z0Pq90uPzu0AsBFwTYxuvGuv4j4LgU2r-JEbJ8heG0X6Bfi2sd4saiKnuB3luLs6CSX9qfLCt4KpBrBae-XGZkqOR1kkCoOj6_EQJncEfjlH6h0naAgoCpq3nxFA9TsiqxQGPXdUHMwzHdeaS47zIFvAvDtw5dTBsxPT8z77lXPCn7NrVRhyuCbQa0_nKhyeaM6Ll4kcRKX_wY",
