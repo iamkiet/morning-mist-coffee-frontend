@@ -21,7 +21,13 @@ let refreshPromise: Promise<boolean> | null = null;
 
 async function refresh(): Promise<boolean> {
   if (refreshPromise) return refreshPromise;
-  refreshPromise = request("/api/v1/auth/refresh", { method: "POST", body: JSON.stringify({}) })
+  // Use plain fetch — must NOT send the expired Bearer token, only the HttpOnly refresh cookie
+  refreshPromise = fetch(`${baseUrl}/api/v1/auth/refresh`, {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({}),
+  })
     .then(async (r) => {
       if (!r.ok) return false;
       const data = await r.json();
