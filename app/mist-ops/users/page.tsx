@@ -1,4 +1,5 @@
-import Image from "next/image";
+"use client";
+
 import {
   KeyRound,
   UserX,
@@ -15,55 +16,62 @@ import { DataTable, type Column } from "../_components/DataTable";
 import { StatCard } from "../_components/StatCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useUsers } from "@/hooks/use-users";
+import type { ApiUser, UserRole, UserStatus } from "@/lib/api/users";
 
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  avatar: string;
-  role: "Admin" | "Barista" | "Customer";
-  joined: string;
-  active: boolean;
+const roleStyle: Record<UserRole, "primary" | "purple"> = {
+  admin: "primary",
+  user: "purple",
+};
+
+const statusStyle: Record<UserStatus, "success" | "neutral" | "error"> = {
+  active: "success",
+  inactive: "neutral",
+  banned: "error",
+};
+
+function UserAvatar({ firstName, lastName }: { firstName: string; lastName: string }) {
+  const initials = `${firstName[0] ?? ""}${lastName[0] ?? ""}`.toUpperCase();
+  return (
+    <div className="size-10 rounded-full bg-muted flex items-center justify-center text-xs font-semibold text-muted-foreground shrink-0">
+      {initials}
+    </div>
+  );
 }
 
-const users: User[] = [
-  { id: "u1", name: "Elena Vance", email: "elena.v@morningmist.coffee", avatar: "https://i.pravatar.cc/100?img=1", role: "Admin", joined: "Oct 12, 2023", active: true },
-  { id: "u2", name: "Julian Thorne", email: "j.thorne@morningmist.coffee", avatar: "https://i.pravatar.cc/100?img=12", role: "Barista", joined: "Jan 05, 2024", active: true },
-  { id: "u3", name: "Amara Okafor", email: "amara.okafor@gmail.com", avatar: "https://i.pravatar.cc/100?img=5", role: "Customer", joined: "Feb 21, 2024", active: true },
-  { id: "u4", name: "Marcus Jensen", email: "m.jensen@studio.io", avatar: "https://i.pravatar.cc/100?img=8", role: "Barista", joined: "Mar 14, 2024", active: false },
-  { id: "u5", name: "Sarah Chen", email: "sarah.chen@design.co", avatar: "https://i.pravatar.cc/100?img=10", role: "Customer", joined: "Apr 02, 2024", active: true },
-];
-
-const roleStatus = {
-  Admin: "primary",
-  Barista: "info",
-  Customer: "purple",
-} as const;
-
-const columns: Column<User>[] = [
+const columns: Column<ApiUser>[] = [
   {
     key: "name",
     header: "User Details",
     render: (r) => (
       <div className="flex items-center gap-4">
-        <Image src={r.avatar} alt={`${r.name}'s avatar`} width={40} height={40} className="rounded-full object-cover" />
+        <UserAvatar firstName={r.firstName} lastName={r.lastName} />
         <div>
-          <p className="text-sm font-medium">{r.name}</p>
+          <p className="text-sm font-medium">{r.firstName} {r.lastName}</p>
           <p className="text-xs text-muted-foreground">{r.email}</p>
         </div>
       </div>
     ),
   },
-  { key: "role", header: "Account Role", render: (r) => <Badge status={roleStatus[r.role]}>{r.role}</Badge> },
-  { key: "joined", header: "Join Date", hideOnMobile: true, render: (r) => <span className="text-muted-foreground text-sm">{r.joined}</span> },
+  {
+    key: "role",
+    header: "Account Role",
+    render: (r) => <Badge status={roleStyle[r.role]}>{r.role}</Badge>,
+  },
+  {
+    key: "joined",
+    header: "Join Date",
+    hideOnMobile: true,
+    render: (r) => (
+      <span className="text-muted-foreground text-sm">
+        {new Date(r.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+      </span>
+    ),
+  },
   {
     key: "status",
     header: "Status",
-    render: (r) => (
-      <Badge status={r.active ? "success" : "neutral"}>
-        {r.active ? "Active" : "Inactive"}
-      </Badge>
-    ),
+    render: (r) => <Badge status={statusStyle[r.status]}>{r.status}</Badge>,
   },
   {
     key: "actions",
@@ -87,6 +95,8 @@ const columns: Column<User>[] = [
 ];
 
 export default function AdminUsersPage() {
+  const { data, isLoading, isError } = useUsers();
+
   return (
     <div className="p-4 sm:p-8">
       <PageHeader
@@ -110,12 +120,27 @@ export default function AdminUsersPage() {
       />
 
       <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-        <StatCard label="Total Members" value="1,284" delta="+8%" icon={UsersIcon} tone="primary" progress={68} />
+        <StatCard
+          label="Total Members"
+          value={isLoading ? "—" : String(data?.total ?? 0)}
+          delta="+8%"
+          icon={UsersIcon}
+          tone="primary"
+          progress={68}
+        />
         <StatCard label="Active Today" value="312" delta="Live" icon={Zap} tone="secondary" progress={42} />
         <StatCard label="Pending Approvals" value="03" delta="Action Required" icon={Hourglass} tone="tertiary" />
       </section>
 
-      <DataTable columns={columns} rows={users} />
+      {isError && (
+        <p className="text-sm text-destructive mb-4">Failed to load users. Please try again.</p>
+      )}
+
+      {isLoading ? (
+        <div className="text-sm text-muted-foreground text-center py-12">Loading users…</div>
+      ) : (
+        <DataTable columns={columns} rows={data?.items ?? []} />
+      )}
     </div>
   );
 }
