@@ -6,6 +6,7 @@ import type { Product } from "@/app/_components/ProductCard";
 const STORAGE_KEY = "morning-mist-cart";
 
 export interface CartItem {
+  id: string;
   slug: string;
   name: string;
   price: number;
@@ -50,7 +51,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       }
       return [
         ...prev,
-        { slug: product.slug, name: product.name, price: product.price, image: product.image, quantity },
+        { id: product.id, slug: product.slug, name: product.name, price: product.price, image: product.image, quantity },
       ];
     });
   }
