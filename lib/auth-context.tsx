@@ -1,6 +1,7 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useCallback, useState } from "react";
+import { setAuthFailureHandler } from "@/lib/api/client";
 
 export interface User {
   id: string;
@@ -25,12 +26,35 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  const clearSession = useCallback(() => setUser(null), []);
+
   useEffect(() => {
-    fetch(`${baseUrl}/api/v1/auth/me`, { credentials: "include" })
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => setUser(data ?? null))
-      .catch(() => setUser(null))
-      .finally(() => setIsLoading(false));
+    setAuthFailureHandler(clearSession);
+  }, [clearSession]);
+
+  useEffect(() => {
+    async function loadUser() {
+      try {
+        let res = await fetch(`${baseUrl}/api/v1/auth/me`, { credentials: "include" });
+        if (res.status === 401) {
+          const refreshed = await fetch(`${baseUrl}/api/v1/auth/refresh`, {
+            method: "POST",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({}),
+          });
+          if (refreshed.ok) {
+            res = await fetch(`${baseUrl}/api/v1/auth/me`, { credentials: "include" });
+          }
+        }
+        setUser(res.ok ? await res.json() : null);
+      } catch {
+        setUser(null);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    loadUser();
   }, []);
 
   async function login(email: string, password: string) {
