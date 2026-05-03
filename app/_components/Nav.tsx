@@ -101,14 +101,6 @@ export function Nav() {
                 ))}
 
                 <div className="w-32 sm:w-40 h-px bg-border/30 mt-6 sm:mt-8" />
-
-                <Link
-                  href="/admin"
-                  onClick={closeMenu}
-                  className="text-xs text-muted-foreground hover:text-primary transition-colors uppercase tracking-[0.2em]"
-                >
-                  Management
-                </Link>
               </div>
             </SheetContent>
           </Sheet>

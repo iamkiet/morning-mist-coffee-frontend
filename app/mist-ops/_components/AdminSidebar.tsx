@@ -21,11 +21,11 @@ interface AdminSidebarProps {
 }
 
 const nav: { href: string; label: string; icon: LucideIcon }[] = [
-  { href: "/admin", label: "Overview", icon: LayoutDashboard },
-  { href: "/admin/analytics", label: "Analytics", icon: LineChart },
-  { href: "/admin/orders", label: "Orders", icon: Receipt },
-  { href: "/admin/products", label: "Inventory", icon: Package },
-  { href: "/admin/users", label: "Users", icon: Users },
+  { href: "/mist-ops", label: "Overview", icon: LayoutDashboard },
+  { href: "/mist-ops/analytics", label: "Analytics", icon: LineChart },
+  { href: "/mist-ops/orders", label: "Orders", icon: Receipt },
+  { href: "/mist-ops/products", label: "Inventory", icon: Package },
+  { href: "/mist-ops/users", label: "Users", icon: Users },
 ];
 
 const footerNav: { href: string; label: string; icon: LucideIcon }[] = [

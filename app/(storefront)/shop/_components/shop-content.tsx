@@ -57,7 +57,7 @@ export function ShopContent() {
       </div>
 
       {error && (
-        <div className="text-center py-8 text-red-500">Failed to load products. Please try again.</div>
+        <div className="text-center py-8 text-destructive">Failed to load products. Please try again.</div>
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8 md:gap-10">

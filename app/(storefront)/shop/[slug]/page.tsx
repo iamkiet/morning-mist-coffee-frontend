@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { fetchProduct } from "@/lib/api/products";
 import { AddToBag } from "./AddToBag";
 
-export default async function ProductPage(props: PageProps<"/shop/[slug]">) {
+export default async function ProductPage(props: { params: Promise<{ slug: string }> }) {
   const { slug } = await props.params;
   const product = await fetchProduct(slug);
   if (!product) notFound();

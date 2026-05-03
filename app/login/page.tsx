@@ -25,7 +25,7 @@ export default function LoginPage() {
 
     try {
       await login(email, password);
-      router.push("/admin");
+      router.push("/mist-ops");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Invalid email or password");
     } finally {
@@ -37,14 +37,14 @@ export default function LoginPage() {
 
   return (
     <main className="min-h-screen flex items-center justify-center px-4 py-12 bg-background">
-      <div style={{ width: "100%", maxWidth: "420px" }} className="bg-card border border-border p-8 sm:p-10 space-y-6">
+      <div className="w-full max-w-[420px] bg-card border border-border p-8 sm:p-10 space-y-6">
         <div className="text-center">
           <h1 className="text-2xl font-light text-foreground mb-2">Sign In</h1>
           <p className="text-sm text-muted-foreground">Admin access required</p>
         </div>
 
         {error && (
-          <div className="p-3 bg-card border border-border rounded text-accent text-sm">
+          <div className="p-3 bg-muted border border-border text-destructive text-sm">
             {error}
           </div>
         )}
