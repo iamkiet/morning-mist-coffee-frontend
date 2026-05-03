@@ -1,20 +1,33 @@
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
-function request(path: string, options: RequestInit = {}): Promise<Response> {
-  return fetch(`${baseUrl}${path}`, {
-    ...options,
-    credentials: "include",
-    headers: { "Content-Type": "application/json", ...options.headers },
-  });
+// In-memory access token — lost on hard refresh, restored via refresh-token cookie
+let accessToken: string | null = null;
+
+export function setAccessToken(token: string | null) {
+  accessToken = token;
 }
 
-// Shared promise so concurrent 401s don't each trigger their own refresh
+function request(path: string, options: RequestInit = {}): Promise<Response> {
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+    ...(options.headers as Record<string, string>),
+  };
+  if (accessToken) headers["Authorization"] = `Bearer ${accessToken}`;
+  return fetch(`${baseUrl}${path}`, { ...options, credentials: "include", headers });
+}
+
+// Shared promise — concurrent 401s all wait on the same refresh call
 let refreshPromise: Promise<boolean> | null = null;
 
 async function refresh(): Promise<boolean> {
   if (refreshPromise) return refreshPromise;
   refreshPromise = request("/api/v1/auth/refresh", { method: "POST", body: JSON.stringify({}) })
-    .then((r) => r.ok)
+    .then(async (r) => {
+      if (!r.ok) return false;
+      const data = await r.json();
+      accessToken = data.accessToken ?? null;
+      return true;
+    })
     .finally(() => { refreshPromise = null; });
   return refreshPromise;
 }

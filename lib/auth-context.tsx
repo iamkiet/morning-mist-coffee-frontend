@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useCallback, useState } from "react";
-import { setAuthFailureHandler } from "@/lib/api/client";
+import { setAccessToken, setAuthFailureHandler } from "@/lib/api/client";
 
 export interface User {
   id: string;
@@ -26,28 +26,39 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const clearSession = useCallback(() => setUser(null), []);
+  const clearSession = useCallback(() => {
+    setAccessToken(null);
+    setUser(null);
+  }, []);
 
   useEffect(() => {
     setAuthFailureHandler(clearSession);
   }, [clearSession]);
 
+  // On page load: access token is gone (in-memory), so try refresh via HttpOnly cookie
   useEffect(() => {
     async function loadUser() {
       try {
-        let res = await fetch(`${baseUrl}/api/v1/auth/me`, { credentials: "include" });
-        if (res.status === 401) {
-          const refreshed = await fetch(`${baseUrl}/api/v1/auth/refresh`, {
-            method: "POST",
-            credentials: "include",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({}),
-          });
-          if (refreshed.ok) {
-            res = await fetch(`${baseUrl}/api/v1/auth/me`, { credentials: "include" });
-          }
+        const refreshRes = await fetch(`${baseUrl}/api/v1/auth/refresh`, {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({}),
+        });
+
+        if (!refreshRes.ok) {
+          setUser(null);
+          return;
         }
-        setUser(res.ok ? await res.json() : null);
+
+        const { accessToken } = await refreshRes.json();
+        setAccessToken(accessToken);
+
+        const meRes = await fetch(`${baseUrl}/api/v1/auth/me`, {
+          credentials: "include",
+          headers: { Authorization: `Bearer ${accessToken}` },
+        });
+        setUser(meRes.ok ? await meRes.json() : null);
       } catch {
         setUser(null);
       } finally {
@@ -71,6 +82,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     const data = await res.json();
+    setAccessToken(data.accessToken);
     setUser(data.user);
   }
 
@@ -81,6 +93,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({}),
     }).catch(() => {});
+    setAccessToken(null);
     setUser(null);
   }
 
