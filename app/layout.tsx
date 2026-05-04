@@ -22,6 +22,9 @@ export default function RootLayout({
       className={cn('h-full antialiased font-sans', geist.variable)}
     >
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
+        <div className="w-full bg-accent text-accent-foreground text-center py-2 px-4 text-xs tracking-[0.2em] uppercase font-semibold">
+          ✦ DEMO PROJECT — ALL ORDERS &amp; DATA ARE SIMULATED ✦
+        </div>
         <Providers>{children}</Providers>
       </body>
     </html>
