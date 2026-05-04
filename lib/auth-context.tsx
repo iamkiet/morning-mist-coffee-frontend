@@ -7,6 +7,7 @@ import {
   useCallback,
   useState,
 } from 'react';
+import { API_URL } from '@/lib/config';
 import { setAccessToken, setAuthFailureHandler } from '@/lib/api/client';
 
 export interface User {
@@ -26,7 +27,6 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -45,7 +45,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     async function loadUser() {
       try {
-        const refreshRes = await fetch(`${baseUrl}/api/v1/auth/refresh`, {
+        const refreshRes = await fetch(`${API_URL}/api/v1/auth/refresh`, {
           method: 'POST',
           credentials: 'include',
           headers: { 'Content-Type': 'application/json' },
@@ -60,7 +60,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const { accessToken } = await refreshRes.json();
         setAccessToken(accessToken);
 
-        const meRes = await fetch(`${baseUrl}/api/v1/auth/me`, {
+        const meRes = await fetch(`${API_URL}/api/v1/auth/me`, {
           credentials: 'include',
           headers: { Authorization: `Bearer ${accessToken}` },
         });
@@ -75,7 +75,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   async function login(email: string, password: string) {
-    const res = await fetch(`${baseUrl}/api/v1/auth/login`, {
+    const res = await fetch(`${API_URL}/api/v1/auth/login`, {
       method: 'POST',
       credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
@@ -93,7 +93,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   async function logout() {
-    await fetch(`${baseUrl}/api/v1/auth/logout`, {
+    await fetch(`${API_URL}/api/v1/auth/logout`, {
       method: 'POST',
       credentials: 'include',
       headers: { 'Content-Type': 'application/json' },

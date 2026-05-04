@@ -71,6 +71,22 @@ function OrderCard({ order }: { order: Order }) {
           </div>
         </div>
         <Separator />
+        {order.items.length > 0 && (
+          <div className="space-y-2">
+            {order.items.map((item) => (
+              <div key={item.id} className="flex justify-between items-center text-sm">
+                <span className="text-foreground">
+                  {item.name}
+                  <span className="text-muted-foreground ml-1">×{item.quantity}</span>
+                </span>
+                <span className="text-muted-foreground">
+                  ${((item.priceCents * item.quantity) / 100).toFixed(2)}
+                </span>
+              </div>
+            ))}
+            <Separator />
+          </div>
+        )}
         <div className="flex justify-between text-sm">
           <span className="text-muted-foreground">{date}</span>
           <span className="font-medium text-foreground">{total}</span>

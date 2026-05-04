@@ -17,6 +17,7 @@ export interface Product {
   price: number;
   image: string;
   notes: string[];
+  stockQuantity?: number;
   badge?: string;
 }
 

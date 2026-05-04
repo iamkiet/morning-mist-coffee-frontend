@@ -37,6 +37,7 @@ const LIMIT = 20;
 
 export default function AdminOrdersPage() {
   const [page, setPage] = useState(1);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
   const { data, isLoading, error } = useOrders(page, LIMIT);
   const updateStatus = useUpdateOrderStatus();
 
@@ -118,7 +119,14 @@ export default function AdminOrdersPage() {
                 Mark {next}
               </Button>
             )}
-            <Button variant="ghost" size="icon" className="size-8">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-8"
+              onClick={() =>
+                setExpandedId((prev) => (prev === r.id ? null : r.id))
+              }
+            >
               <MoreHorizontal className="size-4" />
             </Button>
           </div>
@@ -195,6 +203,60 @@ export default function AdminOrdersPage() {
           }
         />
       )}
+
+      {expandedId && (() => {
+        const order = orders.find((o) => o.id === expandedId);
+        if (!order) return null;
+        return (
+          <Card className="mt-4 border-primary/20">
+            <CardContent className="p-5 space-y-3">
+              <div className="flex items-center justify-between">
+                <p className="text-xs uppercase tracking-widest text-muted-foreground">
+                  Order #{order.id.slice(0, 8).toUpperCase()} · Items
+                </p>
+                <button
+                  onClick={() => setExpandedId(null)}
+                  className="text-xs text-muted-foreground hover:text-foreground transition-colors uppercase tracking-widest"
+                >
+                  Close
+                </button>
+              </div>
+              {order.items.length === 0 ? (
+                <p className="text-sm text-muted-foreground">No items recorded.</p>
+              ) : (
+                <div className="space-y-2">
+                  {order.items.map((item) => (
+                    <div
+                      key={item.id}
+                      className="flex items-center justify-between text-sm"
+                    >
+                      <span className="text-foreground">
+                        {item.name}
+                        <span className="text-muted-foreground ml-2">
+                          ×{item.quantity}
+                        </span>
+                      </span>
+                      <span className="text-muted-foreground">
+                        ${((item.priceCents * item.quantity) / 100).toFixed(2)}
+                      </span>
+                    </div>
+                  ))}
+                  <div className="pt-2 flex justify-between text-sm font-medium border-t border-border">
+                    <span className="uppercase tracking-widest text-xs text-muted-foreground">
+                      Total
+                    </span>
+                    <span>
+                      {order.currency === 'VND'
+                        ? `₫${order.totalCents.toLocaleString()}`
+                        : `$${(order.totalCents / 100).toFixed(2)}`}
+                    </span>
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        );
+      })()}
 
       <section className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="md:col-span-2 group overflow-hidden">

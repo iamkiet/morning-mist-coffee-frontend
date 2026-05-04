@@ -1,6 +1,5 @@
+import { API_URL } from '@/lib/config';
 import { authFetch } from './client';
-
-const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export type OrderStatus =
   | 'pending'
@@ -9,12 +8,21 @@ export type OrderStatus =
   | 'delivered'
   | 'cancelled';
 
+export interface OrderItem {
+  id: string;
+  productId: string | null;
+  name: string;
+  priceCents: number;
+  quantity: number;
+}
+
 export interface Order {
   id: string;
   email: string;
   status: OrderStatus;
   totalCents: number;
   currency: string;
+  items: OrderItem[];
   createdAt: string;
   updatedAt: string;
 }
@@ -46,7 +54,7 @@ export async function updateOrderStatus(
 
 export async function lookupOrders(email: string): Promise<Order[]> {
   const res = await fetch(
-    `${baseUrl}/api/v1/orders/lookup?email=${encodeURIComponent(email)}`,
+    `${API_URL}/api/v1/orders/lookup?email=${encodeURIComponent(email)}`,
     { credentials: 'include' },
   );
   if (!res.ok) throw new Error('Failed to look up orders');
@@ -54,17 +62,30 @@ export async function lookupOrders(email: string): Promise<Order[]> {
   return data.items;
 }
 
+export interface CreateOrderItemInput {
+  productId?: string;
+  name: string;
+  priceCents: number;
+  quantity: number;
+}
+
 export async function createOrder(
   email: string,
   totalCents: number,
+  items: CreateOrderItemInput[],
   currency = 'USD',
 ): Promise<Order> {
-  const res = await fetch(`${baseUrl}/api/v1/orders`, {
+  const res = await fetch(`${API_URL}/api/v1/orders`, {
     method: 'POST',
     credentials: 'include',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, totalCents, currency }),
+    body: JSON.stringify({ email, totalCents, currency, items }),
   });
-  if (!res.ok) throw new Error('Failed to place order');
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(
+      (body as { message?: string }).message ?? 'Failed to place order',
+    );
+  }
   return res.json();
 }

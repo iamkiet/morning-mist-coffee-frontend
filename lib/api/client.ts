@@ -1,4 +1,4 @@
-const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+import { API_URL } from '@/lib/config';
 
 // In-memory access token — lost on hard refresh, restored via refresh-token cookie
 let accessToken: string | null = null;
@@ -13,7 +13,7 @@ function request(path: string, options: RequestInit = {}): Promise<Response> {
     ...(options.headers as Record<string, string>),
   };
   if (accessToken) headers['Authorization'] = `Bearer ${accessToken}`;
-  return fetch(`${baseUrl}${path}`, {
+  return fetch(`${API_URL}${path}`, {
     ...options,
     credentials: 'include',
     headers,
@@ -26,7 +26,7 @@ let refreshPromise: Promise<boolean> | null = null;
 async function refresh(): Promise<boolean> {
   if (refreshPromise) return refreshPromise;
   // Use plain fetch — must NOT send the expired Bearer token, only the HttpOnly refresh cookie
-  refreshPromise = fetch(`${baseUrl}/api/v1/auth/refresh`, {
+  refreshPromise = fetch(`${API_URL}/api/v1/auth/refresh`, {
     method: 'POST',
     credentials: 'include',
     headers: { 'Content-Type': 'application/json' },

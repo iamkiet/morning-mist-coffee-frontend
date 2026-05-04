@@ -58,13 +58,21 @@ export default function CheckoutPage() {
     setSubmitError('');
     try {
       const totalCents = Math.round(total * 100);
-      await createOrder(_data.email, totalCents);
+      const orderItems = items.map((item) => ({
+        productId: item.id,
+        name: item.name,
+        priceCents: Math.round(item.price * 100),
+        quantity: item.quantity,
+      }));
+      await createOrder(_data.email, totalCents, orderItems);
       clearCart();
       toast.success('Order placed!', {
         description: "We've received your order and will process it shortly.",
       });
-    } catch {
-      setSubmitError('Failed to place order. Please try again.');
+    } catch (err) {
+      setSubmitError(
+        err instanceof Error ? err.message : 'Failed to place order. Please try again.',
+      );
     } finally {
       setIsSubmitting(false);
     }

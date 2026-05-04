@@ -51,6 +51,27 @@ const columns: Column<Product>[] = [
     render: (r) => <span className="font-medium">${r.price.toFixed(2)}</span>,
   },
   {
+    key: 'stock',
+    header: 'Stock',
+    hideOnMobile: true,
+    render: (r) => {
+      const qty = r.stockQuantity ?? 0;
+      if (qty === 0)
+        return (
+          <span className="text-xs font-medium text-destructive uppercase tracking-wider">
+            Out of stock
+          </span>
+        );
+      if (qty <= 5)
+        return (
+          <span className="text-xs font-medium text-primary uppercase tracking-wider">
+            Low · {qty}
+          </span>
+        );
+      return <span className="text-sm text-foreground">{qty}</span>;
+    },
+  },
+  {
     key: 'notes',
     header: 'Notes',
     hideOnMobile: true,

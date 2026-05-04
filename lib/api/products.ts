@@ -1,4 +1,5 @@
 import type { Product } from '@/app/_components/ProductCard';
+import { API_URL } from '@/lib/config';
 import { DEFAULT_PRODUCT_IMAGE } from '@/lib/product-images';
 
 interface BackendProduct {
@@ -9,6 +10,7 @@ interface BackendProduct {
   currency: string;
   image: string | null;
   productTypeId: string;
+  stockQuantity: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -37,6 +39,7 @@ function transform(p: BackendProduct): Product {
     price: p.priceCents / 100,
     image: p.image ?? DEFAULT_PRODUCT_IMAGE,
     notes,
+    stockQuantity: p.stockQuantity,
   };
 }
 
@@ -44,8 +47,7 @@ export async function fetchProducts(
   limit = 8,
   offset = 0,
 ): Promise<ProductsPage> {
-  const base = process.env.NEXT_PUBLIC_API_URL ?? '';
-  const url = `${base}/api/v1/products?limit=${limit}&offset=${offset}`;
+  const url = `${API_URL}/api/v1/products?limit=${limit}&offset=${offset}`;
   const res = await fetch(url);
   if (!res.ok) throw new Error('Failed to fetch products');
   const data = await res.json();
