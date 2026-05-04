@@ -1,12 +1,14 @@
-import Image from "next/image";
-import { notFound } from "next/navigation";
-import { Coffee, Thermometer, Leaf } from "lucide-react";
-import { Container } from "../../../_components/Container";
-import { Badge } from "@/components/ui/badge";
-import { fetchProduct } from "@/lib/api/products";
-import { AddToBag } from "./AddToBag";
+import Image from 'next/image';
+import { notFound } from 'next/navigation';
+import { Coffee, Thermometer, Leaf } from 'lucide-react';
+import { Container } from '../../../_components/Container';
+import { Badge } from '@/components/ui/badge';
+import { fetchProduct } from '@/lib/api/products';
+import { AddToBag } from './AddToBag';
 
-export default async function ProductPage(props: { params: Promise<{ slug: string }> }) {
+export default async function ProductPage(props: {
+  params: Promise<{ slug: string }>;
+}) {
   const { slug } = await props.params;
   const product = await fetchProduct(slug);
   if (!product) notFound();
@@ -53,7 +55,9 @@ export default async function ProductPage(props: { params: Promise<{ slug: strin
             <span className="text-primary tracking-[0.2em] mb-2 block uppercase text-xs">
               Reserve Series
             </span>
-            <h1 className="text-4xl md:text-5xl text-foreground mb-1">{product.name}</h1>
+            <h1 className="text-4xl md:text-5xl text-foreground mb-1">
+              {product.name}
+            </h1>
             <p className="text-muted-foreground font-light">
               Single Origin {product.origin}
             </p>
@@ -61,26 +65,38 @@ export default async function ProductPage(props: { params: Promise<{ slug: strin
 
           <div className="mb-lg">
             <p className="text-muted-foreground leading-relaxed">
-              A delicate expression of dawn in the highlands. This limited reserve is harvested
-              at peak maturity, offering a translucent clarity that dances between misty
-              clarity and floral elegance.
+              A delicate expression of dawn in the highlands. This limited
+              reserve is harvested at peak maturity, offering a translucent
+              clarity that dances between misty clarity and floral elegance.
             </p>
           </div>
 
           <div className="grid grid-cols-2 gap-2 mb-lg">
             <div className="p-md bg-card rounded-lg border border-border text-center">
-              <span className="text-muted-foreground block mb-1 uppercase text-xs tracking-wider">Roast Level</span>
+              <span className="text-muted-foreground block mb-1 uppercase text-xs tracking-wider">
+                Roast Level
+              </span>
               <span className="text-primary font-medium">Light</span>
             </div>
             <div className="p-md bg-card rounded-lg border border-border text-center">
-              <span className="text-muted-foreground block mb-1 uppercase text-xs tracking-wider">Process</span>
+              <span className="text-muted-foreground block mb-1 uppercase text-xs tracking-wider">
+                Process
+              </span>
               <span className="text-primary font-medium">Washed</span>
             </div>
             <div className="col-span-2 p-md bg-card rounded-lg border border-border flex flex-col items-center">
-              <span className="text-muted-foreground block mb-2 uppercase text-xs tracking-wider">Tasting Notes</span>
+              <span className="text-muted-foreground block mb-2 uppercase text-xs tracking-wider">
+                Tasting Notes
+              </span>
               <div className="flex flex-wrap gap-2 justify-center">
                 {product.notes.map((note) => (
-                  <Badge key={note} variant="outline" className="uppercase tracking-wider text-[11px]">{note}</Badge>
+                  <Badge
+                    key={note}
+                    variant="outline"
+                    className="uppercase tracking-wider text-[11px]"
+                  >
+                    {note}
+                  </Badge>
                 ))}
               </div>
             </div>
@@ -93,13 +109,15 @@ export default async function ProductPage(props: { params: Promise<{ slug: strin
             <div className="flex items-start gap-md py-2">
               <Coffee className="size-5 text-primary shrink-0" />
               <p className="text-muted-foreground text-sm">
-                Best enjoyed as a Pour Over (V60 or Chemex) to unlock the intricate floral architecture.
+                Best enjoyed as a Pour Over (V60 or Chemex) to unlock the
+                intricate floral architecture.
               </p>
             </div>
             <div className="flex items-start gap-md py-2">
               <Thermometer className="size-5 text-primary shrink-0" />
               <p className="text-muted-foreground text-sm">
-                Brew with 92°C soft water to maintain the delicate acidity of the beans.
+                Brew with 92°C soft water to maintain the delicate acidity of
+                the beans.
               </p>
             </div>
           </div>

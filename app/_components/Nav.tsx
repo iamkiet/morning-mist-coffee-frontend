@@ -1,26 +1,27 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import dynamic from "next/dynamic";
-import { usePathname } from "next/navigation";
-import { useState } from "react";
-import { Menu, ShoppingBag } from "lucide-react";
+import Link from 'next/link';
+import dynamic from 'next/dynamic';
+import { usePathname } from 'next/navigation';
+import { useState } from 'react';
+import { Menu, ShoppingBag } from 'lucide-react';
 import {
   Sheet,
   SheetContent,
   SheetTrigger,
   SheetTitle,
   SheetDescription,
-} from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
+} from '@/components/ui/sheet';
+import { Button } from '@/components/ui/button';
 
-const CartCount = dynamic(() => import("./CartCount"), { ssr: false });
+const CartCount = dynamic(() => import('./CartCount'), { ssr: false });
 
 const links = [
-  { href: "/", label: "Home" },
-  { href: "/shop", label: "Shop" },
-  { href: "/story", label: "Our Story" },
-  { href: "/journal", label: "Journal" },
+  { href: '/', label: 'Home' },
+  { href: '/shop', label: 'Shop' },
+  { href: '/story', label: 'Our Story' },
+  { href: '/journal', label: 'Journal' },
+  { href: '/track-order', label: 'Track Order' },
 ];
 
 export function Nav() {
@@ -47,8 +48,8 @@ export function Nav() {
               href={l.href}
               className={`text-sm font-light uppercase transition-colors ${
                 pathname === l.href
-                  ? "text-accent"
-                  : "text-muted-foreground hover:text-primary"
+                  ? 'text-accent'
+                  : 'text-muted-foreground hover:text-primary'
               }`}
             >
               {l.label}
@@ -57,8 +58,17 @@ export function Nav() {
         </div>
 
         <div className="flex items-center gap-1">
-          <Button asChild variant="ghost" size="icon" className="relative h-11 w-11 sm:h-12 sm:w-12">
-            <Link href="/checkout" onClick={closeMenu} aria-label="Shopping Bag">
+          <Button
+            asChild
+            variant="ghost"
+            size="icon"
+            className="relative h-11 w-11 sm:h-12 sm:w-12"
+          >
+            <Link
+              href="/checkout"
+              onClick={closeMenu}
+              aria-label="Shopping Bag"
+            >
               <ShoppingBag className="size-5" />
               <CartCount />
             </Link>
@@ -76,10 +86,7 @@ export function Nav() {
                 <Menu className="size-6" />
               </Button>
             </SheetTrigger>
-            <SheetContent
-              side="right"
-              className="!w-full sm:!max-w-sm bg-card"
-            >
+            <SheetContent side="right" className="!w-full sm:!max-w-sm bg-card">
               <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
               <SheetDescription className="sr-only">
                 Main site navigation
@@ -92,15 +99,13 @@ export function Nav() {
                     onClick={closeMenu}
                     className={`text-2xl sm:text-3xl font-light uppercase tracking-[0.3em] transition-colors ${
                       pathname === l.href
-                        ? "text-accent"
-                        : "text-muted-foreground hover:text-primary"
+                        ? 'text-accent'
+                        : 'text-muted-foreground hover:text-primary'
                     }`}
                   >
                     {l.label}
                   </Link>
                 ))}
-
-                <div className="w-32 sm:w-40 h-px bg-border/30 mt-6 sm:mt-8" />
               </div>
             </SheetContent>
           </Sheet>

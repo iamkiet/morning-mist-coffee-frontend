@@ -1,30 +1,36 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import { MoreHorizontal, Search, TrendingUp, ChevronLeft, ChevronRight } from "lucide-react";
-import { useState } from "react";
-import { PageHeader } from "../_components/PageHeader";
-import { Badge } from "../_components/Badge";
-import { DataTable, type Column } from "../_components/DataTable";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useOrders, useUpdateOrderStatus } from "@/hooks/use-orders";
-import type { Order, OrderStatus } from "@/lib/api/orders";
+import Image from 'next/image';
+import {
+  MoreHorizontal,
+  Search,
+  TrendingUp,
+  ChevronLeft,
+  ChevronRight,
+} from 'lucide-react';
+import { useState } from 'react';
+import { PageHeader } from '../_components/PageHeader';
+import { Badge } from '../_components/Badge';
+import { DataTable, type Column } from '../_components/DataTable';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useOrders, useUpdateOrderStatus } from '@/hooks/use-orders';
+import type { Order, OrderStatus } from '@/lib/api/orders';
 
 const STATUS_BADGE = {
-  pending: "info",
-  paid: "info",
-  shipped: "info",
-  delivered: "success",
-  cancelled: "error",
+  pending: 'info',
+  paid: 'info',
+  shipped: 'info',
+  delivered: 'success',
+  cancelled: 'error',
 } as const;
 
 const NEXT_STATUSES: Partial<Record<OrderStatus, OrderStatus>> = {
-  pending: "paid",
-  paid: "shipped",
-  shipped: "delivered",
+  pending: 'paid',
+  paid: 'shipped',
+  shipped: 'delivered',
 };
 
 const LIMIT = 20;
@@ -41,8 +47,8 @@ export default function AdminOrdersPage() {
 
   const columns: Column<Order>[] = [
     {
-      key: "id",
-      header: "Order ID",
+      key: 'id',
+      header: 'Order ID',
       render: (r) => (
         <span className="text-xs font-medium text-muted-foreground">
           #{r.id.slice(0, 8).toUpperCase()}
@@ -50,8 +56,8 @@ export default function AdminOrdersPage() {
       ),
     },
     {
-      key: "customer",
-      header: "Customer",
+      key: 'customer',
+      header: 'Customer',
       render: (r) => (
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-[10px] text-muted-foreground font-bold">
@@ -62,30 +68,30 @@ export default function AdminOrdersPage() {
       ),
     },
     {
-      key: "status",
-      header: "Status",
+      key: 'status',
+      header: 'Status',
       render: (r) => (
-        <Badge status={STATUS_BADGE[r.status] ?? "neutral"}>
+        <Badge status={STATUS_BADGE[r.status] ?? 'neutral'}>
           {r.status.charAt(0).toUpperCase() + r.status.slice(1)}
         </Badge>
       ),
     },
     {
-      key: "total",
-      header: "Amount",
-      align: "right",
+      key: 'total',
+      header: 'Amount',
+      align: 'right',
       hideOnMobile: true,
       render: (r) => (
         <span className="font-medium">
-          {r.currency === "VND"
+          {r.currency === 'VND'
             ? `₫${r.totalCents.toLocaleString()}`
             : `$${(r.totalCents / 100).toFixed(2)}`}
         </span>
       ),
     },
     {
-      key: "date",
-      header: "Date",
+      key: 'date',
+      header: 'Date',
       hideOnMobile: true,
       render: (r) => (
         <span className="text-muted-foreground text-xs">
@@ -94,9 +100,9 @@ export default function AdminOrdersPage() {
       ),
     },
     {
-      key: "actions",
-      header: "",
-      align: "right",
+      key: 'actions',
+      header: '',
+      align: 'right',
       render: (r) => {
         const next = NEXT_STATUSES[r.status];
         return (
@@ -158,7 +164,8 @@ export default function AdminOrdersPage() {
             totalPages > 1 ? (
               <div className="px-4 py-3 flex items-center justify-between">
                 <p className="text-xs uppercase tracking-widest text-muted-foreground">
-                  Showing {offset + 1}–{Math.min(offset + orders.length, total)} of {total}
+                  Showing {offset + 1}–{Math.min(offset + orders.length, total)}{' '}
+                  of {total}
                 </p>
                 <div className="flex items-center gap-2">
                   <Button
@@ -196,10 +203,12 @@ export default function AdminOrdersPage() {
               <p className="text-[10px] text-muted-foreground uppercase tracking-widest">
                 Morning Mist Coffee Admin
               </p>
-              <h3 className="text-base mb-4 font-medium">Roastery Performance</h3>
+              <h3 className="text-base mb-4 font-medium">
+                Roastery Performance
+              </h3>
               <div className="flex items-end gap-4">
                 <div className="text-3xl font-light">
-                  {total}{" "}
+                  {total}{' '}
                   <span className="text-xs text-muted-foreground font-medium tracking-widest">
                     TOTAL ORDERS
                   </span>
@@ -227,13 +236,18 @@ export default function AdminOrdersPage() {
             </p>
             <div>
               <h3 className="text-base font-medium mb-1">
-                {orders.filter((o) => o.status === "pending").length} Pending
+                {orders.filter((o) => o.status === 'pending').length} Pending
               </h3>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                {orders.filter((o) => o.status === "delivered").length} delivered on this page.
+                {orders.filter((o) => o.status === 'delivered').length}{' '}
+                delivered on this page.
               </p>
             </div>
-            <Button variant="outline" size="sm" className="uppercase tracking-widest text-[10px]">
+            <Button
+              variant="outline"
+              size="sm"
+              className="uppercase tracking-widest text-[10px]"
+            >
               View All
             </Button>
           </CardContent>

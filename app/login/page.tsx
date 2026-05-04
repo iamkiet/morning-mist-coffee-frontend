@@ -1,39 +1,48 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { useAuth } from "@/lib/auth-context";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { useAuth } from '@/lib/auth-context';
 
 export default function LoginPage() {
-  const [email, setEmail] = useState(() => typeof window !== "undefined" ? localStorage.getItem("remembered_email") ?? "" : "");
-  const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(() => typeof window !== "undefined" ? !!localStorage.getItem("remembered_email") : false);
-  const [error, setError] = useState("");
+  const [email, setEmail] = useState(() =>
+    typeof window !== 'undefined'
+      ? (localStorage.getItem('remembered_email') ?? '')
+      : '',
+  );
+  const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(() =>
+    typeof window !== 'undefined'
+      ? !!localStorage.getItem('remembered_email')
+      : false,
+  );
+  const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
   const router = useRouter();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError("");
+    setError('');
     setIsLoading(true);
 
     try {
       if (rememberMe) {
-        localStorage.setItem("remembered_email", email);
+        localStorage.setItem('remembered_email', email);
       } else {
-        localStorage.removeItem("remembered_email");
+        localStorage.removeItem('remembered_email');
       }
       await login(email, password);
-      router.push("/mist-ops");
+      router.push('/mist-ops');
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Invalid email or password");
+      setError(
+        err instanceof Error ? err.message : 'Invalid email or password',
+      );
     } finally {
       setIsLoading(false);
     }
   }
-
 
   return (
     <main className="min-h-screen flex items-center justify-center px-4 py-12 bg-background">
@@ -85,7 +94,9 @@ export default function LoginPage() {
               onChange={(e) => setRememberMe(e.target.checked)}
               className="size-4 accent-foreground cursor-pointer"
             />
-            <span className="text-xs text-muted-foreground">Remember my email</span>
+            <span className="text-xs text-muted-foreground">
+              Remember my email
+            </span>
           </label>
 
           <button
@@ -93,7 +104,7 @@ export default function LoginPage() {
             disabled={isLoading}
             className="w-full px-4 py-3 bg-foreground text-background uppercase tracking-widest text-xs font-medium hover:opacity-90 disabled:opacity-50 transition-opacity"
           >
-            {isLoading ? "Signing in..." : "Sign In"}
+            {isLoading ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
 

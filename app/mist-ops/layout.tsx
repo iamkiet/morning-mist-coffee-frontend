@@ -1,19 +1,19 @@
-"use client";
+'use client';
 
-import type { ReactNode } from "react";
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { Menu, LogOut } from "lucide-react";
+import type { ReactNode } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { Menu, LogOut } from 'lucide-react';
 import {
   Sheet,
   SheetContent,
   SheetTrigger,
   SheetTitle,
   SheetDescription,
-} from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
-import { AdminSidebar } from "./_components/AdminSidebar";
-import { useAuth } from "@/lib/auth-context";
+} from '@/components/ui/sheet';
+import { Button } from '@/components/ui/button';
+import { AdminSidebar } from './_components/AdminSidebar';
+import { useAuth } from '@/lib/auth-context';
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -25,8 +25,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const router = useRouter();
 
   useEffect(() => {
-    if (!isLoading && (!user || user.role !== "admin")) {
-      router.push("/login");
+    if (!isLoading && (!user || user.role !== 'admin')) {
+      router.push('/login');
     }
   }, [user, isLoading, router]);
 
@@ -38,7 +38,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     );
   }
 
-  if (!user || user.role !== "admin") {
+  if (!user || user.role !== 'admin') {
     return null;
   }
 
@@ -71,7 +71,12 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
               <AdminSidebar onClose={() => setIsOpen(false)} />
             </SheetContent>
           </Sheet>
-          <Button variant="ghost" size="icon" onClick={logout} aria-label="Logout">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={logout}
+            aria-label="Logout"
+          >
             <LogOut className="size-4" />
           </Button>
         </div>
@@ -82,9 +87,16 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             <p className="text-sm font-medium text-foreground">
               {user.firstName} {user.lastName}
             </p>
-            <p className="text-[10px] text-muted-foreground tracking-widest">{user.email}</p>
+            <p className="text-[10px] text-muted-foreground tracking-widest">
+              {user.email}
+            </p>
           </div>
-          <Button size="sm" variant="outline" onClick={logout} className="rounded-none text-xs uppercase tracking-widest gap-2">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={logout}
+            className="rounded-none text-xs uppercase tracking-widest gap-2"
+          >
             <LogOut className="size-3.5" />
             Logout
           </Button>

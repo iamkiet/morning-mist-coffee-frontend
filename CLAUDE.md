@@ -40,6 +40,7 @@ hooks/
 ## Components
 
 **Do not recreate** any of these — grep before adding:
+
 - Shared: `app/_components/` — Nav, Footer, Container, ProductCard, Chip
 - Admin: `app/mist-ops/_components/` — AdminSidebar, Badge, DataTable, PageHeader, StatCard
 - shadcn: `@/components/ui/*` — add with `pnpm dlx shadcn add <name>`

@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard,
   LineChart,
@@ -13,24 +13,24 @@ import {
   Coffee,
   ArrowLeft,
   type LucideIcon,
-} from "lucide-react";
-import { useAuth } from "@/lib/auth-context";
+} from 'lucide-react';
+import { useAuth } from '@/lib/auth-context';
 
 interface AdminSidebarProps {
   onClose?: () => void;
 }
 
 const nav: { href: string; label: string; icon: LucideIcon }[] = [
-  { href: "/mist-ops", label: "Overview", icon: LayoutDashboard },
-  { href: "/mist-ops/analytics", label: "Analytics", icon: LineChart },
-  { href: "/mist-ops/orders", label: "Orders", icon: Receipt },
-  { href: "/mist-ops/products", label: "Inventory", icon: Package },
-  { href: "/mist-ops/users", label: "Users", icon: Users },
+  { href: '/mist-ops', label: 'Overview', icon: LayoutDashboard },
+  { href: '/mist-ops/analytics', label: 'Analytics', icon: LineChart },
+  { href: '/mist-ops/orders', label: 'Orders', icon: Receipt },
+  { href: '/mist-ops/products', label: 'Inventory', icon: Package },
+  { href: '/mist-ops/users', label: 'Users', icon: Users },
 ];
 
 const footerNav: { href: string; label: string; icon: LucideIcon }[] = [
-  { href: "#", label: "Settings", icon: Settings },
-  { href: "#", label: "Support", icon: HelpCircle },
+  { href: '#', label: 'Settings', icon: Settings },
+  { href: '#', label: 'Support', icon: HelpCircle },
 ];
 
 export function AdminSidebar({ onClose }: AdminSidebarProps) {
@@ -42,7 +42,7 @@ export function AdminSidebar({ onClose }: AdminSidebarProps) {
 
   const initials = user
     ? `${user.firstName[0]}${user.lastName[0]}`.toUpperCase()
-    : "??";
+    : '??';
 
   return (
     <aside className="h-full lg:h-screen w-full lg:w-64 lg:fixed lg:left-0 lg:top-0 lg:border-r border-border/30 bg-sidebar flex flex-col p-6 space-y-6 z-40">
@@ -63,10 +63,10 @@ export function AdminSidebar({ onClose }: AdminSidebarProps) {
         </div>
         <div className="min-w-0">
           <p className="text-xs font-medium tracking-wider uppercase text-foreground truncate">
-            {user ? `${user.firstName} ${user.lastName}` : "—"}
+            {user ? `${user.firstName} ${user.lastName}` : '—'}
           </p>
           <p className="text-[10px] text-muted-foreground tracking-widest truncate">
-            {user?.email ?? ""}
+            {user?.email ?? ''}
           </p>
         </div>
       </div>
@@ -83,8 +83,8 @@ export function AdminSidebar({ onClose }: AdminSidebarProps) {
               onClick={handleLinkClick}
               className={`flex items-center gap-3 py-3 px-4 rounded-lg transition-colors ${
                 active
-                  ? "bg-card text-primary shadow-sm"
-                  : "text-muted-foreground hover:bg-card/50"
+                  ? 'bg-card text-primary shadow-sm'
+                  : 'text-muted-foreground hover:bg-card/50'
               }`}
             >
               <Icon size={20} />

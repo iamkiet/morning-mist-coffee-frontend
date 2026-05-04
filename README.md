@@ -25,8 +25,8 @@ pnpm install
 cp .env.example .env.local
 ```
 
-| Variable | Description |
-|---|---|
+| Variable              | Description                                           |
+| --------------------- | ----------------------------------------------------- |
 | `NEXT_PUBLIC_API_URL` | Base URL for API calls (e.g. `http://localhost:3000`) |
 
 ### 3. Run the dev server
@@ -85,11 +85,11 @@ Returns the full product list.
 
 ```ts
 // Server component — fetch directly
-import { fetchProducts } from "@/lib/api/products";
+import { fetchProducts } from '@/lib/api/products';
 const products = await fetchProducts();
 
 // Client component — React Query
-import { useProducts } from "@/hooks/use-products";
+import { useProducts } from '@/hooks/use-products';
 const { data, isLoading, isError } = useProducts();
 ```
 

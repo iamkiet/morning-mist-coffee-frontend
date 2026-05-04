@@ -1,5 +1,5 @@
-import { Suspense } from "react";
-import { ShopContent } from "./_components/shop-content";
+import { Suspense } from 'react';
+import { ShopContent } from './_components/shop-content';
 
 export default function ShopPage() {
   return (
@@ -9,8 +9,8 @@ export default function ShopPage() {
           The Whole Collection
         </h1>
         <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto font-light">
-          Explore our curated selection of sustainably sourced beans and artisan equipment,
-          designed for the mindful morning ritual.
+          Explore our curated selection of sustainably sourced beans and artisan
+          equipment, designed for the mindful morning ritual.
         </p>
       </header>
 

@@ -1,8 +1,12 @@
-import type { ReactNode } from "react";
-import { Nav } from "../_components/Nav";
-import { Footer } from "../_components/Footer";
+import type { ReactNode } from 'react';
+import { Nav } from '../_components/Nav';
+import { Footer } from '../_components/Footer';
 
-export default function StorefrontLayout({ children }: { children: ReactNode }) {
+export default function StorefrontLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
   return (
     <>
       <Nav />

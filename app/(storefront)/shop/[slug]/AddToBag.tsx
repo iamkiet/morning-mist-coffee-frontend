@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { Minus, Plus, Check } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useCart } from "@/lib/cart";
-import type { Product } from "@/app/_components/ProductCard";
+import { useState } from 'react';
+import { Minus, Plus, Check } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useCart } from '@/lib/cart';
+import type { Product } from '@/app/_components/ProductCard';
 
 export function AddToBag({ product }: { product: Product }) {
   const { addItem } = useCart();
@@ -31,7 +31,9 @@ export function AddToBag({ product }: { product: Product }) {
   return (
     <div className="space-y-md">
       <div className="flex items-center justify-between">
-        <span className="text-3xl text-foreground">${product.price.toFixed(2)}</span>
+        <span className="text-3xl text-foreground">
+          ${product.price.toFixed(2)}
+        </span>
         <div className="flex items-center border border-border rounded-lg bg-card">
           <Button
             variant="ghost"
@@ -43,7 +45,9 @@ export function AddToBag({ product }: { product: Product }) {
           >
             <Minus className="size-4" />
           </Button>
-          <span className="px-md text-foreground min-w-[2rem] text-center">{quantity}</span>
+          <span className="px-md text-foreground min-w-[2rem] text-center">
+            {quantity}
+          </span>
           <Button
             variant="ghost"
             size="icon"
@@ -67,7 +71,7 @@ export function AddToBag({ product }: { product: Product }) {
             Added to Bag
           </>
         ) : (
-          "Add to Bag"
+          'Add to Bag'
         )}
       </Button>
     </div>

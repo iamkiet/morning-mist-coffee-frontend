@@ -9,11 +9,15 @@ export function setAccessToken(token: string | null) {
 
 function request(path: string, options: RequestInit = {}): Promise<Response> {
   const headers: Record<string, string> = {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
     ...(options.headers as Record<string, string>),
   };
-  if (accessToken) headers["Authorization"] = `Bearer ${accessToken}`;
-  return fetch(`${baseUrl}${path}`, { ...options, credentials: "include", headers });
+  if (accessToken) headers['Authorization'] = `Bearer ${accessToken}`;
+  return fetch(`${baseUrl}${path}`, {
+    ...options,
+    credentials: 'include',
+    headers,
+  });
 }
 
 // Shared promise — concurrent 401s all wait on the same refresh call
@@ -23,9 +27,9 @@ async function refresh(): Promise<boolean> {
   if (refreshPromise) return refreshPromise;
   // Use plain fetch — must NOT send the expired Bearer token, only the HttpOnly refresh cookie
   refreshPromise = fetch(`${baseUrl}/api/v1/auth/refresh`, {
-    method: "POST",
-    credentials: "include",
-    headers: { "Content-Type": "application/json" },
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({}),
   })
     .then(async (r) => {
@@ -34,7 +38,9 @@ async function refresh(): Promise<boolean> {
       accessToken = data.accessToken ?? null;
       return true;
     })
-    .finally(() => { refreshPromise = null; });
+    .finally(() => {
+      refreshPromise = null;
+    });
   return refreshPromise;
 }
 
@@ -45,7 +51,10 @@ export function setAuthFailureHandler(handler: OnAuthFailure) {
   onAuthFailure = handler;
 }
 
-export async function authFetch(path: string, options: RequestInit = {}): Promise<Response> {
+export async function authFetch(
+  path: string,
+  options: RequestInit = {},
+): Promise<Response> {
   const res = await request(path, options);
   if (res.status !== 401) return res;
 

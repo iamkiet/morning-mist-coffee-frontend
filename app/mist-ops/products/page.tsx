@@ -1,23 +1,31 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import { Pencil, Trash2, Download, Plus, Search, ChevronLeft, ChevronRight } from "lucide-react";
-import { useState } from "react";
-import { PageHeader } from "../_components/PageHeader";
-import { DataTable, type Column } from "../_components/DataTable";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useProducts } from "@/hooks/use-products";
-import type { Product } from "@/app/_components/ProductCard";
+import Image from 'next/image';
+import {
+  Pencil,
+  Trash2,
+  Download,
+  Plus,
+  Search,
+  ChevronLeft,
+  ChevronRight,
+} from 'lucide-react';
+import { useState } from 'react';
+import { PageHeader } from '../_components/PageHeader';
+import { DataTable, type Column } from '../_components/DataTable';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useProducts } from '@/hooks/use-products';
+import type { Product } from '@/app/_components/ProductCard';
 
 const LIMIT = 10;
 
 const columns: Column<Product>[] = [
   {
-    key: "details",
-    header: "Product Details",
+    key: 'details',
+    header: 'Product Details',
     render: (r) => (
       <div className="flex items-center gap-4">
         <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-card flex-shrink-0">
@@ -37,32 +45,36 @@ const columns: Column<Product>[] = [
     ),
   },
   {
-    key: "price",
-    header: "Price",
+    key: 'price',
+    header: 'Price',
     hideOnMobile: true,
     render: (r) => <span className="font-medium">${r.price.toFixed(2)}</span>,
   },
   {
-    key: "notes",
-    header: "Notes",
+    key: 'notes',
+    header: 'Notes',
     hideOnMobile: true,
     render: (r) => (
       <span className="text-muted-foreground text-sm">
-        {r.notes.length > 0 ? r.notes[0] : "—"}
+        {r.notes.length > 0 ? r.notes[0] : '—'}
       </span>
     ),
   },
   {
-    key: "actions",
-    header: "Actions",
-    align: "right",
+    key: 'actions',
+    header: 'Actions',
+    align: 'right',
     hideOnMobile: true,
     render: () => (
       <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
         <Button variant="ghost" size="icon" className="size-8">
           <Pencil className="size-4" />
         </Button>
-        <Button variant="ghost" size="icon" className="size-8 hover:text-destructive">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="size-8 hover:text-destructive"
+        >
           <Trash2 className="size-4" />
         </Button>
       </div>
@@ -86,7 +98,11 @@ export default function AdminProductsPage() {
         description="Morning Mist was born from the quiet clarity of a high-altitude mist, where every bean tells the story of the soil it was cradled in."
         actions={
           <>
-            <Button variant="outline" size="sm" className="uppercase tracking-wider">
+            <Button
+              variant="outline"
+              size="sm"
+              className="uppercase tracking-wider"
+            >
               <Download className="size-4" />
               Export CSV
             </Button>
@@ -108,7 +124,7 @@ export default function AdminProductsPage() {
             />
           </div>
           <p className="text-xs text-muted-foreground uppercase tracking-widest">
-            {isLoading ? "Loading..." : `${total} products total`}
+            {isLoading ? 'Loading...' : `${total} products total`}
           </p>
         </CardContent>
       </Card>
@@ -133,7 +149,8 @@ export default function AdminProductsPage() {
             totalPages > 1 ? (
               <div className="px-4 py-3 flex items-center justify-between">
                 <p className="text-xs uppercase tracking-widest text-muted-foreground">
-                  Showing {offset + 1}–{Math.min(offset + items.length, total)} of {total}
+                  Showing {offset + 1}–{Math.min(offset + items.length, total)}{' '}
+                  of {total}
                 </p>
                 <div className="flex items-center gap-2">
                   <Button

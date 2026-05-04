@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 import {
   Table,
   TableBody,
@@ -6,13 +6,13 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Card, CardContent } from "@/components/ui/card";
+} from '@/components/ui/table';
+import { Card, CardContent } from '@/components/ui/card';
 
 export interface Column<T> {
   key: string;
   header: string;
-  align?: "left" | "right";
+  align?: 'left' | 'right';
   hideOnMobile?: boolean;
   render: (row: T) => ReactNode;
 }
@@ -41,7 +41,7 @@ export function DataTable<T extends { id: string | number }>({
                     <TableHead
                       key={c.key}
                       className={`uppercase text-xs tracking-wider text-muted-foreground ${
-                        c.align === "right" ? "text-right" : ""
+                        c.align === 'right' ? 'text-right' : ''
                       }`}
                     >
                       {c.header}
@@ -55,7 +55,7 @@ export function DataTable<T extends { id: string | number }>({
                     {columns.map((c) => (
                       <TableCell
                         key={c.key}
-                        className={c.align === "right" ? "text-right" : ""}
+                        className={c.align === 'right' ? 'text-right' : ''}
                       >
                         {c.render(row)}
                       </TableCell>
@@ -129,8 +129,8 @@ export function Pagination({
             key={p}
             className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium cursor-pointer transition-colors ${
               p === current
-                ? "bg-accent text-accent-foreground"
-                : "text-muted-foreground hover:bg-muted"
+                ? 'bg-accent text-accent-foreground'
+                : 'text-muted-foreground hover:bg-muted'
             }`}
           >
             {p}

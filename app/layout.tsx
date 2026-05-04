@@ -1,14 +1,14 @@
-import type { Metadata } from "next";
-import { Geist } from "next/font/google";
-import "./globals.css";
-import { cn } from "@/lib/utils";
-import { Providers } from "./providers";
+import type { Metadata } from 'next';
+import { Geist } from 'next/font/google';
+import './globals.css';
+import { cn } from '@/lib/utils';
+import { Providers } from './providers';
 
-const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
+const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
 
 export const metadata: Metadata = {
-  title: "Morning Mist Coffee",
-  description: "Specialty coffee, slowly served.",
+  title: 'Morning Mist Coffee',
+  description: 'Specialty coffee, slowly served.',
 };
 
 export default function RootLayout({
@@ -17,7 +17,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={cn("h-full antialiased font-sans", geist.variable)}>
+    <html
+      lang="en"
+      className={cn('h-full antialiased font-sans', geist.variable)}
+    >
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
         <Providers>{children}</Providers>
       </body>

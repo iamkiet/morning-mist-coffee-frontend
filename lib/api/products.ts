@@ -1,5 +1,5 @@
-import type { Product } from "@/app/_components/ProductCard";
-import { DEFAULT_PRODUCT_IMAGE } from "@/lib/product-images";
+import type { Product } from '@/app/_components/ProductCard';
+import { DEFAULT_PRODUCT_IMAGE } from '@/lib/product-images';
 
 interface BackendProduct {
   id: string;
@@ -21,24 +21,40 @@ export interface ProductsPage {
 }
 
 function transform(p: BackendProduct): Product {
-  const slug = p.name.toLowerCase().replace(/\s+/g, "-");
-  let origin = "Morning Mist • Collection";
+  const slug = p.name.toLowerCase().replace(/\s+/g, '-');
+  let origin = 'Morning Mist • Collection';
   let notes: string[] = [];
   if (p.description) {
-    const lines = p.description.split("\n").filter((l) => l.trim());
+    const lines = p.description.split('\n').filter((l) => l.trim());
     if (lines.length > 0) origin = lines[0];
     notes = lines.slice(1).filter((l) => l.trim().length > 0);
   }
-  return { id: p.id, slug, name: p.name, origin, price: p.priceCents / 100, image: p.image ?? DEFAULT_PRODUCT_IMAGE, notes };
+  return {
+    id: p.id,
+    slug,
+    name: p.name,
+    origin,
+    price: p.priceCents / 100,
+    image: p.image ?? DEFAULT_PRODUCT_IMAGE,
+    notes,
+  };
 }
 
-export async function fetchProducts(limit = 8, offset = 0): Promise<ProductsPage> {
-  const base = process.env.NEXT_PUBLIC_API_URL ?? "";
+export async function fetchProducts(
+  limit = 8,
+  offset = 0,
+): Promise<ProductsPage> {
+  const base = process.env.NEXT_PUBLIC_API_URL ?? '';
   const url = `${base}/api/v1/products?limit=${limit}&offset=${offset}`;
   const res = await fetch(url);
-  if (!res.ok) throw new Error("Failed to fetch products");
+  if (!res.ok) throw new Error('Failed to fetch products');
   const data = await res.json();
-  return { items: data.items.map(transform), total: data.total, limit: data.limit, offset: data.offset };
+  return {
+    items: data.items.map(transform),
+    total: data.total,
+    limit: data.limit,
+    offset: data.offset,
+  };
 }
 
 export async function fetchProduct(slug: string): Promise<Product | undefined> {

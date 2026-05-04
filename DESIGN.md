@@ -141,17 +141,22 @@ Standard components like buttons and input fields utilize a 0.5rem (8px) radius.
 ## Components
 
 ### Buttons
+
 Primary buttons use a desaturated sage fill with white text. Secondary buttons are "Ghost" style, utilizing a thin 1px border in a slightly darker mist tone. All transitions must be slow (300ms+) to maintain the serene tempo.
 
 ### Cards
+
 Cards are the primary vessel for products. They should feature no borders, instead relying on the ambient sage-tinted shadows for separation. Images within cards should have a slight desaturation filter applied to align with the palette.
 
 ### Input Fields
+
 Fields are minimalist: a single bottom border or a very soft, light-grey-filled trough with rounded corners. Focus states should be indicated by a subtle glow in the primary sage color rather than a heavy stroke.
 
 ### Chips & Tags
+
 Used for coffee notes (e.g., "Floral", "Citrus"). These should be pill-shaped with ethereal pastel backgrounds (e.g., Mist Blue or Pale Peach) and slightly darker text for accessibility.
 
 ### Additional Elements
+
 - **Image Treatment:** Use "soft-focus" or macro photography for coffee beans and steam.
 - **Micro-interactions:** Use fading and gentle sliding motions. Avoid "snappy" or "bouncy" spring physics.

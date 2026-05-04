@@ -10,6 +10,7 @@ description: Use this skill whenever generating, creating, editing, or styling A
 Use these for all component styling:
 
 **Backgrounds**
+
 - `bg-background` — page/root background
 - `bg-card` — card surfaces, panels
 - `bg-muted` — subtle/secondary surfaces
@@ -18,6 +19,7 @@ Use these for all component styling:
 - `bg-border` — border-colored fill
 
 **Text**
+
 - `text-foreground` — primary body text
 - `text-muted-foreground` — secondary/helper text
 - `text-primary` — primary brand text
@@ -25,6 +27,7 @@ Use these for all component styling:
 - `text-destructive` — error/danger text
 
 **Borders**
+
 - `border-border` — default border
 - `border-accent` — accent border
 
@@ -61,6 +64,7 @@ Also forbidden: `px-margin-safe` — not a valid Tailwind token here.
 ```
 
 Status badge mapping:
+
 - success → `bg-accent/20 text-accent-foreground border-accent/40`
 - info → `bg-primary/10 text-primary border-primary/20`
 - warning → `bg-muted text-foreground border-border`

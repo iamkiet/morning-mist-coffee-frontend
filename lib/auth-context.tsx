@@ -1,14 +1,20 @@
-"use client";
+'use client';
 
-import { createContext, useContext, useEffect, useCallback, useState } from "react";
-import { setAccessToken, setAuthFailureHandler } from "@/lib/api/client";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useCallback,
+  useState,
+} from 'react';
+import { setAccessToken, setAuthFailureHandler } from '@/lib/api/client';
 
 export interface User {
   id: string;
   firstName: string;
   lastName: string;
   email: string;
-  role: "user" | "admin";
+  role: 'user' | 'admin';
 }
 
 interface AuthContextValue {
@@ -40,9 +46,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     async function loadUser() {
       try {
         const refreshRes = await fetch(`${baseUrl}/api/v1/auth/refresh`, {
-          method: "POST",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({}),
         });
 
@@ -55,7 +61,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setAccessToken(accessToken);
 
         const meRes = await fetch(`${baseUrl}/api/v1/auth/me`, {
-          credentials: "include",
+          credentials: 'include',
           headers: { Authorization: `Bearer ${accessToken}` },
         });
         setUser(meRes.ok ? await meRes.json() : null);
@@ -70,15 +76,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   async function login(email: string, password: string) {
     const res = await fetch(`${baseUrl}/api/v1/auth/login`, {
-      method: "POST",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
     });
 
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
-      throw new Error(err.message ?? "Invalid email or password");
+      throw new Error(err.message ?? 'Invalid email or password');
     }
 
     const data = await res.json();
@@ -88,9 +94,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   async function logout() {
     await fetch(`${baseUrl}/api/v1/auth/logout`, {
-      method: "POST",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({}),
     }).catch(() => {});
     setAccessToken(null);
@@ -106,6 +112,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 export function useAuth() {
   const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error("useAuth must be used within AuthProvider");
+  if (!ctx) throw new Error('useAuth must be used within AuthProvider');
   return ctx;
 }

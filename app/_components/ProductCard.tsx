@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import Link from "next/link";
-import { useState } from "react";
-import { ShoppingBag, Check } from "lucide-react";
-import { Chip } from "./Chip";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { useCart } from "@/lib/cart";
+import Image from 'next/image';
+import Link from 'next/link';
+import { useState } from 'react';
+import { ShoppingBag, Check } from 'lucide-react';
+import { Chip } from './Chip';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { useCart } from '@/lib/cart';
 
 export interface Product {
   id: string;
@@ -76,12 +76,22 @@ export function ProductCard({ product }: ProductCardProps) {
 
       <div className="px-4 mt-auto">
         <Button
-          variant={added ? "default" : "outline"}
+          variant={added ? 'default' : 'outline'}
           onClick={handleAddToBag}
           aria-label={`Add ${product.name} to bag`}
           className="w-full text-xs uppercase tracking-widest gap-2 transition-all duration-300"
         >
-          {added ? <><Check className="size-3.5" />Added</> : <><ShoppingBag className="size-3.5" />Add to Bag</>}
+          {added ? (
+            <>
+              <Check className="size-3.5" />
+              Added
+            </>
+          ) : (
+            <>
+              <ShoppingBag className="size-3.5" />
+              Add to Bag
+            </>
+          )}
         </Button>
       </div>
     </div>

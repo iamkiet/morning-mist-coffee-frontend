@@ -1,5 +1,5 @@
-import type { LucideIcon } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import type { LucideIcon } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
 
 interface StatCardProps {
   label: string;
@@ -7,24 +7,24 @@ interface StatCardProps {
   delta?: string;
   icon?: LucideIcon;
   progress?: number;
-  tone?: "primary" | "secondary" | "tertiary";
+  tone?: 'primary' | 'secondary' | 'tertiary';
 }
 
 const tonePalette = {
   primary: {
-    fg: "text-primary",
-    bg: "bg-accent/30",
-    glow: "bg-accent/10",
+    fg: 'text-primary',
+    bg: 'bg-accent/30',
+    glow: 'bg-accent/10',
   },
   secondary: {
-    fg: "text-primary",
-    bg: "bg-primary/10",
-    glow: "bg-primary/5",
+    fg: 'text-primary',
+    bg: 'bg-primary/10',
+    glow: 'bg-primary/5',
   },
   tertiary: {
-    fg: "text-accent-foreground",
-    bg: "bg-accent/20",
-    glow: "bg-accent/10",
+    fg: 'text-accent-foreground',
+    bg: 'bg-accent/20',
+    glow: 'bg-accent/10',
   },
 };
 
@@ -34,7 +34,7 @@ export function StatCard({
   delta,
   icon: Icon,
   progress,
-  tone = "primary",
+  tone = 'primary',
 }: StatCardProps) {
   const t = tonePalette[tone];
   return (
@@ -61,7 +61,7 @@ export function StatCard({
         <p className="text-2xl sm:text-3xl text-primary mt-1 font-light">
           {value}
         </p>
-        {typeof progress === "number" && (
+        {typeof progress === 'number' && (
           <div className="mt-4 h-1 w-full bg-muted rounded-full overflow-hidden">
             <div
               className="h-full bg-primary transition-all duration-700"

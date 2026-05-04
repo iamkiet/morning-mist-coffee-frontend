@@ -1,4 +1,4 @@
-import Image from "next/image";
+import Image from 'next/image';
 import {
   Wallet,
   ShoppingBasket,
@@ -8,23 +8,23 @@ import {
   User,
   History,
   type LucideIcon,
-} from "lucide-react";
-import { PageHeader } from "./_components/PageHeader";
-import { StatCard } from "./_components/StatCard";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+} from 'lucide-react';
+import { PageHeader } from './_components/PageHeader';
+import { StatCard } from './_components/StatCard';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 const bars = [
-  { day: "Mon", h: 40 },
-  { day: "Tue", h: 65 },
-  { day: "Wed", h: 90, active: true },
-  { day: "Thu", h: 55 },
-  { day: "Fri", h: 75 },
-  { day: "Sat", h: 45 },
-  { day: "Sun", h: 85 },
+  { day: 'Mon', h: 40 },
+  { day: 'Tue', h: 65 },
+  { day: 'Wed', h: 90, active: true },
+  { day: 'Thu', h: 55 },
+  { day: 'Fri', h: 75 },
+  { day: 'Sat', h: 45 },
+  { day: 'Sun', h: 85 },
 ];
 
-type ActivityColor = "primary" | "secondary" | "tertiary" | "neutral";
+type ActivityColor = 'primary' | 'secondary' | 'tertiary' | 'neutral';
 
 const activity: {
   icon: LucideIcon;
@@ -34,35 +34,35 @@ const activity: {
 }[] = [
   {
     icon: AlertTriangle,
-    color: "secondary",
-    body: "New batch of Ethiopian Yirgacheffe roasted.",
-    when: "12 minutes ago",
+    color: 'secondary',
+    body: 'New batch of Ethiopian Yirgacheffe roasted.',
+    when: '12 minutes ago',
   },
   {
     icon: Check,
-    color: "primary",
-    body: "Order #4920 fulfilled and dispatched.",
-    when: "1 hour ago",
+    color: 'primary',
+    body: 'Order #4920 fulfilled and dispatched.',
+    when: '1 hour ago',
   },
   {
     icon: User,
-    color: "tertiary",
-    body: "New wholesale inquiry from Lumière Café.",
-    when: "3 hours ago",
+    color: 'tertiary',
+    body: 'New wholesale inquiry from Lumière Café.',
+    when: '3 hours ago',
   },
   {
     icon: History,
-    color: "neutral",
-    body: "Inventory restock: 50kg Organic Sage beans.",
-    when: "Yesterday",
+    color: 'neutral',
+    body: 'Inventory restock: 50kg Organic Sage beans.',
+    when: 'Yesterday',
   },
 ];
 
 const colorMap: Record<ActivityColor, string> = {
-  primary: "bg-accent/20 text-accent-foreground",
-  secondary: "bg-muted text-foreground",
-  tertiary: "bg-primary/10 text-primary",
-  neutral: "bg-muted text-muted-foreground",
+  primary: 'bg-accent/20 text-accent-foreground',
+  secondary: 'bg-muted text-foreground',
+  tertiary: 'bg-primary/10 text-primary',
+  neutral: 'bg-muted text-muted-foreground',
 };
 
 export default function AdminOverviewPage() {
@@ -114,10 +114,18 @@ export default function AdminOverviewPage() {
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-base font-medium">Sales Trends</h3>
               <div className="flex gap-1">
-                <Button variant="outline" size="sm" className="text-[10px] uppercase tracking-widest h-7">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-[10px] uppercase tracking-widest h-7"
+                >
                   Daily
                 </Button>
-                <Button variant="default" size="sm" className="text-[10px] uppercase tracking-widest h-7">
+                <Button
+                  variant="default"
+                  size="sm"
+                  className="text-[10px] uppercase tracking-widest h-7"
+                >
                   Weekly
                 </Button>
               </div>
@@ -133,7 +141,7 @@ export default function AdminOverviewPage() {
                   <div
                     key={b.day}
                     className={`flex-1 mx-1 rounded-t-lg transition-all duration-500 ${
-                      b.active ? "bg-primary/40" : "bg-accent/20"
+                      b.active ? 'bg-primary/40' : 'bg-accent/20'
                     }`}
                     style={{ height: `${b.h}%` }}
                   />
@@ -193,7 +201,9 @@ export default function AdminOverviewPage() {
             <p className="text-xs text-white/80 uppercase tracking-wider">
               Active Roastery Status
             </p>
-            <p className="text-base text-white">Optimal Environment: 22°C / 45% Hum.</p>
+            <p className="text-base text-white">
+              Optimal Environment: 22°C / 45% Hum.
+            </p>
           </div>
         </div>
         <Card>
@@ -204,10 +214,15 @@ export default function AdminOverviewPage() {
                 Live Quality Monitoring
               </h4>
               <p className="text-sm text-muted-foreground px-4 mt-2">
-                Our sensors are tracking bean quality in real-time across all our roasteries.
+                Our sensors are tracking bean quality in real-time across all
+                our roasteries.
               </p>
             </div>
-            <Button variant="outline" size="sm" className="uppercase tracking-wider rounded-full">
+            <Button
+              variant="outline"
+              size="sm"
+              className="uppercase tracking-wider rounded-full"
+            >
               View Analytics
             </Button>
           </CardContent>

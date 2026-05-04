@@ -1,12 +1,12 @@
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
 interface PageHeaderProps {
   eyebrow?: string;
   title: string;
   description?: string;
   actions?: ReactNode;
-  size?: "headline" | "display";
-  titleColor?: "default" | "primary";
+  size?: 'headline' | 'display';
+  titleColor?: 'default' | 'primary';
   descriptionItalic?: boolean;
 }
 
@@ -15,16 +15,16 @@ export function PageHeader({
   title,
   description,
   actions,
-  size = "headline",
-  titleColor = "default",
+  size = 'headline',
+  titleColor = 'default',
   descriptionItalic = false,
 }: PageHeaderProps) {
   const titleCls =
-    size === "display"
-      ? "text-2xl sm:text-3xl md:text-4xl lg:text-5xl"
-      : "text-xl sm:text-2xl md:text-3xl";
+    size === 'display'
+      ? 'text-2xl sm:text-3xl md:text-4xl lg:text-5xl'
+      : 'text-xl sm:text-2xl md:text-3xl';
   const colorCls =
-    titleColor === "primary" ? "text-primary" : "text-foreground";
+    titleColor === 'primary' ? 'text-primary' : 'text-foreground';
   return (
     <header className="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4">
       <div className="space-y-2 min-w-0 flex-1">
@@ -38,7 +38,7 @@ export function PageHeader({
         </h1>
         {description && (
           <p
-            className={`text-sm sm:text-base text-muted-foreground ${descriptionItalic ? "italic" : ""}`}
+            className={`text-sm sm:text-base text-muted-foreground ${descriptionItalic ? 'italic' : ''}`}
           >
             {description}
           </p>
