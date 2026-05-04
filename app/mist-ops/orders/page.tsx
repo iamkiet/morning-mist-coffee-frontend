@@ -55,12 +55,9 @@ export default function AdminOrdersPage() {
       render: (r) => (
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-[10px] text-muted-foreground font-bold">
-            {r.customerId.slice(0, 2).toUpperCase()}
+            {r.email.slice(0, 2).toUpperCase()}
           </div>
-          <div>
-            <p className="text-sm font-medium">Customer</p>
-            <p className="text-[10px] text-muted-foreground">{r.customerId.slice(0, 16)}…</p>
-          </div>
+          <p className="text-sm text-muted-foreground">{r.email}</p>
         </div>
       ),
     },

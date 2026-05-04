@@ -76,10 +76,10 @@ export function ProductCard({ product }: ProductCardProps) {
 
       <div className="px-4 mt-auto">
         <Button
-          variant="outline"
+          variant={added ? "default" : "outline"}
           onClick={handleAddToBag}
           aria-label={`Add ${product.name} to bag`}
-          className="w-full text-xs uppercase tracking-widest opacity-0 group-hover:opacity-100 focus-visible:opacity-100"
+          className="w-full text-xs uppercase tracking-widest gap-2 transition-all duration-300"
         >
           {added ? <><Check className="size-3.5" />Added</> : <><ShoppingBag className="size-3.5" />Add to Bag</>}
         </Button>

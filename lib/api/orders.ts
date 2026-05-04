@@ -6,7 +6,7 @@ export type OrderStatus = "pending" | "paid" | "shipped" | "delivered" | "cancel
 
 export interface Order {
   id: string;
-  customerId: string;
+  email: string;
   status: OrderStatus;
   totalCents: number;
   currency: string;
