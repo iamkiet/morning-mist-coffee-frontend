@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
@@ -19,8 +20,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { useCart } from "@/lib/cart";
+import { createOrder } from "@/lib/api/orders";
 
 const checkoutSchema = z.object({
+  email: z.string().email("Please enter a valid email"),
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
   address: z.string().min(5, "Please enter a valid address"),
@@ -36,6 +39,7 @@ export default function CheckoutPage() {
   const form = useForm<CheckoutForm>({
     resolver: zodResolver(checkoutSchema),
     defaultValues: {
+      email: "",
       firstName: "",
       lastName: "",
       address: "",
@@ -44,10 +48,22 @@ export default function CheckoutPage() {
     },
   });
 
-  const onSubmit = (data: CheckoutForm) => {
-    console.log("Checkout:", data);
-    clearCart();
-    alert("Order placed successfully!");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+
+  const onSubmit = async (_data: CheckoutForm) => {
+    setIsSubmitting(true);
+    setSubmitError("");
+    try {
+      const totalCents = Math.round(total * 100);
+      await createOrder(_data.email, totalCents);
+      clearCart();
+      alert("Order placed successfully!");
+    } catch {
+      setSubmitError("Failed to place order. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -171,6 +187,22 @@ export default function CheckoutPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem className="sm:col-span-2">
+                        <FormLabel className="text-xs uppercase tracking-wider text-muted-foreground">
+                          Email
+                        </FormLabel>
+                        <FormControl>
+                          <Input type="email" placeholder="your@email.com" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
                     name="firstName"
                     render={({ field }) => (
                       <FormItem>
@@ -252,12 +284,16 @@ export default function CheckoutPage() {
               </section>
 
               <div className="space-y-3">
+                {submitError && (
+                  <p className="text-sm text-destructive">{submitError}</p>
+                )}
                 <Button
                   type="submit"
+                  disabled={isSubmitting || itemCount === 0}
                   className="w-full uppercase tracking-wider h-12"
                   size="lg"
                 >
-                  Complete Purchase
+                  {isSubmitting ? "Placing Order..." : "Complete Purchase"}
                 </Button>
                 <p className="text-center text-xs text-muted-foreground tracking-widest uppercase flex items-center justify-center gap-2">
                   <Lock className="size-3" />

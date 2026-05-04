@@ -1,28 +1,18 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth-context";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(() => localStorage.getItem("remembered_email") ?? "");
   const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
+  const [rememberMe, setRememberMe] = useState(() => !!localStorage.getItem("remembered_email"));
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [mounted, setMounted] = useState(false);
   const { login } = useAuth();
   const router = useRouter();
-
-  useEffect(() => {
-    const saved = localStorage.getItem("remembered_email");
-    if (saved) {
-      setEmail(saved);
-      setRememberMe(true);
-    }
-    setMounted(true);
-  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -44,7 +34,6 @@ export default function LoginPage() {
     }
   }
 
-  if (!mounted) return null;
 
   return (
     <main className="min-h-screen flex items-center justify-center px-4 py-12 bg-background">

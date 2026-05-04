@@ -14,7 +14,6 @@ import {
   ArrowLeft,
   type LucideIcon,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth-context";
 
 interface AdminSidebarProps {

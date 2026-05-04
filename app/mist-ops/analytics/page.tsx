@@ -3,7 +3,6 @@ import { Calendar, ChevronDown, Plus } from "lucide-react";
 import { PageHeader } from "../_components/PageHeader";
 import { StatCard } from "../_components/StatCard";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 
 const topProducts = [
   { name: "Morning Mist Blend", sold: 342, revenue: "$6,840", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDuQBHxJhtIZi_sbq64m4yk8ORb9QXxS853Ps5E7Ib_8bqIATGx6lTYLAdgPpnLVWaLwpfSwp7usyYY0CnUPstT7DUXjGcMUhdrJL44poKdPOhHe4PWxo1_I9mFOQcU61awaQN4SEL7aNltGElJ6dKnNz9PacRODfF5SQaFqbvz62yUSn295VuJXbocZahd_DTtmys0O-sVybA_GGvqeyC5IL3L2Dy2gi8TXtTpFnInxtJtlNBe5-rbYzF1GEYQUqG6cG_Z26CWg6E" },
