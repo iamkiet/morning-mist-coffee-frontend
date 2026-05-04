@@ -6,9 +6,9 @@ import Link from "next/link";
 import { useAuth } from "@/lib/auth-context";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState(() => localStorage.getItem("remembered_email") ?? "");
+  const [email, setEmail] = useState(() => typeof window !== "undefined" ? localStorage.getItem("remembered_email") ?? "" : "");
   const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(() => !!localStorage.getItem("remembered_email"));
+  const [rememberMe, setRememberMe] = useState(() => typeof window !== "undefined" ? !!localStorage.getItem("remembered_email") : false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
