@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { CreditCard, Lock, Leaf, ShoppingBag, Minus, Plus, Trash2 } from "lucide-react";
+import { Lock, Leaf, ShoppingBag, Minus, Plus, Trash2 } from "lucide-react";
 import {
   Form,
   FormControl,
@@ -26,14 +26,6 @@ const checkoutSchema = z.object({
   address: z.string().min(5, "Please enter a valid address"),
   city: z.string().min(1, "City is required"),
   postalCode: z.string().min(3, "Postal code is required"),
-  cardNumber: z
-    .string()
-    .min(13, "Invalid card number")
-    .regex(/^[0-9 ]+$/, "Numbers only"),
-  expiry: z
-    .string()
-    .regex(/^(0[1-9]|1[0-2])\/\d{2}$/, "Format: MM/YY"),
-  cvv: z.string().regex(/^\d{3,4}$/, "3-4 digits"),
 });
 
 type CheckoutForm = z.infer<typeof checkoutSchema>;
@@ -49,9 +41,6 @@ export default function CheckoutPage() {
       address: "",
       city: "",
       postalCode: "",
-      cardNumber: "",
-      expiry: "",
-      cvv: "",
     },
   });
 
@@ -169,7 +158,6 @@ export default function CheckoutPage() {
 
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              {/* Shipping Information */}
               <section className="space-y-4">
                 <div className="flex items-center gap-3 mb-3">
                   <span className="text-xs text-accent uppercase tracking-widest">
@@ -261,83 +249,6 @@ export default function CheckoutPage() {
                     )}
                   />
                 </div>
-              </section>
-
-              {/* Payment Information */}
-              <section className="space-y-4">
-                <div className="flex items-center gap-3 mb-3">
-                  <span className="text-xs text-accent uppercase tracking-widest">
-                    02
-                  </span>
-                  <h2 className="text-sm uppercase tracking-widest font-medium">
-                    Payment Method
-                  </h2>
-                </div>
-
-                <Card>
-                  <CardContent className="p-4 space-y-4">
-                    <FormField
-                      control={form.control}
-                      name="cardNumber"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-xs uppercase tracking-wider text-muted-foreground">
-                            Card Number
-                          </FormLabel>
-                          <FormControl>
-                            <div className="relative">
-                              <Input
-                                placeholder="0000 0000 0000 0000"
-                                className="pr-10"
-                                {...field}
-                              />
-                              <CreditCard className="absolute right-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-                            </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <FormField
-                        control={form.control}
-                        name="expiry"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-xs uppercase tracking-wider text-muted-foreground">
-                              Expiry Date
-                            </FormLabel>
-                            <FormControl>
-                              <Input placeholder="MM/YY" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={form.control}
-                        name="cvv"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-xs uppercase tracking-wider text-muted-foreground">
-                              CVV
-                            </FormLabel>
-                            <FormControl>
-                              <Input
-                                placeholder="***"
-                                type="password"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                  </CardContent>
-                </Card>
               </section>
 
               <div className="space-y-3">

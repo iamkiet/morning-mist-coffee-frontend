@@ -8,6 +8,7 @@ import { useAuth } from "@/lib/auth-context";
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -15,6 +16,11 @@ export default function LoginPage() {
   const router = useRouter();
 
   useEffect(() => {
+    const saved = localStorage.getItem("remembered_email");
+    if (saved) {
+      setEmail(saved);
+      setRememberMe(true);
+    }
     setMounted(true);
   }, []);
 
@@ -24,6 +30,11 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
+      if (rememberMe) {
+        localStorage.setItem("remembered_email", email);
+      } else {
+        localStorage.removeItem("remembered_email");
+      }
       await login(email, password);
       router.push("/mist-ops");
     } catch (err) {
@@ -77,6 +88,16 @@ export default function LoginPage() {
               className="w-full px-4 py-3 border border-border bg-background text-foreground placeholder-muted-foreground text-sm"
             />
           </div>
+
+          <label className="flex items-center gap-2 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+              className="size-4 accent-foreground cursor-pointer"
+            />
+            <span className="text-xs text-muted-foreground">Remember my email</span>
+          </label>
 
           <button
             type="submit"

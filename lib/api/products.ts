@@ -1,5 +1,5 @@
 import type { Product } from "@/app/_components/ProductCard";
-import { getProductImage } from "@/lib/product-images";
+import { DEFAULT_PRODUCT_IMAGE } from "@/lib/product-images";
 
 interface BackendProduct {
   id: string;
@@ -29,7 +29,7 @@ function transform(p: BackendProduct): Product {
     if (lines.length > 0) origin = lines[0];
     notes = lines.slice(1).filter((l) => l.trim().length > 0);
   }
-  return { id: p.id, slug, name: p.name, origin, price: p.priceCents / 100, image: p.image ?? getProductImage(p.id), notes };
+  return { id: p.id, slug, name: p.name, origin, price: p.priceCents / 100, image: p.image ?? DEFAULT_PRODUCT_IMAGE, notes };
 }
 
 export async function fetchProducts(limit = 8, offset = 0): Promise<ProductsPage> {
