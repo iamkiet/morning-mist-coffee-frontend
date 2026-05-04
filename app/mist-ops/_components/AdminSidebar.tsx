@@ -10,7 +10,6 @@ import {
   Users,
   Settings,
   HelpCircle,
-  Coffee,
   ArrowLeft,
   type LucideIcon,
 } from 'lucide-react';
@@ -47,17 +46,17 @@ export function AdminSidebar({ onClose }: AdminSidebarProps) {
   return (
     <aside className="h-full lg:h-screen w-full lg:w-64 lg:fixed lg:left-0 lg:top-0 lg:border-r border-border/30 bg-sidebar flex flex-col p-6 space-y-6 z-40">
       {/* Logo */}
-      <div className="flex items-center gap-3">
-        <span className="w-8 h-8 rounded-full bg-accent flex items-center justify-center">
-          <Coffee size={18} className="text-accent-foreground" />
-        </span>
-        <span className="text-xl font-light text-foreground tracking-tighter">
+      <div className="px-4">
+        <p className="text-sm font-medium text-foreground tracking-tight leading-none">
+          Morning Mist Coffee
+        </p>
+        <p className="text-[10px] text-muted-foreground tracking-widest uppercase mt-0.5">
           Management
-        </span>
+        </p>
       </div>
 
       {/* Profile */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 px-4">
         <div className="w-10 h-10 rounded-full bg-muted border border-border/30 flex items-center justify-center text-xs font-semibold text-muted-foreground flex-shrink-0">
           {initials}
         </div>
