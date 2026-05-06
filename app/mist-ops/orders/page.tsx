@@ -16,8 +16,81 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
 import { useOrders, useUpdateOrderStatus } from '@/hooks/use-orders';
 import type { Order, OrderStatus } from '@/lib/api/orders';
+
+const ALL_STATUSES: OrderStatus[] = ['pending', 'paid', 'shipped', 'delivered', 'cancelled'];
+
+function EditOrderDialog({
+  order,
+  onClose,
+}: {
+  order: Order;
+  onClose: () => void;
+}) {
+  const update = useUpdateOrderStatus();
+  const [status, setStatus] = useState<OrderStatus>(order.status);
+
+  function handleSave() {
+    if (status === order.status) { onClose(); return; }
+    update.mutate({ id: order.id, status }, { onSuccess: onClose });
+  }
+
+  return (
+    <Dialog open onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="sm:max-w-sm">
+        <DialogHeader>
+          <DialogTitle className="text-sm uppercase tracking-widest font-medium">
+            Edit Order
+          </DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4 py-2">
+          <p className="text-xs text-muted-foreground">
+            #{order.id.slice(0, 8).toUpperCase()} · {order.email}
+          </p>
+          <div className="space-y-1.5">
+            <Label htmlFor="eo-status" className="text-xs uppercase tracking-wider text-muted-foreground">
+              Status
+            </Label>
+            <select
+              id="eo-status"
+              value={status}
+              onChange={(e) => setStatus(e.target.value as OrderStatus)}
+              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+            >
+              {ALL_STATUSES.map((s) => (
+                <option key={s} value={s}>
+                  {s.charAt(0).toUpperCase() + s.slice(1)}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <DialogFooter>
+          <Button variant="outline" size="sm" onClick={onClose} className="uppercase tracking-wider text-xs">
+            Cancel
+          </Button>
+          <Button
+            size="sm"
+            className="uppercase tracking-wider text-xs"
+            disabled={update.isPending}
+            onClick={handleSave}
+          >
+            {update.isPending ? 'Saving…' : 'Save'}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
 
 const STATUS_BADGE = {
   pending: 'info',
@@ -38,6 +111,7 @@ const LIMIT = 20;
 export default function AdminOrdersPage() {
   const [page, setPage] = useState(1);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [editOrder, setEditOrder] = useState<Order | null>(null);
   const { data, isLoading, error } = useOrders(page, LIMIT);
   const updateStatus = useUpdateOrderStatus();
 
@@ -123,9 +197,7 @@ export default function AdminOrdersPage() {
               variant="ghost"
               size="icon"
               className="size-8"
-              onClick={() =>
-                setExpandedId((prev) => (prev === r.id ? null : r.id))
-              }
+              onClick={() => setEditOrder(r)}
             >
               <MoreHorizontal className="size-4" />
             </Button>
@@ -315,6 +387,10 @@ export default function AdminOrdersPage() {
           </CardContent>
         </Card>
       </section>
+
+      {editOrder && (
+        <EditOrderDialog order={editOrder} onClose={() => setEditOrder(null)} />
+      )}
     </div>
   );
 }

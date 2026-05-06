@@ -3,20 +3,29 @@
 import {
   KeyRound,
   UserX,
-  MoreVertical,
+  Pencil,
   Search,
   UserPlus,
   Users as UsersIcon,
   Zap,
   Hourglass,
 } from 'lucide-react';
+import { useState } from 'react';
 import { PageHeader } from '../_components/PageHeader';
 import { Badge } from '../_components/Badge';
 import { DataTable, type Column } from '../_components/DataTable';
 import { StatCard } from '../_components/StatCard';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useUsers } from '@/hooks/use-users';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { useUsers, useUpdateUser } from '@/hooks/use-users';
 import type { ApiUser, UserRole, UserStatus } from '@/lib/api/users';
 
 const roleStyle: Record<UserRole, 'primary' | 'purple'> = {
@@ -45,79 +54,170 @@ function UserAvatar({
   );
 }
 
-const columns: Column<ApiUser>[] = [
-  {
-    key: 'name',
-    header: 'User Details',
-    render: (r) => (
-      <div className="flex items-center gap-4">
-        <UserAvatar firstName={r.firstName} lastName={r.lastName} />
-        <div>
-          <p className="text-sm font-medium">
-            {r.firstName} {r.lastName}
-          </p>
-          <p className="text-xs text-muted-foreground">{r.email}</p>
+function EditUserDialog({
+  user,
+  onClose,
+}: {
+  user: ApiUser;
+  onClose: () => void;
+}) {
+  const update = useUpdateUser();
+  const [role, setRole] = useState<UserRole>(user.role);
+  const [status, setStatus] = useState<UserStatus>(user.status);
+
+  function handleSave() {
+    update.mutate(
+      { id: user.id, payload: { role, status } },
+      { onSuccess: onClose },
+    );
+  }
+
+  return (
+    <Dialog open onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="sm:max-w-sm">
+        <DialogHeader>
+          <DialogTitle className="text-sm uppercase tracking-widest font-medium">
+            Edit User
+          </DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4 py-2">
+          <div className="flex items-center gap-3">
+            <UserAvatar firstName={user.firstName} lastName={user.lastName} />
+            <div>
+              <p className="text-sm font-medium">
+                {user.firstName} {user.lastName}
+              </p>
+              <p className="text-xs text-muted-foreground">{user.email}</p>
+            </div>
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="eu-role" className="text-xs uppercase tracking-wider text-muted-foreground">
+              Role
+            </Label>
+            <select
+              id="eu-role"
+              value={role}
+              onChange={(e) => setRole(e.target.value as UserRole)}
+              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+            >
+              <option value="user">User</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="eu-status" className="text-xs uppercase tracking-wider text-muted-foreground">
+              Status
+            </Label>
+            <select
+              id="eu-status"
+              value={status}
+              onChange={(e) => setStatus(e.target.value as UserStatus)}
+              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+            >
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+              <option value="banned">Banned</option>
+            </select>
+          </div>
         </div>
-      </div>
-    ),
-  },
-  {
-    key: 'role',
-    header: 'Account Role',
-    render: (r) => <Badge status={roleStyle[r.role]}>{r.role}</Badge>,
-  },
-  {
-    key: 'joined',
-    header: 'Join Date',
-    hideOnMobile: true,
-    render: (r) => (
-      <span className="text-muted-foreground text-sm">
-        {new Date(r.createdAt).toLocaleDateString('en-US', {
-          month: 'short',
-          day: 'numeric',
-          year: 'numeric',
-        })}
-      </span>
-    ),
-  },
-  {
-    key: 'status',
-    header: 'Status',
-    render: (r) => <Badge status={statusStyle[r.status]}>{r.status}</Badge>,
-  },
-  {
-    key: 'actions',
-    header: 'Actions',
-    align: 'right',
-    hideOnMobile: true,
-    render: () => (
-      <div className="flex justify-end gap-1">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="size-8"
-          title="Reset Password"
-        >
-          <KeyRound className="size-4" />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="size-8 hover:text-destructive"
-          title="Deactivate"
-        >
-          <UserX className="size-4" />
-        </Button>
-        <Button variant="ghost" size="icon" className="size-8">
-          <MoreVertical className="size-4" />
-        </Button>
-      </div>
-    ),
-  },
-];
+        <DialogFooter>
+          <Button variant="outline" size="sm" onClick={onClose} className="uppercase tracking-wider text-xs">
+            Cancel
+          </Button>
+          <Button
+            size="sm"
+            className="uppercase tracking-wider text-xs"
+            disabled={update.isPending}
+            onClick={handleSave}
+          >
+            {update.isPending ? 'Saving…' : 'Save'}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
 
 export default function AdminUsersPage() {
   const { data, isLoading, isError } = useUsers();
+  const [editUser, setEditUser] = useState<ApiUser | null>(null);
+
+  const columns: Column<ApiUser>[] = [
+    {
+      key: 'name',
+      header: 'User Details',
+      render: (r) => (
+        <div className="flex items-center gap-4">
+          <UserAvatar firstName={r.firstName} lastName={r.lastName} />
+          <div>
+            <p className="text-sm font-medium">
+              {r.firstName} {r.lastName}
+            </p>
+            <p className="text-xs text-muted-foreground">{r.email}</p>
+          </div>
+        </div>
+      ),
+    },
+    {
+      key: 'role',
+      header: 'Account Role',
+      render: (r) => <Badge status={roleStyle[r.role]}>{r.role}</Badge>,
+    },
+    {
+      key: 'joined',
+      header: 'Join Date',
+      hideOnMobile: true,
+      render: (r) => (
+        <span className="text-muted-foreground text-sm">
+          {new Date(r.createdAt).toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+          })}
+        </span>
+      ),
+    },
+    {
+      key: 'status',
+      header: 'Status',
+      render: (r) => <Badge status={statusStyle[r.status]}>{r.status}</Badge>,
+    },
+    {
+      key: 'actions',
+      header: 'Actions',
+      align: 'right',
+      hideOnMobile: true,
+      render: (r) => (
+        <div className="flex justify-end gap-1">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="size-8"
+            title="Reset Password"
+          >
+            <KeyRound className="size-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="size-8 hover:text-destructive"
+            title="Deactivate"
+          >
+            <UserX className="size-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="size-8"
+            title="Edit"
+            onClick={() => setEditUser(r)}
+          >
+            <Pencil className="size-4" />
+          </Button>
+        </div>
+      ),
+    },
+  ];
 
   return (
     <div className="p-4 sm:p-8">
@@ -179,6 +279,10 @@ export default function AdminUsersPage() {
         </div>
       ) : (
         <DataTable columns={columns} rows={data?.items ?? []} />
+      )}
+
+      {editUser && (
+        <EditUserDialog user={editUser} onClose={() => setEditUser(null)} />
       )}
     </div>
   );

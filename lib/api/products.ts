@@ -1,6 +1,7 @@
 import type { Product } from '@/app/_components/ProductCard';
 import { API_URL } from '@/lib/config';
 import { DEFAULT_PRODUCT_IMAGE } from '@/lib/product-images';
+import { authFetch } from './client';
 
 interface BackendProduct {
   id: string;
@@ -62,4 +63,23 @@ export async function fetchProducts(
 export async function fetchProduct(slug: string): Promise<Product | undefined> {
   const { items } = await fetchProducts(50, 0);
   return items.find((p) => p.slug === slug);
+}
+
+export interface UpdateProductPayload {
+  name?: string;
+  description?: string | null;
+  priceCents?: number;
+  image?: string | null;
+}
+
+export async function updateProduct(
+  id: string,
+  payload: UpdateProductPayload,
+): Promise<Product> {
+  const res = await authFetch(`/api/v1/products/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) throw new Error('Failed to update product');
+  return transform(await res.json());
 }

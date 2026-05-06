@@ -26,3 +26,20 @@ export async function fetchUsers(limit = 20, offset = 0): Promise<UsersPage> {
   if (!res.ok) throw new Error('Failed to fetch users');
   return res.json();
 }
+
+export interface UpdateUserPayload {
+  role?: UserRole;
+  status?: UserStatus;
+}
+
+export async function updateUser(
+  id: string,
+  payload: UpdateUserPayload,
+): Promise<ApiUser> {
+  const res = await authFetch(`/api/v1/users/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) throw new Error('Failed to update user');
+  return res.json();
+}

@@ -1,5 +1,5 @@
-import { useQuery } from '@tanstack/react-query';
-import { fetchProducts, fetchProduct } from '@/lib/api/products';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { fetchProducts, fetchProduct, updateProduct, type UpdateProductPayload } from '@/lib/api/products';
 
 export function useProducts(page = 1, limit = 8) {
   const offset = (page - 1) * limit;
@@ -14,5 +14,16 @@ export function useProduct(slug: string) {
     queryKey: ['products', slug],
     queryFn: () => fetchProduct(slug),
     enabled: !!slug,
+  });
+}
+
+export function useUpdateProduct() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, payload }: { id: string; payload: UpdateProductPayload }) =>
+      updateProduct(id, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+    },
   });
 }
