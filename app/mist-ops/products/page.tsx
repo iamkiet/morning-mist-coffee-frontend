@@ -83,7 +83,7 @@ function EditProductDialog({
 
   return (
     <Dialog open onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-[28rem]">
         <DialogHeader>
           <DialogTitle className="text-sm uppercase tracking-widest font-medium">
             Edit Product
@@ -109,7 +109,7 @@ function EditProductDialog({
             <textarea
               id="ep-desc"
               rows={3}
-              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring resize-none"
+              className="w-full rounded-lg border border-input bg-background px-2.5 py-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 resize-none"
               {...field('description')}
             />
           </div>

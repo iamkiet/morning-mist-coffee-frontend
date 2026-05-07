@@ -74,7 +74,7 @@ function EditUserDialog({
 
   return (
     <Dialog open onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-sm">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle className="text-sm uppercase tracking-widest font-medium">
             Edit User
@@ -98,7 +98,7 @@ function EditUserDialog({
               id="eu-role"
               value={role}
               onChange={(e) => setRole(e.target.value as UserRole)}
-              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              className="w-full rounded-lg border border-input bg-background px-2.5 py-2 text-sm outline-none cursor-pointer focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
             >
               <option value="user">User</option>
               <option value="admin">Admin</option>
@@ -112,7 +112,7 @@ function EditUserDialog({
               id="eu-status"
               value={status}
               onChange={(e) => setStatus(e.target.value as UserStatus)}
-              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              className="w-full rounded-lg border border-input bg-background px-2.5 py-2 text-sm outline-none cursor-pointer focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
             >
               <option value="active">Active</option>
               <option value="inactive">Inactive</option>

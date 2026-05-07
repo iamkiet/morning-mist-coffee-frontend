@@ -46,7 +46,7 @@ function EditOrderDialog({
 
   return (
     <Dialog open onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-sm">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle className="text-sm uppercase tracking-widest font-medium">
             Edit Order
@@ -64,7 +64,7 @@ function EditOrderDialog({
               id="eo-status"
               value={status}
               onChange={(e) => setStatus(e.target.value as OrderStatus)}
-              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              className="w-full rounded-lg border border-input bg-background px-2.5 py-2 text-sm outline-none cursor-pointer focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
             >
               {ALL_STATUSES.map((s) => (
                 <option key={s} value={s}>
