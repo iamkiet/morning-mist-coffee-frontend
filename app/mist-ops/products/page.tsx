@@ -119,6 +119,9 @@ function EditProductDialog({
             </Label>
             <Input id="ep-img" type="url" {...field('image')} />
           </div>
+          {update.isError && (
+            <p className="text-xs text-destructive">Failed to update product. Please try again.</p>
+          )}
         </div>
         <DialogFooter>
           <Button variant="outline" size="sm" onClick={onClose} className="uppercase tracking-wider text-xs">

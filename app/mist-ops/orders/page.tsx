@@ -73,6 +73,9 @@ function EditOrderDialog({
               ))}
             </select>
           </div>
+          {update.isError && (
+            <p className="text-xs text-destructive">Failed to update order. Please try again.</p>
+          )}
         </div>
         <DialogFooter>
           <Button variant="outline" size="sm" onClick={onClose} className="uppercase tracking-wider text-xs">
