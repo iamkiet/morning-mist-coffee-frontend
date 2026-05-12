@@ -11,7 +11,7 @@ export default function LoginPage() {
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { login, user, isLoading: authLoading } = useAuth();
+  const { login, logout, user, isLoading: authLoading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
@@ -23,10 +23,14 @@ export default function LoginPage() {
   }, []);
 
   useEffect(() => {
-    if (!authLoading && user) {
+    if (authLoading || !user) return;
+    if (user.role === 'admin') {
       router.replace('/mist-ops');
+    } else {
+      setError('This account does not have admin access.');
+      logout();
     }
-  }, [user, authLoading, router]);
+  }, [user, authLoading, router, logout]);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
