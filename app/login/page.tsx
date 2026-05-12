@@ -9,6 +9,10 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const { login, user, isLoading: authLoading } = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
     const saved = localStorage.getItem('remembered_email');
@@ -17,10 +21,6 @@ export default function LoginPage() {
       setRememberMe(true);
     }
   }, []);
-  const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const { login, user, isLoading: authLoading } = useAuth();
-  const router = useRouter();
 
   useEffect(() => {
     if (!authLoading && user) {

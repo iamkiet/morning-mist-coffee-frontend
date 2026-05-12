@@ -10,6 +10,7 @@ export function useOrders(page = 1, limit = 20) {
   return useQuery({
     queryKey: ['orders', page, limit],
     queryFn: () => fetchOrders(limit, offset),
+    staleTime: 1000 * 60,
   });
 }
 
