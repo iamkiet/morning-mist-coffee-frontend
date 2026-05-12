@@ -36,6 +36,7 @@ interface EditState {
   price: string;
   description: string;
   image: string;
+  stock: string;
 }
 
 function buildDescription(origin: string, notes: string[]): string {
@@ -56,6 +57,7 @@ function EditProductDialog({
     price: product.price.toFixed(2),
     description: buildDescription(product.origin, product.notes),
     image: product.image,
+    stock: String(product.stockQuantity ?? 0),
   });
 
   const field = (key: keyof EditState) => ({
@@ -67,6 +69,8 @@ function EditProductDialog({
   function handleSave() {
     const priceNum = parseFloat(form.price);
     if (isNaN(priceNum) || priceNum < 0) return;
+    const stockNum = parseInt(form.stock, 10);
+    if (isNaN(stockNum) || stockNum < 0) return;
     update.mutate(
       {
         id: form.id,
@@ -75,6 +79,7 @@ function EditProductDialog({
           description: form.description.trim() || null,
           priceCents: Math.round(priceNum * 100),
           image: form.image.trim() || null,
+          stockQuantity: stockNum,
         },
       },
       { onSuccess: onClose },
@@ -101,6 +106,12 @@ function EditProductDialog({
               Price (USD)
             </Label>
             <Input id="ep-price" type="number" step="0.01" min="0" {...field('price')} />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="ep-stock" className="text-xs uppercase tracking-wider text-muted-foreground">
+              Stock Quantity
+            </Label>
+            <Input id="ep-stock" type="number" step="1" min="0" {...field('stock')} />
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="ep-desc" className="text-xs uppercase tracking-wider text-muted-foreground">

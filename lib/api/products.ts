@@ -70,6 +70,7 @@ export interface UpdateProductPayload {
   description?: string | null;
   priceCents?: number;
   image?: string | null;
+  stockQuantity?: number;
 }
 
 export async function updateProduct(
