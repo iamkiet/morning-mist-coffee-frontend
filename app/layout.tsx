@@ -7,7 +7,7 @@ import { Providers } from './providers';
 const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
 
 export const metadata: Metadata = {
-  title: 'Morning Mist Coffee',
+  title: 'Todaywegrind Coffee',
   description: 'Specialty coffee, slowly served.',
 };
 

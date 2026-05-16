@@ -25,7 +25,7 @@ export default function StoryPage() {
             slows down.
           </h1>
           <p className="text-base text-muted-foreground max-w-2xl mx-auto italic">
-            Morning Mist was born from the quiet clarity of a high-altitude
+            Todaywegrind was born from the quiet clarity of a high-altitude
             mist, where every bean tells the story of the soil it was cradled
             in.
           </p>

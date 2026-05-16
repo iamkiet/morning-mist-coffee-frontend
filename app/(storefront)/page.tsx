@@ -27,7 +27,7 @@ export default function HomePage() {
             The Art of Living <br /> through the lens of Coffee.
           </h1>
           <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto mb-8 sm:mb-12 font-light">
-            Morning Mist is an exploration of sensory precision. We curate rare
+            Todaywegrind is an exploration of sensory precision. We curate rare
             beans and artisanal ceramics to transform your morning routine into
             a meditative practice.
           </p>
@@ -138,7 +138,7 @@ export default function HomePage() {
               Crafting the <br /> Silent Moments.
             </h2>
             <p className="text-base sm:text-lg text-muted-foreground font-light leading-relaxed">
-              Morning Mist Coffee was founded on the belief that coffee is not a
+              Todaywegrind Coffee was founded on the belief that coffee is not a
               commodity, but a choreography. We spend months sourcing beans from
               sustainable high-altitude farms, roasting them in small batches
               that respect the bean&apos;s inherent floral and fruit notes.

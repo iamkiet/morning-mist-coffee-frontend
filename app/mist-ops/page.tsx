@@ -69,7 +69,7 @@ export default function AdminOverviewPage() {
   return (
     <div className="p-4 sm:p-8">
       <PageHeader
-        title="Morning Mist Overview"
+        title="Todaywegrind Overview"
         description="A quiet reflection of today's progress."
         descriptionItalic={true}
         size="display"

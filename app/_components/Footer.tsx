@@ -5,8 +5,7 @@ const sitemapLinks = [
   { label: 'Shop', href: '/shop' },
   { label: 'Our Story', href: '/story' },
   { label: 'Journal', href: '/journal' },
-  { label: 'Brewing Guides', href: '#' },
-  { label: 'Wholesale', href: '#' },
+  { label: 'Track Order', href: '/track-order' },
 ];
 
 const socialLinks = [
@@ -30,7 +29,7 @@ export function Footer() {
           {/* Brand — col 4 */}
           <div className="md:col-span-4 flex flex-col space-y-6">
             <span className="text-2xl font-light tracking-tighter text-accent uppercase">
-              Morning Mist
+              Todaywegrind Coffee
             </span>
             <p className="text-base text-muted-foreground font-light leading-relaxed">
               An exploration of sensory precision. Crafting stillness through
@@ -77,22 +76,12 @@ export function Footer() {
             <div className="flex flex-col space-y-6">
               <div>
                 <p className="text-[11px] uppercase tracking-[0.1em] text-foreground mb-1">
-                  Portland
+                  Việt Nam
                 </p>
                 <p className="text-sm text-muted-foreground font-light leading-relaxed">
-                  412 NW 13th Ave
+                  123 Hàn Thuyên
                   <br />
-                  Oregon, USA
-                </p>
-              </div>
-              <div>
-                <p className="text-[11px] uppercase tracking-[0.1em] text-foreground mb-1">
-                  Kyoto
-                </p>
-                <p className="text-sm text-muted-foreground font-light leading-relaxed">
-                  23-1 Nakagyo-ku
-                  <br />
-                  Kyoto, Japan
+                  Hồ Chí Minh City, Việt Nam
                 </p>
               </div>
             </div>
@@ -105,10 +94,10 @@ export function Footer() {
             </h5>
             <div className="flex flex-col space-y-4">
               <a
-                href="mailto:hello@morningmist.coffee"
+                href="mailto:hello@todaywegrind.com"
                 className="text-base text-muted-foreground hover:text-primary transition-colors font-light"
               >
-                hello@morningmist.coffee
+                hello@todaywegrind.com
               </a>
               <p className="text-base text-muted-foreground font-light">
                 +1 234 567 890
@@ -117,7 +106,7 @@ export function Footer() {
                 <p className="text-[11px] uppercase tracking-widest text-muted-foreground/70 leading-relaxed">
                   Support Hours:
                   <br />
-                  Mon—Fri 9am—5pm PST
+                  Mon—Fri 9am—5pm
                 </p>
               </div>
             </div>
@@ -127,7 +116,7 @@ export function Footer() {
         {/* Bottom bar */}
         <div className="pt-8 md:pt-12 border-t border-border/30 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
           <p className="text-[11px] uppercase tracking-widest text-muted-foreground/60">
-            © 2026 Morning Mist Coffee. Crafted for slow living.
+            © 2026 Todaywegrind Coffee. Crafted for slow living.
           </p>
           <div className="flex space-x-8">
             {legalLinks.map(({ label, href }) => (

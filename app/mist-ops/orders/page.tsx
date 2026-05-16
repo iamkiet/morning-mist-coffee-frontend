@@ -27,7 +27,13 @@ import { Label } from '@/components/ui/label';
 import { useOrders, useUpdateOrderStatus } from '@/hooks/use-orders';
 import type { Order, OrderStatus } from '@/lib/api/orders';
 
-const ALL_STATUSES: OrderStatus[] = ['pending', 'paid', 'shipped', 'delivered', 'cancelled'];
+const ALL_STATUSES: OrderStatus[] = [
+  'pending',
+  'paid',
+  'shipped',
+  'delivered',
+  'cancelled',
+];
 
 function EditOrderDialog({
   order,
@@ -40,7 +46,10 @@ function EditOrderDialog({
   const [status, setStatus] = useState<OrderStatus>(order.status);
 
   function handleSave() {
-    if (status === order.status) { onClose(); return; }
+    if (status === order.status) {
+      onClose();
+      return;
+    }
     update.mutate({ id: order.id, status }, { onSuccess: onClose });
   }
 
@@ -57,7 +66,10 @@ function EditOrderDialog({
             #{order.id.slice(0, 8).toUpperCase()} · {order.email}
           </p>
           <div className="space-y-1.5">
-            <Label htmlFor="eo-status" className="text-xs uppercase tracking-wider text-muted-foreground">
+            <Label
+              htmlFor="eo-status"
+              className="text-xs uppercase tracking-wider text-muted-foreground"
+            >
               Status
             </Label>
             <select
@@ -74,11 +86,18 @@ function EditOrderDialog({
             </select>
           </div>
           {update.isError && (
-            <p className="text-xs text-destructive">Failed to update order. Please try again.</p>
+            <p className="text-xs text-destructive">
+              Failed to update order. Please try again.
+            </p>
           )}
         </div>
         <DialogFooter>
-          <Button variant="outline" size="sm" onClick={onClose} className="uppercase tracking-wider text-xs">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onClose}
+            className="uppercase tracking-wider text-xs"
+          >
             Cancel
           </Button>
           <Button
@@ -214,7 +233,7 @@ export default function AdminOrdersPage() {
     <div className="p-4 sm:p-8">
       <PageHeader
         eyebrow="Orders"
-        title="Morning Mist Overview"
+        title="Todaywegrind Mist Overview"
         description="Each order, brewed and honored with intention."
         actions={
           <div className="relative">
@@ -279,66 +298,70 @@ export default function AdminOrdersPage() {
         />
       )}
 
-      {expandedId && (() => {
-        const order = orders.find((o) => o.id === expandedId);
-        if (!order) return null;
-        return (
-          <Card className="mt-4 border-primary/20">
-            <CardContent className="p-5 space-y-3">
-              <div className="flex items-center justify-between">
-                <p className="text-xs uppercase tracking-widest text-muted-foreground">
-                  Order #{order.id.slice(0, 8).toUpperCase()} · Items
-                </p>
-                <button
-                  onClick={() => setExpandedId(null)}
-                  className="text-xs text-muted-foreground hover:text-foreground transition-colors uppercase tracking-widest"
-                >
-                  Close
-                </button>
-              </div>
-              {order.items.length === 0 ? (
-                <p className="text-sm text-muted-foreground">No items recorded.</p>
-              ) : (
-                <div className="space-y-2">
-                  {order.items.map((item) => (
-                    <div
-                      key={item.id}
-                      className="flex items-center justify-between text-sm"
-                    >
-                      <span className="text-foreground">
-                        {item.name}
-                        <span className="text-muted-foreground ml-2">
-                          ×{item.quantity}
+      {expandedId &&
+        (() => {
+          const order = orders.find((o) => o.id === expandedId);
+          if (!order) return null;
+          return (
+            <Card className="mt-4 border-primary/20">
+              <CardContent className="p-5 space-y-3">
+                <div className="flex items-center justify-between">
+                  <p className="text-xs uppercase tracking-widest text-muted-foreground">
+                    Order #{order.id.slice(0, 8).toUpperCase()} · Items
+                  </p>
+                  <button
+                    onClick={() => setExpandedId(null)}
+                    className="text-xs text-muted-foreground hover:text-foreground transition-colors uppercase tracking-widest"
+                  >
+                    Close
+                  </button>
+                </div>
+                {order.items.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">
+                    No items recorded.
+                  </p>
+                ) : (
+                  <div className="space-y-2">
+                    {order.items.map((item) => (
+                      <div
+                        key={item.id}
+                        className="flex items-center justify-between text-sm"
+                      >
+                        <span className="text-foreground">
+                          {item.name}
+                          <span className="text-muted-foreground ml-2">
+                            ×{item.quantity}
+                          </span>
                         </span>
+                        <span className="text-muted-foreground">
+                          $
+                          {((item.priceCents * item.quantity) / 100).toFixed(2)}
+                        </span>
+                      </div>
+                    ))}
+                    <div className="pt-2 flex justify-between text-sm font-medium border-t border-border">
+                      <span className="uppercase tracking-widest text-xs text-muted-foreground">
+                        Total
                       </span>
-                      <span className="text-muted-foreground">
-                        ${((item.priceCents * item.quantity) / 100).toFixed(2)}
+                      <span>
+                        {order.currency === 'VND'
+                          ? `₫${order.totalCents.toLocaleString()}`
+                          : `$${(order.totalCents / 100).toFixed(2)}`}
                       </span>
                     </div>
-                  ))}
-                  <div className="pt-2 flex justify-between text-sm font-medium border-t border-border">
-                    <span className="uppercase tracking-widest text-xs text-muted-foreground">
-                      Total
-                    </span>
-                    <span>
-                      {order.currency === 'VND'
-                        ? `₫${order.totalCents.toLocaleString()}`
-                        : `$${(order.totalCents / 100).toFixed(2)}`}
-                    </span>
                   </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        );
-      })()}
+                )}
+              </CardContent>
+            </Card>
+          );
+        })()}
 
       <section className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="md:col-span-2 group overflow-hidden">
           <CardContent className="p-6 flex items-center justify-between">
             <div>
               <p className="text-[10px] text-muted-foreground uppercase tracking-widest">
-                Morning Mist Coffee Admin
+                Todaywegrind Coffee Admin
               </p>
               <h3 className="text-base mb-4 font-medium">
                 Roastery Performance

@@ -96,25 +96,49 @@ function EditProductDialog({
         </DialogHeader>
         <div className="space-y-4 py-2">
           <div className="space-y-1.5">
-            <Label htmlFor="ep-name" className="text-xs uppercase tracking-wider text-muted-foreground">
+            <Label
+              htmlFor="ep-name"
+              className="text-xs uppercase tracking-wider text-muted-foreground"
+            >
               Name
             </Label>
             <Input id="ep-name" {...field('name')} />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="ep-price" className="text-xs uppercase tracking-wider text-muted-foreground">
+            <Label
+              htmlFor="ep-price"
+              className="text-xs uppercase tracking-wider text-muted-foreground"
+            >
               Price (USD)
             </Label>
-            <Input id="ep-price" type="number" step="0.01" min="0" {...field('price')} />
+            <Input
+              id="ep-price"
+              type="number"
+              step="0.01"
+              min="0"
+              {...field('price')}
+            />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="ep-stock" className="text-xs uppercase tracking-wider text-muted-foreground">
+            <Label
+              htmlFor="ep-stock"
+              className="text-xs uppercase tracking-wider text-muted-foreground"
+            >
               Stock Quantity
             </Label>
-            <Input id="ep-stock" type="number" step="1" min="0" {...field('stock')} />
+            <Input
+              id="ep-stock"
+              type="number"
+              step="1"
+              min="0"
+              {...field('stock')}
+            />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="ep-desc" className="text-xs uppercase tracking-wider text-muted-foreground">
+            <Label
+              htmlFor="ep-desc"
+              className="text-xs uppercase tracking-wider text-muted-foreground"
+            >
               Description
             </Label>
             <textarea
@@ -125,17 +149,27 @@ function EditProductDialog({
             />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="ep-img" className="text-xs uppercase tracking-wider text-muted-foreground">
+            <Label
+              htmlFor="ep-img"
+              className="text-xs uppercase tracking-wider text-muted-foreground"
+            >
               Image URL
             </Label>
             <Input id="ep-img" type="url" {...field('image')} />
           </div>
           {update.isError && (
-            <p className="text-xs text-destructive">Failed to update product. Please try again.</p>
+            <p className="text-xs text-destructive">
+              Failed to update product. Please try again.
+            </p>
           )}
         </div>
         <DialogFooter>
-          <Button variant="outline" size="sm" onClick={onClose} className="uppercase tracking-wider text-xs">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onClose}
+            className="uppercase tracking-wider text-xs"
+          >
             Cancel
           </Button>
           <Button
@@ -178,7 +212,9 @@ export default function AdminProductsPage() {
             />
           </div>
           <div>
-            <div className="text-base font-medium text-foreground">{r.name}</div>
+            <div className="text-base font-medium text-foreground">
+              {r.name}
+            </div>
             <div className="text-sm text-muted-foreground">{r.origin}</div>
           </div>
         </div>
@@ -252,7 +288,7 @@ export default function AdminProductsPage() {
     <div className="p-4 sm:p-8">
       <PageHeader
         title="Inventory Management"
-        description="Morning Mist was born from the quiet clarity of a high-altitude mist, where every bean tells the story of the soil it was cradled in."
+        description="Todaywegrind was born from the quiet clarity of a high-altitude mist, where every bean tells the story of the soil it was cradled in."
         actions={
           <>
             <Button
