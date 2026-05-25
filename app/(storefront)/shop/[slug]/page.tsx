@@ -67,7 +67,11 @@ export default async function ProductPage(props: {
             processMethod = 'Natural (Sơ Chế Khô)';
           } else if (product.name.includes('Ấn Độ') || product.name.includes('Gió Mùa')) {
             processMethod = 'Monsooned (Phơi Gió Mùa)';
-          } else if (pr          return (
+          } else if (product.name.includes('Sumatra') || product.name.includes('Rừng Già')) {
+            processMethod = 'Wet-Hulled (Giling Basah)';
+          }
+
+          return (
             <div className="lg:col-span-5 flex flex-col justify-center">
               <header className="mb-md">
                 <span className="text-primary tracking-[0.2em] mb-2 block uppercase text-xs">
@@ -151,14 +155,6 @@ export default async function ProductPage(props: {
                 <p className="text-center text-xs text-muted-foreground flex items-center justify-center gap-2">
                   <Leaf className="size-3.5" />
                   <span>Nguồn cung ứng có trách nhiệm &amp; Bao bì tự phân hủy</span>
-                </p>
-              </div>
-            </div>
-          );-y-md">
-                <AddToBag product={product} />
-                <p className="text-center text-xs text-muted-foreground flex items-center justify-center gap-2">
-                  <Leaf className="size-3.5" />
-                  <span>Nguồn cung ứng bền vững & Bao bì thân thiện môi trường</span>
                 </p>
               </div>
             </div>
