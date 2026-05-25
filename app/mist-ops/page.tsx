@@ -15,13 +15,13 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
 const bars = [
-  { day: 'Mon', h: 40 },
-  { day: 'Tue', h: 65 },
-  { day: 'Wed', h: 90, active: true },
-  { day: 'Thu', h: 55 },
-  { day: 'Fri', h: 75 },
-  { day: 'Sat', h: 45 },
-  { day: 'Sun', h: 85 },
+  { day: 'Thứ 2', h: 40 },
+  { day: 'Thứ 3', h: 65 },
+  { day: 'Thứ 4', h: 90, active: true },
+  { day: 'Thứ 5', h: 55 },
+  { day: 'Thứ 6', h: 75 },
+  { day: 'Thứ 7', h: 45 },
+  { day: 'Chủ Nhật', h: 85 },
 ];
 
 type ActivityColor = 'primary' | 'secondary' | 'tertiary' | 'neutral';
@@ -35,26 +35,26 @@ const activity: {
   {
     icon: AlertTriangle,
     color: 'secondary',
-    body: 'New batch of Ethiopian Yirgacheffe roasted.',
-    when: '12 minutes ago',
+    body: 'Mẻ cà phê Ethiopian Yirgacheffe mới đã được rang.',
+    when: '12 phút trước',
   },
   {
     icon: Check,
     color: 'primary',
-    body: 'Order #4920 fulfilled and dispatched.',
-    when: '1 hour ago',
+    body: 'Đơn hàng #4920 đã hoàn tất và được gửi đi.',
+    when: '1 giờ trước',
   },
   {
     icon: User,
     color: 'tertiary',
-    body: 'New wholesale inquiry from Lumière Café.',
-    when: '3 hours ago',
+    body: 'Yêu cầu bán buôn mới từ Lumière Café.',
+    when: '3 giờ trước',
   },
   {
     icon: History,
     color: 'neutral',
-    body: 'Inventory restock: 50kg Organic Sage beans.',
-    when: 'Yesterday',
+    body: 'Bổ sung kho: 50kg hạt Organic Sage.',
+    when: 'Hôm qua',
   },
 ];
 
@@ -69,15 +69,15 @@ export default function AdminOverviewPage() {
   return (
     <div className="p-4 sm:p-8">
       <PageHeader
-        title="Todaywegrind Overview"
-        description="A quiet reflection of today's progress."
+        title="Tổng quan Todaywegrind"
+        description="Một sự phản chiếu tĩnh lặng về tiến độ hôm nay."
         descriptionItalic={true}
         size="display"
         titleColor="primary"
         actions={
           <div className="text-right">
             <p className="text-xs text-muted-foreground uppercase tracking-wider">
-              Local Time
+              Giờ địa phương
             </p>
             <p className="text-base text-foreground">08:42 AM</p>
           </div>
@@ -86,23 +86,23 @@ export default function AdminOverviewPage() {
 
       <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-8">
         <StatCard
-          label="Total Revenue"
+          label="Tổng doanh thu"
           value="$14,280.00"
-          delta="+12% vs last week"
+          delta="+12% so với tuần trước"
           icon={Wallet}
           tone="primary"
         />
         <StatCard
-          label="Active Orders"
+          label="Đơn hàng đang hoạt động"
           value="42"
-          delta="Processing now"
+          delta="Đang xử lý lúc này"
           icon={ShoppingBasket}
           tone="tertiary"
         />
         <StatCard
-          label="New Customers"
+          label="Khách hàng mới"
           value="156"
-          delta="New members"
+          delta="Thành viên mới"
           icon={UserPlus}
           tone="secondary"
         />
@@ -112,21 +112,21 @@ export default function AdminOverviewPage() {
         <Card className="lg:col-span-3">
           <CardContent className="p-4 sm:p-6">
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-base font-medium">Sales Trends</h3>
+              <h3 className="text-base font-medium">Xu hướng doanh số</h3>
               <div className="flex gap-1">
                 <Button
                   variant="outline"
                   size="sm"
                   className="text-[10px] uppercase tracking-widest h-7"
                 >
-                  Daily
+                  Hàng ngày
                 </Button>
                 <Button
                   variant="default"
                   size="sm"
                   className="text-[10px] uppercase tracking-widest h-7"
                 >
-                  Weekly
+                  Hàng tuần
                 </Button>
               </div>
             </div>
@@ -148,7 +148,7 @@ export default function AdminOverviewPage() {
                 ))}
               </div>
             </div>
-            <div className="flex justify-between px-2 mt-4 text-xs text-muted-foreground uppercase">
+            <div className="flex justify-between px-2 mt-4 text-[10px] text-muted-foreground uppercase tracking-wider">
               {bars.map((b) => (
                 <span key={b.day} className="flex-1 text-center">
                   {b.day}
@@ -160,7 +160,7 @@ export default function AdminOverviewPage() {
 
         <Card className="lg:col-span-2">
           <CardContent className="p-4 sm:p-6">
-            <h3 className="text-base font-medium mb-6">Recent Activity</h3>
+            <h3 className="text-base font-medium mb-6">Hoạt động gần đây</h3>
             <div className="space-y-6">
               {activity.map((a, i) => {
                 const Icon = a.icon;
@@ -199,10 +199,10 @@ export default function AdminOverviewPage() {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent flex flex-col justify-end p-4">
             <p className="text-xs text-white/80 uppercase tracking-wider">
-              Active Roastery Status
+              Trạng thái hoạt động xưởng rang
             </p>
             <p className="text-base text-white">
-              Optimal Environment: 22°C / 45% Hum.
+              Môi trường tối ưu: 22°C / Độ ẩm 45%
             </p>
           </div>
         </div>
@@ -211,11 +211,10 @@ export default function AdminOverviewPage() {
             <div className="w-16 h-16 rounded-full border-2 border-primary border-t-transparent animate-[spin_8s_linear_infinite]" />
             <div>
               <h4 className="text-base text-primary font-medium">
-                Live Quality Monitoring
+                Giám sát chất lượng trực tiếp
               </h4>
               <p className="text-sm text-muted-foreground px-4 mt-2">
-                Our sensors are tracking bean quality in real-time across all
-                our roasteries.
+                Các cảm biến của chúng tôi đang theo dõi chất lượng hạt cà phê theo thời gian thực tại toàn bộ xưởng rang.
               </p>
             </div>
             <Button
@@ -223,7 +222,7 @@ export default function AdminOverviewPage() {
               size="sm"
               className="uppercase tracking-wider rounded-full"
             >
-              View Analytics
+              Xem phân tích
             </Button>
           </CardContent>
         </Card>

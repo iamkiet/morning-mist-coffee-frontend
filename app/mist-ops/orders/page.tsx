@@ -35,6 +35,14 @@ const ALL_STATUSES: OrderStatus[] = [
   'cancelled',
 ];
 
+const STATUS_VIETNAMESE: Record<OrderStatus, string> = {
+  pending: 'Chờ xử lý',
+  paid: 'Đã thanh toán',
+  shipped: 'Đang giao hàng',
+  delivered: 'Đã giao',
+  cancelled: 'Đã hủy',
+};
+
 function EditOrderDialog({
   order,
   onClose,
@@ -58,7 +66,7 @@ function EditOrderDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle className="text-sm uppercase tracking-widest font-medium">
-            Edit Order
+            Chỉnh sửa Đơn hàng
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-4 py-2">
@@ -70,7 +78,7 @@ function EditOrderDialog({
               htmlFor="eo-status"
               className="text-xs uppercase tracking-wider text-muted-foreground"
             >
-              Status
+              Trạng thái
             </Label>
             <select
               id="eo-status"
@@ -80,14 +88,14 @@ function EditOrderDialog({
             >
               {ALL_STATUSES.map((s) => (
                 <option key={s} value={s}>
-                  {s.charAt(0).toUpperCase() + s.slice(1)}
+                  {STATUS_VIETNAMESE[s]}
                 </option>
               ))}
             </select>
           </div>
           {update.isError && (
             <p className="text-xs text-destructive">
-              Failed to update order. Please try again.
+              Không thể cập nhật đơn hàng. Vui lòng thử lại.
             </p>
           )}
         </div>
@@ -98,7 +106,7 @@ function EditOrderDialog({
             onClick={onClose}
             className="uppercase tracking-wider text-xs"
           >
-            Cancel
+            Hủy
           </Button>
           <Button
             size="sm"
@@ -106,7 +114,7 @@ function EditOrderDialog({
             disabled={update.isPending}
             onClick={handleSave}
           >
-            {update.isPending ? 'Saving…' : 'Save'}
+            {update.isPending ? 'Đang lưu…' : 'Lưu'}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -145,7 +153,7 @@ export default function AdminOrdersPage() {
   const columns: Column<Order>[] = [
     {
       key: 'id',
-      header: 'Order ID',
+      header: 'Mã đơn hàng',
       render: (r) => (
         <span className="text-xs font-medium text-muted-foreground">
           #{r.id.slice(0, 8).toUpperCase()}
@@ -154,7 +162,7 @@ export default function AdminOrdersPage() {
     },
     {
       key: 'customer',
-      header: 'Customer',
+      header: 'Khách hàng',
       render: (r) => (
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-[10px] text-muted-foreground font-bold">
@@ -166,16 +174,16 @@ export default function AdminOrdersPage() {
     },
     {
       key: 'status',
-      header: 'Status',
+      header: 'Trạng thái',
       render: (r) => (
         <Badge status={STATUS_BADGE[r.status] ?? 'neutral'}>
-          {r.status.charAt(0).toUpperCase() + r.status.slice(1)}
+          {STATUS_VIETNAMESE[r.status]}
         </Badge>
       ),
     },
     {
       key: 'total',
-      header: 'Amount',
+      header: 'Tổng tiền',
       align: 'right',
       hideOnMobile: true,
       render: (r) => (
@@ -188,11 +196,11 @@ export default function AdminOrdersPage() {
     },
     {
       key: 'date',
-      header: 'Date',
+      header: 'Ngày đặt',
       hideOnMobile: true,
       render: (r) => (
         <span className="text-muted-foreground text-xs">
-          {new Date(r.createdAt).toLocaleDateString()}
+          {new Date(r.createdAt).toLocaleDateString('vi-VN')}
         </span>
       ),
     },
@@ -212,7 +220,7 @@ export default function AdminOrdersPage() {
                 disabled={updateStatus.isPending}
                 onClick={() => updateStatus.mutate({ id: r.id, status: next })}
               >
-                Mark {next}
+                Giao tiếp: {STATUS_VIETNAMESE[next]}
               </Button>
             )}
             <Button
@@ -232,14 +240,14 @@ export default function AdminOrdersPage() {
   return (
     <div className="p-4 sm:p-8">
       <PageHeader
-        eyebrow="Orders"
-        title="Todaywegrind Mist Overview"
-        description="Each order, brewed and honored with intention."
+        eyebrow="Đơn hàng"
+        title="Quản lý Đơn hàng Todaywegrind"
+        description="Mỗi đơn hàng đều được chuẩn bị và trân trọng tận tâm."
         actions={
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
             <Input
-              placeholder="Search orders..."
+              placeholder="Tìm kiếm đơn hàng..."
               className="pl-10 w-full sm:w-64 bg-card"
             />
           </div>
@@ -248,7 +256,7 @@ export default function AdminOrdersPage() {
 
       {error && (
         <div className="mb-4 p-3 border border-border text-destructive text-sm">
-          Failed to load orders. Please try again.
+          Không thể tải danh sách đơn hàng. Vui lòng thử lại.
         </div>
       )}
 
@@ -266,8 +274,8 @@ export default function AdminOrdersPage() {
             totalPages > 1 ? (
               <div className="px-4 py-3 flex items-center justify-between">
                 <p className="text-xs uppercase tracking-widest text-muted-foreground">
-                  Showing {offset + 1}–{Math.min(offset + orders.length, total)}{' '}
-                  of {total}
+                  Hiển thị {offset + 1}–{Math.min(offset + orders.length, total)}{' '}
+                  trên {total}
                 </p>
                 <div className="flex items-center gap-2">
                   <Button
@@ -307,18 +315,18 @@ export default function AdminOrdersPage() {
               <CardContent className="p-5 space-y-3">
                 <div className="flex items-center justify-between">
                   <p className="text-xs uppercase tracking-widest text-muted-foreground">
-                    Order #{order.id.slice(0, 8).toUpperCase()} · Items
+                    Đơn hàng #{order.id.slice(0, 8).toUpperCase()} · Sản phẩm
                   </p>
                   <button
                     onClick={() => setExpandedId(null)}
                     className="text-xs text-muted-foreground hover:text-foreground transition-colors uppercase tracking-widest"
                   >
-                    Close
+                    Đóng
                   </button>
                 </div>
                 {order.items.length === 0 ? (
                   <p className="text-sm text-muted-foreground">
-                    No items recorded.
+                    Không có sản phẩm nào được ghi nhận.
                   </p>
                 ) : (
                   <div className="space-y-2">
@@ -341,7 +349,7 @@ export default function AdminOrdersPage() {
                     ))}
                     <div className="pt-2 flex justify-between text-sm font-medium border-t border-border">
                       <span className="uppercase tracking-widest text-xs text-muted-foreground">
-                        Total
+                        Tổng cộng
                       </span>
                       <span>
                         {order.currency === 'VND'
@@ -361,16 +369,16 @@ export default function AdminOrdersPage() {
           <CardContent className="p-6 flex items-center justify-between">
             <div>
               <p className="text-[10px] text-muted-foreground uppercase tracking-widest">
-                Todaywegrind Coffee Admin
+                Quản trị Todaywegrind Coffee
               </p>
               <h3 className="text-base mb-4 font-medium">
-                Roastery Performance
+                Hiệu suất xưởng rang
               </h3>
               <div className="flex items-end gap-4">
                 <div className="text-3xl font-light">
                   {total}{' '}
                   <span className="text-xs text-muted-foreground font-medium tracking-widest">
-                    TOTAL ORDERS
+                    TỔNG ĐƠN HÀNG
                   </span>
                 </div>
                 <div className="pb-2 text-primary">
@@ -392,15 +400,15 @@ export default function AdminOrdersPage() {
         <Card className="bg-accent/30">
           <CardContent className="p-6 flex flex-col justify-between gap-4 h-full">
             <p className="text-xs text-accent-foreground uppercase tracking-widest">
-              Order Stats
+              Thống kê đơn hàng
             </p>
             <div>
               <h3 className="text-base font-medium mb-1">
-                {orders.filter((o) => o.status === 'pending').length} Pending
+                {orders.filter((o) => o.status === 'pending').length} Chờ xử lý
               </h3>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                {orders.filter((o) => o.status === 'delivered').length}{' '}
-                delivered on this page.
+                Có {orders.filter((o) => o.status === 'delivered').length}{' '}
+                đơn đã giao trên trang này.
               </p>
             </div>
             <Button
@@ -408,7 +416,7 @@ export default function AdminOrdersPage() {
               size="sm"
               className="uppercase tracking-widest text-[10px]"
             >
-              View All
+              Xem tất cả
             </Button>
           </CardContent>
         </Card>

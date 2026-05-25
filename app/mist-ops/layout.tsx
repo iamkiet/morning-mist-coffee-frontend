@@ -33,7 +33,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   if (isLoading || !user || user.role !== 'admin') {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p className="text-muted-foreground">Loading...</p>
+        <p className="text-muted-foreground">Đang tải...</p>
       </div>
     );
   }
@@ -94,7 +94,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             className="rounded-none text-xs uppercase tracking-widest gap-2"
           >
             <LogOut className="size-3.5" />
-            Logout
+            Đăng xuất
           </Button>
         </div>
 

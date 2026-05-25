@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, ReactNode } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageCircle, X, Send } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
@@ -57,12 +57,12 @@ export function ChatWidget() {
                     ) : (
                       <ReactMarkdown
                         components={{
-                          p: ({ children }) => <p className="mb-2 last:mb-0 leading-relaxed">{children}</p>,
-                          ul: ({ children }) => <ul className="list-disc pl-4 mb-2 space-y-1">{children}</ul>,
-                          ol: ({ children }) => <ol className="list-decimal pl-4 mb-2 space-y-1">{children}</ol>,
-                          li: ({ children }) => <li className="text-xs leading-normal">{children}</li>,
-                          strong: ({ children }) => <strong className="font-semibold text-primary">{children}</strong>,
-                          em: ({ children }) => <em className="italic">{children}</em>,
+                          p: ({ children }: { children: ReactNode }) => <p className="mb-2 last:mb-0 leading-relaxed">{children}</p>,
+                          ul: ({ children }: { children: ReactNode }) => <ul className="list-disc pl-4 mb-2 space-y-1">{children}</ul>,
+                          ol: ({ children }: { children: ReactNode }) => <ol className="list-decimal pl-4 mb-2 space-y-1">{children}</ol>,
+                          li: ({ children }: { children: ReactNode }) => <li className="text-xs leading-normal">{children}</li>,
+                          strong: ({ children }: { children: ReactNode }) => <strong className="font-semibold text-primary">{children}</strong>,
+                          em: ({ children }: { children: ReactNode }) => <em className="italic">{children}</em>,
                         }}
                       >
                         {msg.content}

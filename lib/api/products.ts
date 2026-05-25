@@ -1,7 +1,9 @@
-import type { Product } from '@/app/_components/ProductCard';
+import { type Product } from '@/app/_components/ProductCard';
 import { API_URL } from '@/lib/config';
 import { DEFAULT_PRODUCT_IMAGE } from '@/lib/product-images';
 import { authFetch } from './client';
+
+export type { Product };
 
 interface BackendProduct {
   id: string;
@@ -23,18 +25,6 @@ export interface ProductsPage {
   offset: number;
 }
 
-export interface Product {
-  id: string;
-  slug: string;
-  name: string;
-  origin: string;
-  price: number;
-  image: string;
-  notes: string[];
-  stockQuantity?: number;
-  badge?: string;
-  description?: string;
-}
 
 function transform(p: BackendProduct): Product {
   const slug = p.name.toLowerCase().replace(/\s+/g, '-');

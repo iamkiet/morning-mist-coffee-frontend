@@ -39,6 +39,17 @@ const statusStyle: Record<UserStatus, 'success' | 'neutral' | 'error'> = {
   banned: 'error',
 };
 
+const STATUS_VIETNAMESE: Record<UserStatus, string> = {
+  active: 'Hoạt động',
+  inactive: 'Không hoạt động',
+  banned: 'Bị khóa',
+};
+
+const ROLE_VIETNAMESE: Record<UserRole, string> = {
+  admin: 'Quản trị viên',
+  user: 'Người dùng',
+};
+
 function UserAvatar({
   firstName,
   lastName,
@@ -77,7 +88,7 @@ function EditUserDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle className="text-sm uppercase tracking-widest font-medium">
-            Edit User
+            Chỉnh sửa Người dùng
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-4 py-2">
@@ -92,7 +103,7 @@ function EditUserDialog({
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="eu-role" className="text-xs uppercase tracking-wider text-muted-foreground">
-              Role
+              Vai trò
             </Label>
             <select
               id="eu-role"
@@ -100,13 +111,13 @@ function EditUserDialog({
               onChange={(e) => setRole(e.target.value as UserRole)}
               className="w-full rounded-lg border border-input bg-background px-2.5 py-2 text-sm outline-none cursor-pointer focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
             >
-              <option value="user">User</option>
-              <option value="admin">Admin</option>
+              <option value="user">Người dùng</option>
+              <option value="admin">Quản trị viên</option>
             </select>
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="eu-status" className="text-xs uppercase tracking-wider text-muted-foreground">
-              Status
+              Trạng thái
             </Label>
             <select
               id="eu-status"
@@ -114,18 +125,18 @@ function EditUserDialog({
               onChange={(e) => setStatus(e.target.value as UserStatus)}
               className="w-full rounded-lg border border-input bg-background px-2.5 py-2 text-sm outline-none cursor-pointer focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
             >
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-              <option value="banned">Banned</option>
+              <option value="active">Hoạt động</option>
+              <option value="inactive">Không hoạt động</option>
+              <option value="banned">Bị cấm</option>
             </select>
           </div>
           {update.isError && (
-            <p className="text-xs text-destructive">Failed to update user. Please try again.</p>
+            <p className="text-xs text-destructive">Không thể cập nhật người dùng. Vui lòng thử lại.</p>
           )}
         </div>
         <DialogFooter>
           <Button variant="outline" size="sm" onClick={onClose} className="uppercase tracking-wider text-xs">
-            Cancel
+            Hủy
           </Button>
           <Button
             size="sm"
@@ -133,7 +144,7 @@ function EditUserDialog({
             disabled={update.isPending}
             onClick={handleSave}
           >
-            {update.isPending ? 'Saving…' : 'Save'}
+            {update.isPending ? 'Đang lưu…' : 'Lưu'}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -148,7 +159,7 @@ export default function AdminUsersPage() {
   const columns: Column<ApiUser>[] = [
     {
       key: 'name',
-      header: 'User Details',
+      header: 'Chi tiết người dùng',
       render: (r) => (
         <div className="flex items-center gap-4">
           <UserAvatar firstName={r.firstName} lastName={r.lastName} />
@@ -163,16 +174,16 @@ export default function AdminUsersPage() {
     },
     {
       key: 'role',
-      header: 'Account Role',
-      render: (r) => <Badge status={roleStyle[r.role]}>{r.role}</Badge>,
+      header: 'Vai trò tài khoản',
+      render: (r) => <Badge status={roleStyle[r.role]}>{ROLE_VIETNAMESE[r.role]}</Badge>,
     },
     {
       key: 'joined',
-      header: 'Join Date',
+      header: 'Ngày tham gia',
       hideOnMobile: true,
       render: (r) => (
         <span className="text-muted-foreground text-sm">
-          {new Date(r.createdAt).toLocaleDateString('en-US', {
+          {new Date(r.createdAt).toLocaleDateString('vi-VN', {
             month: 'short',
             day: 'numeric',
             year: 'numeric',
@@ -182,12 +193,12 @@ export default function AdminUsersPage() {
     },
     {
       key: 'status',
-      header: 'Status',
-      render: (r) => <Badge status={statusStyle[r.status]}>{r.status}</Badge>,
+      header: 'Trạng thái',
+      render: (r) => <Badge status={statusStyle[r.status]}>{STATUS_VIETNAMESE[r.status]}</Badge>,
     },
     {
       key: 'actions',
-      header: 'Actions',
+      header: 'Thao tác',
       align: 'right',
       hideOnMobile: true,
       render: (r) => (
@@ -196,7 +207,7 @@ export default function AdminUsersPage() {
             variant="ghost"
             size="icon"
             className="size-8"
-            title="Reset Password"
+            title="Đặt lại Mật khẩu"
           >
             <KeyRound className="size-4" />
           </Button>
@@ -204,7 +215,7 @@ export default function AdminUsersPage() {
             variant="ghost"
             size="icon"
             className="size-8 hover:text-destructive"
-            title="Deactivate"
+            title="Vô hiệu hóa"
           >
             <UserX className="size-4" />
           </Button>
@@ -212,7 +223,7 @@ export default function AdminUsersPage() {
             variant="ghost"
             size="icon"
             className="size-8"
-            title="Edit"
+            title="Chỉnh sửa"
             onClick={() => setEditUser(r)}
           >
             <Pencil className="size-4" />
@@ -225,20 +236,20 @@ export default function AdminUsersPage() {
   return (
     <div className="p-4 sm:p-8">
       <PageHeader
-        eyebrow="Overview of all registered accounts"
-        title="User Management"
+        eyebrow="Tổng quan về tất cả tài khoản đã đăng ký"
+        title="Quản lý Người dùng"
         actions={
           <>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
               <Input
-                placeholder="Search accounts..."
+                placeholder="Tìm kiếm tài khoản..."
                 className="w-full sm:w-64 pl-10 bg-card"
               />
             </div>
             <Button>
               <UserPlus className="size-4" />
-              Invite User
+              Mời người dùng
             </Button>
           </>
         }
@@ -246,7 +257,7 @@ export default function AdminUsersPage() {
 
       <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
         <StatCard
-          label="Total Members"
+          label="Tổng thành viên"
           value={isLoading ? '—' : String(data?.total ?? 0)}
           delta="+8%"
           icon={UsersIcon}
@@ -254,17 +265,17 @@ export default function AdminUsersPage() {
           progress={68}
         />
         <StatCard
-          label="Active Today"
+          label="Hoạt động hôm nay"
           value="312"
-          delta="Live"
+          delta="Trực tuyến"
           icon={Zap}
           tone="secondary"
           progress={42}
         />
         <StatCard
-          label="Pending Approvals"
+          label="Đang chờ phê duyệt"
           value="03"
-          delta="Action Required"
+          delta="Yêu cầu xử lý"
           icon={Hourglass}
           tone="tertiary"
         />
@@ -272,13 +283,13 @@ export default function AdminUsersPage() {
 
       {isError && (
         <p className="text-sm text-destructive mb-4">
-          Failed to load users. Please try again.
+          Không thể tải danh sách người dùng. Vui lòng thử lại.
         </p>
       )}
 
       {isLoading ? (
         <div className="text-sm text-muted-foreground text-center py-12">
-          Loading users…
+          Đang tải danh sách người dùng…
         </div>
       ) : (
         <DataTable columns={columns} rows={data?.items ?? []} />

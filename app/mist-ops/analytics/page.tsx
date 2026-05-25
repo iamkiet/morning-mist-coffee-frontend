@@ -28,27 +28,27 @@ const topProducts = [
 const feed = [
   {
     dot: 'active',
-    title: 'New Order',
-    body: 'from Julian A. for $42.00',
-    when: 'Just Now',
+    title: 'Đơn hàng mới',
+    body: ' từ Julian A. trị giá $42.00',
+    when: 'Vừa xong',
   },
   {
     dot: 'muted',
-    title: 'Subscription Renewal',
+    title: 'Gia hạn gói đăng ký',
     body: ': Elena P.',
-    when: '12 Minutes ago',
+    when: '12 phút trước',
   },
   {
     dot: 'muted',
-    title: 'Inventory Alert',
-    body: ': Morning Mist Blend Low',
-    when: '45 Minutes ago',
+    title: 'Cảnh báo kho hàng',
+    body: ': Hạt Morning Mist Blend sắp hết',
+    when: '45 phút trước',
   },
   {
     dot: 'muted',
-    title: 'New Member',
-    body: ': Marcus Thorne joined the Coffee Club',
-    when: '1 Hour ago',
+    title: 'Thành viên mới',
+    body: ': Marcus Thorne đã tham gia Câu lạc bộ Cà phê',
+    when: '1 giờ trước',
   },
 ];
 
@@ -56,18 +56,18 @@ export default function AdminAnalyticsPage() {
   return (
     <div className="p-4 sm:p-8">
       <PageHeader
-        eyebrow="Performance Dashboard"
-        title="Business Analytics"
+        eyebrow="Bảng theo dõi hiệu suất"
+        title="Phân tích Kinh doanh"
         actions={
           <>
             <div className="px-3 py-2 bg-card rounded-lg shadow-sm border border-border/30 flex items-center gap-2 text-muted-foreground text-xs uppercase tracking-wider">
               <Calendar className="size-4" />
-              <span>Last 30 Days</span>
+              <span>30 ngày qua</span>
               <ChevronDown className="size-4" />
             </div>
             <Button>
               <Plus className="size-4" />
-              New Batch
+              Mẻ rang mới
             </Button>
           </>
         }
@@ -75,25 +75,25 @@ export default function AdminAnalyticsPage() {
 
       <section className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <StatCard
-          label="Net Revenue"
+          label="Doanh thu thuần"
           value="$24,500.00"
           delta="+12%"
           progress={70}
         />
-        <StatCard label="Total Orders" value="842" delta="+5%" progress={55} />
-        <StatCard label="Avg. Order Value" value="$29.10" progress={45} />
-        <StatCard label="Active Customers" value="1,284" progress={82} />
+        <StatCard label="Tổng đơn hàng" value="842" delta="+5%" progress={55} />
+        <StatCard label="Giá trị đơn hàng TB" value="$29.10" progress={45} />
+        <StatCard label="Khách hàng hoạt động" value="1,284" progress={82} />
       </section>
 
       <section className="mb-6 bg-card p-6 rounded-xl shadow-[0_8px_30px_rgba(169,183,166,0.05)] border border-border/20">
         <div className="flex justify-between items-center mb-6">
           <h4 className="text-base font-medium text-foreground">
-            Revenue Trends
+            Xu hướng doanh thu
           </h4>
           <div className="flex items-center space-x-2">
             <span className="w-3 h-3 rounded-full bg-accent" />
-            <span className="text-xs uppercase tracking-wider text-muted-foreground uppercase">
-              Monthly Yield
+            <span className="text-[10px] text-xs uppercase tracking-wider text-muted-foreground uppercase">
+              Sản lượng hàng tháng
             </span>
           </div>
         </div>
@@ -130,7 +130,7 @@ export default function AdminAnalyticsPage() {
           </svg>
           <div className="absolute bottom-0 left-0 right-0 flex justify-between text-[10px] text-xs uppercase tracking-wider text-muted-foreground">
             {Array.from({ length: 10 }, (_, i) => (
-              <span key={i}>W{i + 1}</span>
+              <span key={i}>Tuần {i + 1}</span>
             ))}
           </div>
         </div>
@@ -139,7 +139,7 @@ export default function AdminAnalyticsPage() {
       <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-card p-6 rounded-xl shadow-[0_8px_30px_rgba(169,183,166,0.05)] border border-border/20">
           <h4 className="text-base font-medium text-foreground mb-6">
-            Top Selling Products
+            Sản phẩm bán chạy nhất
           </h4>
           <div className="space-y-6">
             {topProducts.map((p) => (
@@ -159,7 +159,7 @@ export default function AdminAnalyticsPage() {
                       {p.name}
                     </p>
                     <p className="text-[10px] text-muted-foreground uppercase tracking-widest">
-                      {p.sold} Sold
+                      Đã bán: {p.sold}
                     </p>
                   </div>
                 </div>
@@ -173,7 +173,7 @@ export default function AdminAnalyticsPage() {
 
         <div className="bg-card p-6 rounded-xl shadow-[0_8px_30px_rgba(169,183,166,0.05)] border border-border/20 flex flex-col">
           <h4 className="text-base font-medium text-foreground mb-6">
-            Customer Acquisition
+            Nguồn tiếp cận khách hàng
           </h4>
           <div className="flex-1 flex flex-col items-center justify-center">
             <div className="relative w-40 h-40">
@@ -196,17 +196,17 @@ export default function AdminAnalyticsPage() {
               <div className="absolute inset-0 flex flex-col items-center justify-center">
                 <span className="text-2xl font-light text-foreground">65%</span>
                 <span className="text-[9px] text-xs uppercase tracking-wider text-muted-foreground uppercase">
-                  Organic
+                  Tự nhiên
                 </span>
               </div>
             </div>
             <div className="mt-6 grid grid-cols-2 gap-4 w-full">
               <div className="text-center">
-                <p className="text-xs text-muted-foreground mb-1">Social</p>
+                <p className="text-xs text-muted-foreground mb-1">Mạng xã hội</p>
                 <p className="text-sm font-medium text-foreground">22%</p>
               </div>
               <div className="text-center">
-                <p className="text-xs text-muted-foreground mb-1">Referral</p>
+                <p className="text-xs text-muted-foreground mb-1">Giới thiệu</p>
                 <p className="text-sm font-medium text-foreground">13%</p>
               </div>
             </div>
@@ -215,7 +215,7 @@ export default function AdminAnalyticsPage() {
 
         <div className="bg-card p-6 rounded-xl shadow-[0_8px_30px_rgba(169,183,166,0.05)] border border-border/20">
           <h4 className="text-base font-medium text-foreground mb-6">
-            Real-time Feed
+            Hoạt động thời gian thực
           </h4>
           <div className="space-y-4">
             {feed.map((f, i) => (

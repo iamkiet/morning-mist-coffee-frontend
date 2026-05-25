@@ -20,16 +20,16 @@ interface AdminSidebarProps {
 }
 
 const nav: { href: string; label: string; icon: LucideIcon }[] = [
-  { href: '/mist-ops', label: 'Overview', icon: LayoutDashboard },
-  { href: '/mist-ops/analytics', label: 'Analytics', icon: LineChart },
-  { href: '/mist-ops/orders', label: 'Orders', icon: Receipt },
-  { href: '/mist-ops/products', label: 'Inventory', icon: Package },
-  { href: '/mist-ops/users', label: 'Users', icon: Users },
+  { href: '/mist-ops', label: 'Tổng quan', icon: LayoutDashboard },
+  { href: '/mist-ops/analytics', label: 'Phân tích', icon: LineChart },
+  { href: '/mist-ops/orders', label: 'Đơn hàng', icon: Receipt },
+  { href: '/mist-ops/products', label: 'Kho hàng', icon: Package },
+  { href: '/mist-ops/users', label: 'Thành viên', icon: Users },
 ];
 
 const footerNav: { href: string; label: string; icon: LucideIcon }[] = [
-  { href: '#', label: 'Settings', icon: Settings },
-  { href: '#', label: 'Support', icon: HelpCircle },
+  { href: '#', label: 'Cài đặt', icon: Settings },
+  { href: '#', label: 'Hỗ trợ', icon: HelpCircle },
 ];
 
 export function AdminSidebar({ onClose }: AdminSidebarProps) {
@@ -51,7 +51,7 @@ export function AdminSidebar({ onClose }: AdminSidebarProps) {
           Todaywegrind Coffee
         </p>
         <p className="text-[10px] text-muted-foreground tracking-widest uppercase mt-0.5">
-          Management
+          Quản trị
         </p>
       </div>
 
@@ -120,7 +120,7 @@ export function AdminSidebar({ onClose }: AdminSidebarProps) {
           >
             <ArrowLeft size={18} />
             <span className="text-xs tracking-wider uppercase font-medium">
-              Back to Store
+              Quay lại Cửa hàng
             </span>
           </Link>
         </div>

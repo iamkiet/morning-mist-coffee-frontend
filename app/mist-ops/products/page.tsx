@@ -91,7 +91,7 @@ function EditProductDialog({
       <DialogContent className="sm:max-w-[28rem]">
         <DialogHeader>
           <DialogTitle className="text-sm uppercase tracking-widest font-medium">
-            Edit Product
+            Chỉnh sửa Sản phẩm
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-4 py-2">
@@ -100,7 +100,7 @@ function EditProductDialog({
               htmlFor="ep-name"
               className="text-xs uppercase tracking-wider text-muted-foreground"
             >
-              Name
+              Tên sản phẩm
             </Label>
             <Input id="ep-name" {...field('name')} />
           </div>
@@ -109,7 +109,7 @@ function EditProductDialog({
               htmlFor="ep-price"
               className="text-xs uppercase tracking-wider text-muted-foreground"
             >
-              Price (USD)
+              Giá bán (USD)
             </Label>
             <Input
               id="ep-price"
@@ -124,7 +124,7 @@ function EditProductDialog({
               htmlFor="ep-stock"
               className="text-xs uppercase tracking-wider text-muted-foreground"
             >
-              Stock Quantity
+              Số lượng tồn kho
             </Label>
             <Input
               id="ep-stock"
@@ -139,7 +139,7 @@ function EditProductDialog({
               htmlFor="ep-desc"
               className="text-xs uppercase tracking-wider text-muted-foreground"
             >
-              Description
+              Mô tả
             </Label>
             <textarea
               id="ep-desc"
@@ -153,13 +153,13 @@ function EditProductDialog({
               htmlFor="ep-img"
               className="text-xs uppercase tracking-wider text-muted-foreground"
             >
-              Image URL
+              Đường dẫn hình ảnh
             </Label>
             <Input id="ep-img" type="url" {...field('image')} />
           </div>
           {update.isError && (
             <p className="text-xs text-destructive">
-              Failed to update product. Please try again.
+              Không thể cập nhật sản phẩm. Vui lòng thử lại.
             </p>
           )}
         </div>
@@ -170,7 +170,7 @@ function EditProductDialog({
             onClick={onClose}
             className="uppercase tracking-wider text-xs"
           >
-            Cancel
+            Hủy
           </Button>
           <Button
             size="sm"
@@ -178,7 +178,7 @@ function EditProductDialog({
             disabled={update.isPending}
             onClick={handleSave}
           >
-            {update.isPending ? 'Saving…' : 'Save'}
+            {update.isPending ? 'Đang lưu…' : 'Lưu'}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -199,7 +199,7 @@ export default function AdminProductsPage() {
   const columns: Column<Product>[] = [
     {
       key: 'details',
-      header: 'Product Details',
+      header: 'Chi tiết sản phẩm',
       render: (r) => (
         <div className="flex items-center gap-4">
           <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-card flex-shrink-0">
@@ -222,26 +222,26 @@ export default function AdminProductsPage() {
     },
     {
       key: 'price',
-      header: 'Price',
+      header: 'Giá',
       hideOnMobile: true,
       render: (r) => <span className="font-medium">${r.price.toFixed(2)}</span>,
     },
     {
       key: 'stock',
-      header: 'Stock',
+      header: 'Kho hàng',
       hideOnMobile: true,
       render: (r) => {
         const qty = r.stockQuantity ?? 0;
         if (qty === 0)
           return (
             <span className="text-xs font-medium text-destructive uppercase tracking-wider">
-              Out of stock
+              Hết hàng
             </span>
           );
         if (qty <= 5)
           return (
             <span className="text-xs font-medium text-primary uppercase tracking-wider">
-              Low · {qty}
+              Sắp hết · {qty}
             </span>
           );
         return <span className="text-sm text-foreground">{qty}</span>;
@@ -249,7 +249,7 @@ export default function AdminProductsPage() {
     },
     {
       key: 'notes',
-      header: 'Notes',
+      header: 'Nốt hương',
       hideOnMobile: true,
       render: (r) => (
         <span className="text-muted-foreground text-sm">
@@ -259,7 +259,7 @@ export default function AdminProductsPage() {
     },
     {
       key: 'actions',
-      header: 'Actions',
+      header: 'Thao tác',
       align: 'right',
       hideOnMobile: true,
       render: (r) => (
@@ -287,8 +287,8 @@ export default function AdminProductsPage() {
   return (
     <div className="p-4 sm:p-8">
       <PageHeader
-        title="Inventory Management"
-        description="Todaywegrind was born from the quiet clarity of a high-altitude mist, where every bean tells the story of the soil it was cradled in."
+        title="Quản lý Kho hàng"
+        description="Todaywegrind được khai sinh từ làn sương sớm tĩnh lặng nơi đại ngàn, nơi mỗi hạt cà phê là một câu chuyện kể về vùng thổ nhưỡng đã nuôi dưỡng chúng."
         actions={
           <>
             <Button
@@ -297,11 +297,11 @@ export default function AdminProductsPage() {
               className="uppercase tracking-wider"
             >
               <Download className="size-4" />
-              Export CSV
+              Xuất tệp CSV
             </Button>
             <Button size="sm" className="uppercase tracking-wider">
               <Plus className="size-4" />
-              Add Product
+              Thêm sản phẩm
             </Button>
           </>
         }
@@ -313,18 +313,18 @@ export default function AdminProductsPage() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
             <Input
               className="pl-10 bg-muted border-0"
-              placeholder="Search beans, brewers, or accessories..."
+              placeholder="Tìm kiếm hạt cà phê, bình pha, hoặc phụ kiện..."
             />
           </div>
           <p className="text-xs text-muted-foreground uppercase tracking-widest">
-            {isLoading ? 'Loading...' : `${total} products total`}
+            {isLoading ? 'Đang tải...' : `Tổng cộng ${total} sản phẩm`}
           </p>
         </CardContent>
       </Card>
 
       {error && (
         <div className="mb-4 p-3 border border-border text-destructive text-sm">
-          Failed to load products. Please try again.
+          Không thể tải danh sách sản phẩm. Vui lòng thử lại.
         </div>
       )}
 
@@ -342,8 +342,8 @@ export default function AdminProductsPage() {
             totalPages > 1 ? (
               <div className="px-4 py-3 flex items-center justify-between">
                 <p className="text-xs uppercase tracking-widest text-muted-foreground">
-                  Showing {offset + 1}–{Math.min(offset + items.length, total)}{' '}
-                  of {total}
+                  Hiển thị {offset + 1}–{Math.min(offset + items.length, total)}{' '}
+                  trên {total}
                 </p>
                 <div className="flex items-center gap-2">
                   <Button
