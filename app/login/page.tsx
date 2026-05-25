@@ -17,8 +17,10 @@ export default function LoginPage() {
   useEffect(() => {
     const saved = localStorage.getItem('remembered_email');
     if (saved) {
-      setEmail(saved);
-      setRememberMe(true);
+      setTimeout(() => {
+        setEmail(saved);
+        setRememberMe(true);
+      }, 0);
     }
   }, []);
 
@@ -27,8 +29,10 @@ export default function LoginPage() {
     if (user.role === 'admin') {
       router.replace('/mist-ops');
     } else {
-      setError('This account does not have admin access.');
-      logout();
+      setTimeout(() => {
+        setError('This account does not have admin access.');
+        logout();
+      }, 0);
     }
   }, [user, authLoading, router, logout]);
 
