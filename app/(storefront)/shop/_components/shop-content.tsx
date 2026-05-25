@@ -33,9 +33,9 @@ export function ShopContent() {
       <div className="flex flex-wrap items-end justify-between mb-10 sm:mb-16 border-b border-border pb-6 gap-4">
         <div className="flex flex-wrap gap-8 sm:gap-12">
           {[
-            { label: 'Origin', value: 'All Regions' },
-            { label: 'Roast Level', value: 'Light to Medium' },
-            { label: 'Brew Method', value: 'Pour Over' },
+            { label: 'Vùng Trồng', value: 'Mọi Khu Vực' },
+            { label: 'Mức Độ Rang', value: 'Sáng đến Vừa' },
+            { label: 'Cách Pha Chế', value: 'Phễu Lọc (Pour Over)' },
           ].map((f) => (
             <div key={f.label} className="group relative">
               <label className="text-muted-foreground block mb-1 text-[10px] uppercase tracking-widest">
@@ -51,15 +51,15 @@ export function ShopContent() {
         <div className="flex items-center gap-4">
           <span className="text-muted-foreground text-[10px] uppercase tracking-widest">
             {isLoading
-              ? 'Loading...'
-              : `Showing ${offset + 1}–${Math.min(offset + items.length, total)} of ${total}`}
+              ? 'Đang tải...'
+              : `Hiển thị ${offset + 1}–${Math.min(offset + items.length, total)} trên ${total}`}
           </span>
           <Button
             variant="outline"
             size="sm"
             className="rounded-none gap-2 text-xs uppercase tracking-wider"
           >
-            Sort
+            Sắp xếp
             <ArrowUpDown className="size-3.5" />
           </Button>
         </div>
@@ -67,7 +67,7 @@ export function ShopContent() {
 
       {error && (
         <div className="text-center py-8 text-destructive">
-          Failed to load products. Please try again.
+          Không thể tải danh sách sản phẩm. Vui lòng thử lại sau.
         </div>
       )}
 

@@ -2,10 +2,10 @@ import Link from 'next/link';
 import { Camera, Globe, Video } from 'lucide-react';
 
 const sitemapLinks = [
-  { label: 'Shop', href: '/shop' },
-  { label: 'Our Story', href: '/story' },
-  { label: 'Journal', href: '/journal' },
-  { label: 'Track Order', href: '/track-order' },
+  { label: 'Cửa hàng', href: '/shop' },
+  { label: 'Câu chuyện', href: '/story' },
+  { label: 'Tạp chí', href: '/journal' },
+  { label: 'Theo dõi đơn hàng', href: '/track-order' },
 ];
 
 const socialLinks = [
@@ -15,9 +15,9 @@ const socialLinks = [
 ];
 
 const legalLinks = [
-  { label: 'Privacy', href: '#' },
-  { label: 'Terms', href: '#' },
-  { label: 'Shipping', href: '#' },
+  { label: 'Quyền riêng tư', href: '#' },
+  { label: 'Điều khoản', href: '#' },
+  { label: 'Vận chuyển', href: '#' },
 ];
 
 export function Footer() {
@@ -32,8 +32,7 @@ export function Footer() {
               Todaywegrind Coffee
             </span>
             <p className="text-base text-muted-foreground font-light leading-relaxed">
-              An exploration of sensory precision. Crafting stillness through
-              artisanal coffee and ceramics.
+              Sự khám phá của sự chính xác giác quan. Kiến tạo sự tĩnh lặng thông qua cà phê thủ công và gốm sứ.
             </p>
             <div className="flex space-x-6 pt-2">
               {socialLinks.map(({ Icon, label, href }) => (
@@ -52,7 +51,7 @@ export function Footer() {
           {/* Sitemap — col 3 */}
           <div className="md:col-span-3">
             <h5 className="text-xs text-primary tracking-[0.2em] uppercase mb-8 font-medium">
-              Explore
+              Khám phá
             </h5>
             <ul className="flex flex-col space-y-4">
               {sitemapLinks.map(({ label, href }) => (
@@ -71,7 +70,7 @@ export function Footer() {
           {/* Locations — col 2 */}
           <div className="md:col-span-2">
             <h5 className="text-xs text-primary tracking-[0.2em] uppercase mb-8 font-medium">
-              Locations
+              Địa điểm
             </h5>
             <div className="flex flex-col space-y-6">
               <div>
@@ -90,7 +89,7 @@ export function Footer() {
           {/* Inquiries — col 3 */}
           <div className="md:col-span-3">
             <h5 className="text-xs text-primary tracking-[0.2em] uppercase mb-8 font-medium">
-              Inquiries
+              Liên hệ
             </h5>
             <div className="flex flex-col space-y-4">
               <a
@@ -104,9 +103,9 @@ export function Footer() {
               </p>
               <div className="pt-2">
                 <p className="text-[11px] uppercase tracking-widest text-muted-foreground/70 leading-relaxed">
-                  Support Hours:
+                  Giờ hỗ trợ:
                   <br />
-                  Mon—Fri 9am—5pm
+                  Thứ 2—Thứ 6, 9:00—17:00
                 </p>
               </div>
             </div>
@@ -116,7 +115,7 @@ export function Footer() {
         {/* Bottom bar */}
         <div className="pt-8 md:pt-12 border-t border-border/30 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
           <p className="text-[11px] uppercase tracking-widest text-muted-foreground/60">
-            © 2026 Todaywegrind Coffee. Crafted for slow living.
+            © 2026 Todaywegrind Coffee. Được tạo ra cho lối sống chậm.
           </p>
           <div className="flex space-x-8">
             {legalLinks.map(({ label, href }) => (

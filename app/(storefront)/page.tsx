@@ -21,22 +21,20 @@ export default function HomePage() {
         </div>
         <div className="relative z-10 text-center max-w-4xl px-4 sm:px-6 md:px-gutter py-12 sm:py-16 md:py-20">
           <span className="text-primary tracking-[0.3em] mb-4 sm:mb-6 block uppercase text-xs sm:text-sm font-medium">
-            Grown in Silence
+            Nuôi Dưỡng Trong Tĩnh Lặng
           </span>
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-foreground mb-6 sm:mb-8 leading-tight font-light">
-            The Art of Living <br /> through the lens of Coffee.
+            Nghệ Thuật Sống <br /> Qua Lăng Kính Cà Phê.
           </h1>
           <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto mb-8 sm:mb-12 font-light">
-            Todaywegrind is an exploration of sensory precision. We curate rare
-            beans and artisanal ceramics to transform your morning routine into
-            a meditative practice.
+            Todaywegrind là cuộc thám hiểm của sự chính xác giác quan. Chúng tôi tuyển chọn những hạt cà phê quý hiếm và tác phẩm gốm sứ thủ công để biến thói quen buổi sáng của bạn thành một khoảnh khắc thiền định yên bình.
           </p>
           <Button
             asChild
             size="lg"
             className="px-6 sm:px-10 py-3 sm:py-4 text-xs sm:text-sm uppercase tracking-widest rounded-none"
           >
-            <Link href="/shop">Shop the Collection</Link>
+            <Link href="/shop">Mua Ngay Bộ Sưu Tập</Link>
           </Button>
         </div>
       </section>
@@ -45,10 +43,10 @@ export default function HomePage() {
       <section className="py-12 sm:py-16 md:py-xl max-w-7xl mx-auto px-4 sm:px-6 md:px-gutter">
         <div className="flex flex-col mb-8 sm:mb-12 md:mb-xl">
           <span className="text-primary tracking-[0.2em] mb-2 sm:mb-4 uppercase text-xs font-medium">
-            Curated Objects
+            Tác Phẩm Tuyển Chọn
           </span>
           <h2 className="text-2xl sm:text-3xl md:text-4xl text-foreground font-light">
-            Featured Collections
+            Bộ Sưu Tập Nổi Bật
           </h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-12 gap-4 sm:gap-6 md:gap-gutter">
@@ -66,10 +64,10 @@ export default function HomePage() {
             <div className="flex justify-between items-end">
               <div>
                 <h3 className="text-lg sm:text-xl text-foreground mb-2 font-normal">
-                  The Ethereal Series
+                  Dòng Sản Phẩm Ethereal
                 </h3>
                 <p className="text-sm text-muted-foreground font-light">
-                  Limited Edition Glassware
+                  Đồ Thủy Tinh Phiên Bản Giới Hạn
                 </p>
               </div>
               <ArrowRight className="size-5 text-primary group-hover:translate-x-2 transition-transform duration-300 shrink-0" />
@@ -88,16 +86,16 @@ export default function HomePage() {
                 />
               </div>
               <h3 className="text-base sm:text-lg text-foreground mb-1 font-normal">
-                Origin 01: Ethiopia
+                Nguồn Gốc 01: Ethiopia
               </h3>
               <p className="text-sm text-muted-foreground font-light">
-                Floral / Bergamot / Honey
+                Hương Hoa / Cam Bergamot / Mật Ong
               </p>
             </div>
             <div className="group cursor-pointer">
               <div className="relative aspect-square overflow-hidden bg-card mb-4 sm:mb-6">
                 <Image
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGCY0lqdGenwYCBL8JEZn2cdmRNAcnsS-zKkrY15MwLT6msYGsE1SkmrOvUsOVVdt-lnWOSeujI8W98njqy6dsZ7L5XJXmgL9cUXg2bi-fj8VUKPwYJaBGcZvDXpJgtfV5zERZ_GaXuE2G_bgda6D5YSJfUsKYtVmBH3jr7npNbb0R9oB7GrtfGyhZ2kQl2BmkXoP7_FOxz1Ydl-K8F5ouDlHr6NXbbvSsRvI46P2C3kx6uGl8S3uT-1HZiKtMXynTYOBlwPK6A64"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGCY0lqdGenwYCBL8JEZn2cdmRNAcnsS-zKkrY15MwLT6msYGsE1SkmrOvUsOVVdt-lnWOSeujI8W98njqy6dsZ7L5XJXmgL9cUXg2bi-fj8VUKPwYJaBGcZvDXpJgtV5zERZ_GaXuE2G_bgda6D5YSJfUsKYtVmBH3jr7npNbb0R9oB7GrtfGyhZ2kQl2BmkXoP7_FOxz1Ydl-K8F5ouDlHr6NXbbvSsRvI46P2C3kx6uGl8S3uT-1HZiKtMXynTYOBlwPK6A64"
                   alt="Minimalist sage and grey ceramic mugs"
                   fill
                   sizes="(max-width: 768px) 100vw, 42vw"
@@ -105,10 +103,10 @@ export default function HomePage() {
                 />
               </div>
               <h3 className="text-base sm:text-lg text-foreground mb-1 font-normal">
-                The Morning Mist Set
+                Bộ Ly Tách Morning Mist
               </h3>
               <p className="text-sm text-muted-foreground font-light">
-                Hand-thrown Stoneware
+                Gốm Sứ Thủ Công Rang Mộc
               </p>
             </div>
           </div>
@@ -132,27 +130,22 @@ export default function HomePage() {
           </div>
           <div className="flex flex-col space-y-6 sm:space-y-8 order-1 md:order-2">
             <span className="text-primary tracking-[0.2em] uppercase text-xs font-medium">
-              The Philosophy
+              Triết Lý Của Chúng Tôi
             </span>
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-foreground font-light">
-              Crafting the <br /> Silent Moments.
+              Kiến Tạo <br /> Những Khoảnh Khắc Tĩnh Lặng.
             </h2>
             <p className="text-base sm:text-lg text-muted-foreground font-light leading-relaxed">
-              Todaywegrind Coffee was founded on the belief that coffee is not a
-              commodity, but a choreography. We spend months sourcing beans from
-              sustainable high-altitude farms, roasting them in small batches
-              that respect the bean&apos;s inherent floral and fruit notes.
+              Todaywegrind Coffee được thành lập trên niềm tin rằng cà phê không đơn thuần là một sản phẩm thương mại, mà là một vũ điệu của nghệ thuật. Chúng tôi dành hàng tháng trời để tìm kiếm những hạt cà phê từ các trang trại vùng cao bền vững, rang chúng theo từng mẻ nhỏ nhằm tôn vinh hương hoa quả tự nhiên vốn có của hạt.
             </p>
             <p className="text-base sm:text-lg text-muted-foreground font-light leading-relaxed">
-              Our ceramics are collaborations with local potters, designed to
-              feel weighted yet effortless in your palm—a physical anchor for
-              your most peaceful time of day.
+              Các tác phẩm gốm sứ của chúng tôi là sự hợp tác với các nghệ nhân gốm địa phương, được thiết kế để mang lại cảm giác đằm tay nhưng vô cùng thanh thoát trong lòng bàn tay bạn — điểm tựa vật lý cho khoảng thời gian yên bình nhất trong ngày.
             </p>
             <Link
               href="/journal"
               className="inline-flex items-center text-primary uppercase tracking-widest group text-xs font-medium"
             >
-              Read Our Journal
+              Đọc Tạp Chí Của Chúng Tôi
               <ArrowRight className="size-4 ml-2 sm:ml-4 group-hover:translate-x-2 transition-transform duration-300" />
             </Link>
           </div>
@@ -166,18 +159,18 @@ export default function HomePage() {
             {[
               {
                 Icon: Leaf,
-                title: 'Sustainable Sourcing',
-                body: 'Direct trade partnerships that ensure fair compensation and ecological preservation through conscious selection.',
+                title: 'Nguồn Cung Bền Vững',
+                body: 'Quan hệ đối tác trực tiếp đảm bảo bồi thường công bằng và bảo tồn sinh thái thông qua việc lựa chọn vùng trồng có ý thức.',
               },
               {
                 Icon: Paintbrush,
-                title: 'Artisanal Craft',
-                body: 'Every vessel is hand-finished by master potters, making each piece in your collection a unique work of quiet art.',
+                title: 'Chế Tác Thủ Công',
+                body: 'Mỗi chiếc ly tách đều được hoàn thiện thủ công bởi các nghệ nhân gốm master, biến mỗi món đồ thành tác phẩm độc bản.',
               },
               {
                 Icon: Settings2,
-                title: 'Small Batch Roast',
-                body: 'Roasting profiles developed with technical precision to highlight the complex terroir and floral notes of each origin.',
+                title: 'Rang Theo Mẻ Nhỏ',
+                body: 'Hồ sơ rang được phát triển với độ chính xác kỹ thuật cao nhằm tôn vinh vùng trồng phức hợp và nốt hương hoa của hạt.',
               },
             ].map(({ Icon, title, body }) => (
               <div
@@ -201,4 +194,5 @@ export default function HomePage() {
       </section>
     </>
   );
+}
 }

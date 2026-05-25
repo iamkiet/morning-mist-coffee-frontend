@@ -17,11 +17,11 @@ import { Button } from '@/components/ui/button';
 const CartCount = dynamic(() => import('./CartCount'), { ssr: false });
 
 const links = [
-  { href: '/', label: 'Home' },
-  { href: '/shop', label: 'Shop' },
-  { href: '/story', label: 'Our Story' },
-  { href: '/journal', label: 'Journal' },
-  { href: '/track-order', label: 'Track Order' },
+  { href: '/', label: 'Trang chủ' },
+  { href: '/shop', label: 'Cửa hàng' },
+  { href: '/story', label: 'Câu chuyện' },
+  { href: '/journal', label: 'Tạp chí' },
+  { href: '/track-order', label: 'Theo dõi đơn hàng' },
 ];
 
 export function Nav() {

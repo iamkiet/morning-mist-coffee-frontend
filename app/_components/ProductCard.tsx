@@ -85,12 +85,12 @@ export function ProductCard({ product }: ProductCardProps) {
           {added ? (
             <>
               <Check className="size-3.5" />
-              Added
+              Đã Thêm
             </>
           ) : (
             <>
               <ShoppingBag className="size-3.5" />
-              Add to Bag
+              Thêm Vào Giỏ
             </>
           )}
         </Button>

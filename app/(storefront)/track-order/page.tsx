@@ -21,19 +21,19 @@ const STATUS_CONFIG: Record<
   { label: string; icon: React.ElementType; className: string }
 > = {
   pending: {
-    label: 'Pending',
+    label: 'Chờ xử lý',
     icon: Clock,
     className: 'text-muted-foreground',
   },
-  paid: { label: 'Paid', icon: CreditCard, className: 'text-primary' },
-  shipped: { label: 'Shipped', icon: Truck, className: 'text-primary' },
+  paid: { label: 'Đã thanh toán', icon: CreditCard, className: 'text-primary' },
+  shipped: { label: 'Đang giao hàng', icon: Truck, className: 'text-primary' },
   delivered: {
-    label: 'Delivered',
+    label: 'Đã giao',
     icon: CheckCircle,
     className: 'text-primary',
   },
   cancelled: {
-    label: 'Cancelled',
+    label: 'Đã hủy',
     icon: XCircle,
     className: 'text-destructive',
   },
@@ -41,7 +41,7 @@ const STATUS_CONFIG: Record<
 
 function OrderCard({ order }: { order: Order }) {
   const { label, icon: Icon, className } = STATUS_CONFIG[order.status];
-  const date = new Date(order.createdAt).toLocaleDateString('en-US', {
+  const date = new Date(order.createdAt).toLocaleDateString('vi-VN', {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
@@ -57,7 +57,7 @@ function OrderCard({ order }: { order: Order }) {
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="text-xs text-muted-foreground uppercase tracking-widest mb-1">
-              Order
+              Đơn hàng
             </p>
             <p className="text-xs font-mono text-foreground">
               {order.id.slice(0, 8).toUpperCase()}
@@ -110,7 +110,7 @@ export default function TrackOrderPage() {
       const result = await lookupOrders(email);
       setOrders(result);
     } catch {
-      setError('Something went wrong. Please try again.');
+      setError('Đã xảy ra lỗi. Vui lòng thử lại sau.');
     } finally {
       setIsLoading(false);
     }
@@ -122,18 +122,18 @@ export default function TrackOrderPage() {
         <div className="flex items-center gap-3 mb-3">
           <Package className="size-5 text-primary" />
           <h1 className="text-3xl font-light text-foreground">
-            Track Your Order
+            Theo Dõi Đơn Hàng
           </h1>
         </div>
         <p className="text-sm text-muted-foreground">
-          Enter the email address you used at checkout to find your orders.
+          Nhập địa chỉ email bạn đã sử dụng khi đặt hàng để tra cứu thông tin đơn hàng.
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="flex gap-3 mb-8">
         <Input
           type="email"
-          placeholder="your@email.com"
+          placeholder="email_cua_ban@example.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
@@ -145,7 +145,7 @@ export default function TrackOrderPage() {
           className="gap-2 uppercase tracking-widest text-xs"
         >
           <Search className="size-4" />
-          {isLoading ? 'Searching...' : 'Search'}
+          {isLoading ? 'Đang tìm...' : 'Tìm kiếm'}
         </Button>
       </form>
 
@@ -155,12 +155,12 @@ export default function TrackOrderPage() {
         (orders.length === 0 ? (
           <div className="text-center py-16 text-muted-foreground">
             <Package className="size-10 mx-auto mb-4 opacity-40" />
-            <p className="text-sm">No orders found for this email address.</p>
+            <p className="text-sm">Không tìm thấy đơn hàng nào liên kết với email này.</p>
           </div>
         ) : (
           <div className="space-y-3">
             <p className="text-xs text-muted-foreground uppercase tracking-widest mb-4">
-              {orders.length} order{orders.length !== 1 ? 's' : ''} found
+              Tìm thấy {orders.length} đơn hàng
             </p>
             {orders.map((order) => (
               <OrderCard key={order.id} order={order} />
