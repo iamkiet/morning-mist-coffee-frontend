@@ -18,16 +18,15 @@ export default function StoryPage() {
         </div>
         <div className="relative z-10 text-center px-gutter max-w-4xl">
           <span className="text-xs uppercase tracking-[0.3em] text-primary mb-6 block">
-            The Origin
+            Khởi Nguồn
           </span>
           <h1 className="text-4xl font-light text-foreground mb-8">
-            Where the earth exhales <br className="hidden md:block" /> and time
-            slows down.
+            Nơi đất trời thở nhẹ <br className="hidden md:block" /> và thời gian
+            trôi chậm lại.
           </h1>
           <p className="text-base text-muted-foreground max-w-2xl mx-auto italic">
-            Todaywegrind was born from the quiet clarity of a high-altitude
-            mist, where every bean tells the story of the soil it was cradled
-            in.
+            Todaywegrind được khai sinh từ sự tĩnh lặng và trong trẻo của sương sớm vùng cao,
+            nơi mỗi hạt cà phê tự kể câu chuyện về mảnh đất đã ôm ấp và nuôi dưỡng nó.
           </p>
         </div>
       </section>
@@ -37,22 +36,21 @@ export default function StoryPage() {
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-lg items-center">
           <div className="md:col-span-6 space-y-md">
             <span className="text-xs uppercase tracking-widest text-primary">
-              Philosophy
+              Triết Lý
             </span>
             <h2 className="text-2xl font-light text-foreground leading-tight">
-              The Art of the <br className="hidden md:block" /> Unhurried Cup
+              Nghệ Thuật Từ <br className="hidden md:block" /> Sự Thưởng Thức Chậm Rãi
             </h2>
             <div className="w-12 h-px bg-accent" />
             <p className="text-sm text-muted-foreground leading-relaxed max-w-[28rem]">
-              We believe that coffee is more than a beverage; it is a ritual of
-              presence. In a world that demands speed, Morning Mist Coffee
-              invites you to inhabit the moment. Our approach is defined by
-              &ldquo;Organic Minimalism&rdquo;—a commitment to removing the
-              noise and celebrating the raw, tactile beauty of craftsmanship.
+              Chúng tôi tin rằng cà phê không chỉ đơn thuần là thức uống, mà là nghi thức của sự hiện diện.
+              Giữa một thế giới hối hả và đòi hỏi tốc độ, Todaywegrind mời gọi bạn dừng lại và sống trọn từng khoảnh khắc.
+              Triết lý của chúng tôi được định nghĩa bằng &ldquo;Chủ nghĩa Tối giản Bản địa&rdquo; — cam kết gạt bỏ những tạp âm
+              cuộc sống và tôn vinh vẻ đẹp nguyên bản, mộc mạc của nghệ thuật thủ công tinh xảo.
             </p>
             <p className="text-sm text-muted-foreground leading-relaxed max-w-[28rem]">
-              Every roast is a dialogue between the bean and the roaster,
-              conducted in the silence of our morning mist.
+              Mỗi mẻ rang là một cuộc đối thoại đầy suy tư giữa hạt cà phê và người nghệ nhân,
+              diễn ra trong sự tĩnh lặng của làn sương sớm vùng cao.
             </p>
           </div>
           <div className="md:col-span-6 relative aspect-[4/5] bg-muted overflow-hidden">
@@ -71,31 +69,31 @@ export default function StoryPage() {
       <section className="py-xl px-gutter bg-card">
         <div className="max-w-7xl mx-auto text-center mb-xl">
           <span className="text-xs uppercase tracking-widest text-primary block mb-4">
-            The Craft
+            Nghệ Thuật Thủ Công
           </span>
           <h2 className="text-2xl font-light text-foreground">
-            Artisanal Precision
+            Sự Tỉ Mỉ Và Chính Xác Thủ Công
           </h2>
         </div>
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-md">
           {[
             {
-              alt: 'Ethical Sourcing',
+              alt: 'Nguồn Cung Ứng Tử Tế',
               src: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCG07lb1YGXB-tjqfZdAveDZgc4RWZ3dM3mFo8BTs5LMC7273947PO5VdRS8TYs0QRTl-VXLxEEtKZKscs5Es3sDBxhYeQprq_lJUL3G__FH0NZbzskBM9V0nk32XVH1ljK5e4kdJms1AKy1q-pGhNPNe8Ji6Avp0lp3VH6k_4rFIimtmCs7aMwVx5j9Tbgp8YWiXsW4Kz_sAEUakvcCpjUdu2v-HsDNiYDHNGLEPJmId9yjpkM9Wvi24UXDR1xNqN9VLuJimFNWc8',
-              title: '01. Conscious Sourcing',
-              body: 'We partner exclusively with small-lot farmers who practice regenerative agriculture, ensuring every bean respects the earth.',
+              title: '01. Nguồn Cung Ứng Tử Tế',
+              body: 'Chúng tôi hợp tác độc quyền với các nông hộ quy mô nhỏ thực hành nông nghiệp tái sinh, đảm bảo mỗi hạt cà phê đều được thu hoạch trong sự tôn kính đất mẹ.',
             },
             {
-              alt: 'Roasting Process',
+              alt: 'Quy Trình Rang Chậm',
               src: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDAILILoSx2SeXS78uco3b96treOJnEtLeyigSYMkDBgMst6Xoz2OdAVhvGNP8kafR28xApDiB2RgiwU6S6GACKCEG2mDs8MR24p7_WvYEgtZprymO1hxYs9cEjWw1OIi6PqFiwEm2MGvAERTPjCsx2Li2gL9YmB_mnxAxT5nYhMBvgjUdQ6oIVKV6jYxqkIWI-zKuPuZJxHk1bZcL8BlAjbafDOkP7StHcDPQr5iSVIwoaqeh0bSlbC3VjYKKOEYExaiNEkgUJE9E',
-              title: '02. Slow Roast',
-              body: 'Small batches are roasted using air-flow technology to preserve the delicate floral and misty notes unique to our terroir.',
+              title: '02. Rang Chậm Tỉ Mỉ',
+              body: 'Từng mẻ nhỏ được rang chậm bằng công nghệ lưu chuyển khí nóng (air-flow) nhằm giữ trọn vẹn những nốt hương hoa thanh tao và vị sương sớm đặc trưng của vùng thổ nhưỡng.',
             },
             {
-              alt: 'Packaging',
+              alt: 'Đóng Gói Chỉn Chu',
               src: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBTA30OBJ_4dfGpiSJGR5MbrAOaqLA3esSzJI_1doEfpjBaci-1p3-5ufEFiUnvDJSEp2pGVlQ-Jtp9ky-WNx0pP-pqyTqb-Im0IksoeRhPlBm_JZCB1nuuMv7OF8YarIqdhKKaoDQjZk06AiQhTW2MAMmvlTcKiq26dvRImkUkR4NyYsm0dvEUrmHusyAe4rfoRFScgRXrEQ3fM2nGEM3LiPgLZyDs9gIv1eqWewj2dWO85s_aIYRH4J3WHm-iqIM7UNhFAhFZuj0',
-              title: '03. Thoughtful Curation',
-              body: 'Each bag is hand-stamped and packaged in biodegradable materials, delivered with a brewing guide tailored for slow living.',
+              title: '03. Đóng Gói Chỉn Chu',
+              body: 'Mỗi túi cà phê đều được đóng dấu thủ công và đựng trong bao bì tự phân hủy sinh học, gửi kèm cẩm nang pha chế được thiết kế riêng dành cho lối sống chậm.',
             },
           ].map(({ alt, src, title, body }) => (
             <div key={title} className="group">
@@ -121,22 +119,22 @@ export default function StoryPage() {
       <section className="py-xl px-gutter bg-background">
         <div className="max-w-4xl mx-auto border border-accent/20 p-lg text-center">
           <span className="text-xs uppercase tracking-widest text-primary block mb-6">
-            Our Commitment
+            Cam Kết Của Chúng Tôi
           </span>
           <h2 className="text-4xl font-light text-foreground mb-8">
-            Purity over speed. <br className="hidden md:block" /> Craft over
-            commerce.
+            Sự thuần khiết hơn tốc độ. <br className="hidden md:block" /> Giá trị thủ công
+            hơn tính thương mại.
           </h2>
           <p className="text-base text-muted-foreground mb-lg italic">
-            &ldquo;We do not aim to be the biggest roastery in the world, only
-            the most intentional. Our promise is to maintain the transparency of
-            our supply chain and the serenity of our experience.&rdquo;
+            &ldquo;Chúng tôi không hướng tới việc trở thành nhà rang xay lớn nhất thế giới,
+            mà là nơi trọn vẹn nhất trong từng ý niệm. Lời hứa của chúng tôi là luôn duy trì
+            sự minh bạch của chuỗi cung ứng và sự bình yên trong từng trải nghiệm thưởng thức của bạn.&rdquo;
           </p>
           <div className="flex justify-center">
             <div className="h-16 w-px bg-accent/30" />
           </div>
           <p className="mt-8 text-xs uppercase tracking-wider text-muted-foreground">
-            Founders of Morning Mist Coffee
+            Những người sáng lập Todaywegrind
           </p>
         </div>
       </section>
