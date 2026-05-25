@@ -88,7 +88,7 @@ export function ChatWidget() {
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Hỏi về menu..."
+                placeholder="Hỏi về sản phẩm..."
                 className="flex-1 bg-surface-container-low text-sm rounded-full px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary border-none"
                 disabled={isLoading}
               />
