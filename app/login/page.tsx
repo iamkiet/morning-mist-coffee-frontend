@@ -30,7 +30,7 @@ export default function LoginPage() {
       router.replace('/mist-ops');
     } else {
       setTimeout(() => {
-        setError('This account does not have admin access.');
+        setError('Tài khoản này không có quyền truy cập quản trị viên.');
         logout();
       }, 0);
     }
@@ -50,7 +50,7 @@ export default function LoginPage() {
       await login(email, password);
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : 'Invalid email or password',
+        err instanceof Error ? err.message : 'Email hoặc mật khẩu không hợp lệ',
       );
     } finally {
       setIsLoading(false);
@@ -61,8 +61,8 @@ export default function LoginPage() {
     <main className="min-h-screen flex items-center justify-center px-4 py-12 bg-background">
       <div className="w-full max-w-[420px] bg-card border border-border p-8 sm:p-10 space-y-6">
         <div className="text-center">
-          <h1 className="text-2xl font-light text-foreground mb-2">Sign In</h1>
-          <p className="text-sm text-muted-foreground">Admin access required</p>
+          <h1 className="text-2xl font-light text-foreground mb-2">Đăng Nhập</h1>
+          <p className="text-sm text-muted-foreground">Yêu cầu quyền truy cập Quản trị</p>
         </div>
 
         {error && (
@@ -80,7 +80,7 @@ export default function LoginPage() {
               id="email"
               type="email"
               autoComplete="email"
-              placeholder="your@email.com"
+              placeholder="ten@email.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -90,7 +90,7 @@ export default function LoginPage() {
 
           <div className="space-y-2">
             <label htmlFor="password" className="block text-xs uppercase tracking-widest text-muted-foreground">
-              Password
+              Mật khẩu
             </label>
             <input
               id="password"
@@ -112,7 +112,7 @@ export default function LoginPage() {
               className="size-4 accent-foreground cursor-pointer"
             />
             <span className="text-xs text-muted-foreground">
-              Remember my email
+              Ghi nhớ email của tôi
             </span>
           </label>
 
@@ -121,13 +121,13 @@ export default function LoginPage() {
             disabled={isLoading}
             className="w-full px-4 py-3 bg-foreground text-background uppercase tracking-widest text-xs font-medium hover:opacity-90 disabled:opacity-50 transition-opacity"
           >
-            {isLoading ? 'Signing in...' : 'Sign In'}
+            {isLoading ? 'Đang đăng nhập...' : 'Đăng Nhập'}
           </button>
         </form>
 
         <div className="text-center text-xs text-muted-foreground">
           <Link href="/" className="hover:text-foreground transition-colors">
-            Back to store
+            Quay lại cửa hàng
           </Link>
         </div>
       </div>

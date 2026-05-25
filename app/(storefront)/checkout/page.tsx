@@ -24,12 +24,12 @@ import { createOrder } from '@/lib/api/orders';
 import { toast } from 'sonner';
 
 const checkoutSchema = z.object({
-  email: z.string().email('Please enter a valid email'),
-  firstName: z.string().min(1, 'First name is required'),
-  lastName: z.string().min(1, 'Last name is required'),
-  address: z.string().min(5, 'Please enter a valid address'),
-  city: z.string().min(1, 'City is required'),
-  postalCode: z.string().min(3, 'Postal code is required'),
+  email: z.string().email('Vui lòng nhập email hợp lệ'),
+  firstName: z.string().min(1, 'Họ và tên đệm là bắt buộc'),
+  lastName: z.string().min(1, 'Tên là bắt buộc'),
+  address: z.string().min(5, 'Vui lòng nhập địa chỉ nhận hàng chi tiết'),
+  city: z.string().min(1, 'Tỉnh / Thành phố là bắt buộc'),
+  postalCode: z.string().min(3, 'Mã bưu chính là bắt buộc'),
 });
 
 type CheckoutForm = z.infer<typeof checkoutSchema>;
@@ -66,12 +66,12 @@ export default function CheckoutPage() {
       }));
       await createOrder(_data.email, totalCents, orderItems);
       clearCart();
-      toast.success('Order placed!', {
-        description: "We've received your order and will process it shortly.",
+      toast.success('Đặt hàng thành công!', {
+        description: "Chúng tôi đã nhận được đơn hàng của bạn và đang tiến hành xử lý.",
       });
     } catch (err) {
       setSubmitError(
-        err instanceof Error ? err.message : 'Failed to place order. Please try again.',
+        err instanceof Error ? err.message : 'Đặt hàng thất bại. Vui lòng thử lại sau.',
       );
     } finally {
       setIsSubmitting(false);
@@ -86,14 +86,14 @@ export default function CheckoutPage() {
           <Card>
             <CardContent className="p-6 space-y-6">
               <h2 className="text-sm uppercase tracking-widest font-medium">
-                Order Summary
+                Tóm Tắt Đơn Hàng
               </h2>
 
               {itemCount === 0 ? (
                 <div className="flex flex-col items-center py-8 gap-3 text-center">
                   <ShoppingBag className="size-8 text-muted-foreground" />
                   <p className="text-sm text-muted-foreground">
-                    Your bag is empty.
+                    Giỏ hàng của bạn đang trống.
                   </p>
                   <Button
                     asChild
@@ -101,7 +101,7 @@ export default function CheckoutPage() {
                     size="sm"
                     className="uppercase tracking-widest text-xs rounded-none"
                   >
-                    <Link href="/shop">Browse Collection</Link>
+                    <Link href="/shop">Khám Phá Bộ Sưu Tập</Link>
                   </Button>
                 </div>
               ) : (
@@ -167,23 +167,22 @@ export default function CheckoutPage() {
                   <Separator />
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm text-muted-foreground">
-                      <span>Subtotal</span>
+                      <span>Tạm tính</span>
                       <span>${total.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between text-sm text-muted-foreground">
-                      <span>Shipping</span>
-                      <span className="text-primary italic">Complimentary</span>
+                      <span>Vận chuyển</span>
+                      <span className="text-primary italic">Miễn phí</span>
                     </div>
                     <div className="flex justify-between text-base font-medium pt-2 uppercase tracking-widest">
-                      <span>Total</span>
+                      <span>Tổng cộng</span>
                       <span>${total.toFixed(2)}</span>
                     </div>
                   </div>
                   <div className="bg-accent/20 p-4 rounded-lg flex items-start gap-3">
                     <Leaf className="size-5 text-primary shrink-0 mt-0.5" />
                     <p className="text-xs text-accent-foreground leading-relaxed uppercase tracking-tight">
-                      Your order will be shipped in our signature 100%
-                      compostable packaging.
+                      Đơn hàng của bạn sẽ được giao trong bao bì tự phân hủy sinh học 100% đặc trưng của chúng tôi.
                     </p>
                   </div>
                 </>
@@ -196,10 +195,10 @@ export default function CheckoutPage() {
         <div className="lg:col-span-7 order-last space-y-8">
           <div>
             <h1 className="text-3xl sm:text-4xl text-primary mb-2 font-light">
-              Checkout
+              Thanh Toán
             </h1>
             <p className="text-muted-foreground italic">
-              Refining your morning ritual with care.
+              Chăm chút tỉ mỉ cho nghi thức sáng lành của bạn.
             </p>
           </div>
 
@@ -211,7 +210,7 @@ export default function CheckoutPage() {
                     01
                   </span>
                   <h2 className="text-sm uppercase tracking-widest font-medium">
-                    Shipping Information
+                    Thông Tin Giao Nhận
                   </h2>
                 </div>
 
@@ -242,10 +241,10 @@ export default function CheckoutPage() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-xs uppercase tracking-wider text-muted-foreground">
-                          First Name
+                          Họ và tên đệm
                         </FormLabel>
                         <FormControl>
-                          <Input placeholder="Julian" {...field} />
+                          <Input placeholder="Tên họ đệm của bạn" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -258,10 +257,10 @@ export default function CheckoutPage() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-xs uppercase tracking-wider text-muted-foreground">
-                          Last Name
+                          Tên
                         </FormLabel>
                         <FormControl>
-                          <Input placeholder="Mist" {...field} />
+                          <Input placeholder="Tên của bạn" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -274,10 +273,10 @@ export default function CheckoutPage() {
                     render={({ field }) => (
                       <FormItem className="sm:col-span-2">
                         <FormLabel className="text-xs uppercase tracking-wider text-muted-foreground">
-                          Shipping Address
+                          Địa chỉ nhận hàng
                         </FormLabel>
                         <FormControl>
-                          <Input placeholder="128 Serenity Lane" {...field} />
+                          <Input placeholder="Số nhà, tên đường, phường/xã..." {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -290,10 +289,10 @@ export default function CheckoutPage() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-xs uppercase tracking-wider text-muted-foreground">
-                          City
+                          Tỉnh / Thành phố
                         </FormLabel>
                         <FormControl>
-                          <Input placeholder="Portland" {...field} />
+                          <Input placeholder="Tên Tỉnh hoặc Thành phố" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -306,10 +305,10 @@ export default function CheckoutPage() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-xs uppercase tracking-wider text-muted-foreground">
-                          Postal Code
+                          Mã bưu chính
                         </FormLabel>
                         <FormControl>
-                          <Input placeholder="97201" {...field} />
+                          <Input placeholder="Mã bưu điện" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -328,11 +327,11 @@ export default function CheckoutPage() {
                   className="w-full uppercase tracking-wider h-12"
                   size="lg"
                 >
-                  {isSubmitting ? 'Placing Order...' : 'Complete Purchase'}
+                  {isSubmitting ? 'Đang xử lý đặt hàng...' : 'Hoàn Tất Đặt Hàng'}
                 </Button>
                 <p className="text-center text-xs text-muted-foreground tracking-widest uppercase flex items-center justify-center gap-2">
                   <Lock className="size-3" />
-                  Secure SSL encrypted transaction
+                  Giao dịch an toàn mã hóa SSL
                 </p>
               </div>
             </form>

@@ -23,14 +23,38 @@ export interface ProductsPage {
   offset: number;
 }
 
+export interface Product {
+  id: string;
+  slug: string;
+  name: string;
+  origin: string;
+  price: number;
+  image: string;
+  notes: string[];
+  stockQuantity?: number;
+  badge?: string;
+  description?: string;
+}
+
 function transform(p: BackendProduct): Product {
   const slug = p.name.toLowerCase().replace(/\s+/g, '-');
   let origin = 'Morning Mist • Collection';
   let notes: string[] = [];
+  let description = '';
   if (p.description) {
     const lines = p.description.split('\n').filter((l) => l.trim());
-    if (lines.length > 0) origin = lines[0];
-    notes = lines.slice(1).filter((l) => l.trim().length > 0);
+    if (lines.length > 2) {
+      origin = lines[0];
+      notes = lines.slice(1, -1).filter((l) => l.trim().length > 0);
+      description = lines[lines.length - 1];
+    } else if (lines.length === 2) {
+      origin = lines[0];
+      notes = [lines[1]];
+      description = lines[1];
+    } else if (lines.length === 1) {
+      origin = 'Morning Mist • Collection';
+      description = lines[0];
+    }
   }
   return {
     id: p.id,
@@ -41,6 +65,7 @@ function transform(p: BackendProduct): Product {
     image: p.image ?? DEFAULT_PRODUCT_IMAGE,
     notes,
     stockQuantity: p.stockQuantity,
+    description: description,
   };
 }
 

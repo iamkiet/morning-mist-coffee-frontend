@@ -10,7 +10,7 @@ export default function StorefrontLayout({
   return (
     <>
       <div className="fixed top-0 left-0 right-0 z-[60] bg-accent text-accent-foreground text-center py-1 px-4 text-[10px] tracking-[0.2em] uppercase font-semibold">
-        ✦ DEMO PROJECT — ALL ORDERS &amp; DATA ARE SIMULATED ✦
+        ✦ DỰ ÁN THỬ NGHIỆM — TẤT CẢ ĐƠN HÀNG &amp; DỮ LIỆU ĐỀU LÀ MÔ PHỎNG ✦
       </div>
       <Nav />
       <div className="flex flex-col min-h-screen">

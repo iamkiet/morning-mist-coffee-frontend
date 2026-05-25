@@ -19,6 +19,7 @@ export interface Product {
   notes: string[];
   stockQuantity?: number;
   badge?: string;
+  description?: string;
 }
 
 interface ProductCardProps {

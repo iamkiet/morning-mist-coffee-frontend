@@ -68,10 +68,10 @@ export function AddToBag({ product }: { product: Product }) {
         {added ? (
           <>
             <Check className="size-4" />
-            Added to Bag
+            Đã Thêm Vào Giỏ
           </>
         ) : (
-          'Add to Bag'
+          'Thêm Vào Giỏ Hàng'
         )}
       </Button>
     </div>
