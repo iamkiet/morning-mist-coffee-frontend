@@ -55,6 +55,7 @@ function transform(p: BackendProduct): Product {
     notes,
     stockQuantity: p.stockQuantity,
     description: description,
+    productTypeId: p.productTypeId,
   };
 }
 
@@ -82,7 +83,9 @@ export interface UpdateProductPayload {
   name?: string;
   description?: string | null;
   priceCents?: number;
+  currency?: string;
   image?: string | null;
+  productTypeId?: string;
   stockQuantity?: number;
 }
 
@@ -96,4 +99,32 @@ export async function updateProduct(
   });
   if (!res.ok) throw new Error('Failed to update product');
   return transform(await res.json());
+}
+
+export interface CreateProductPayload {
+  name: string;
+  description: string | null;
+  priceCents: number;
+  currency?: string;
+  image: string | null;
+  productTypeId: string;
+  stockQuantity?: number;
+}
+
+export async function createProduct(
+  payload: CreateProductPayload,
+): Promise<Product> {
+  const res = await authFetch('/api/v1/products', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) throw new Error('Failed to create product');
+  return transform(await res.json());
+}
+
+export async function deleteProduct(id: string): Promise<void> {
+  const res = await authFetch(`/api/v1/products/${id}`, {
+    method: 'DELETE',
+  });
+  if (!res.ok) throw new Error('Failed to delete product');
 }

@@ -25,7 +25,8 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import { useProducts, useUpdateProduct } from '@/hooks/use-products';
+import { useProducts, useUpdateProduct, useCreateProduct, useDeleteProduct } from '@/hooks/use-products';
+import { useProductTypes } from '@/hooks/use-product-types';
 import type { Product } from '@/app/_components/ProductCard';
 
 const LIMIT = 10;
@@ -37,6 +38,7 @@ interface EditState {
   description: string;
   image: string;
   stock: string;
+  productTypeId: string;
 }
 
 function buildDescription(origin: string, notes: string[]): string {
@@ -51,6 +53,9 @@ function EditProductDialog({
   onClose: () => void;
 }) {
   const update = useUpdateProduct();
+  const { data: catData } = useProductTypes();
+  const categories = catData?.items ?? [];
+
   const [form, setForm] = useState<EditState>({
     id: product.id,
     name: product.name,
@@ -58,6 +63,7 @@ function EditProductDialog({
     description: buildDescription(product.origin, product.notes),
     image: product.image,
     stock: String(product.stockQuantity ?? 0),
+    productTypeId: product.productTypeId || '',
   });
 
   const field = (key: keyof EditState) => ({
@@ -80,6 +86,7 @@ function EditProductDialog({
           priceCents: Math.round(priceNum * 100),
           image: form.image.trim() || null,
           stockQuantity: stockNum,
+          productTypeId: form.productTypeId || undefined,
         },
       },
       { onSuccess: onClose },
@@ -95,6 +102,25 @@ function EditProductDialog({
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-4 py-2">
+          <div className="space-y-1.5">
+            <Label
+              htmlFor="ep-category"
+              className="text-xs uppercase tracking-wider text-muted-foreground"
+            >
+              Danh mục sản phẩm
+            </Label>
+            <select
+              id="ep-category"
+              className="w-full h-9 rounded-lg border border-input bg-background px-3 py-1 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+              value={form.productTypeId}
+              onChange={(e) => setForm((prev) => ({ ...prev, productTypeId: e.target.value }))}
+            >
+              <option value="" disabled>Chọn danh mục...</option>
+              {categories.map((c) => (
+                <option key={c.id} value={c.id}>{c.name}</option>
+              ))}
+            </select>
+          </div>
           <div className="space-y-1.5">
             <Label
               htmlFor="ep-name"
@@ -186,10 +212,188 @@ function EditProductDialog({
   );
 }
 
+interface CreateState {
+  name: string;
+  price: string;
+  description: string;
+  image: string;
+  stock: string;
+  productTypeId: string;
+}
+
+function CreateProductDialog({
+  onClose,
+}: {
+  onClose: () => void;
+}) {
+  const create = useCreateProduct();
+  const { data: catData } = useProductTypes();
+  const categories = catData?.items ?? [];
+  
+  const [form, setForm] = useState<CreateState>({
+    name: '',
+    price: '',
+    description: '',
+    image: '',
+    stock: '0',
+    productTypeId: '',
+  });
+
+  const field = (key: keyof CreateState) => ({
+    value: form[key],
+    onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+      setForm((prev) => ({ ...prev, [key]: e.target.value })),
+  });
+
+  function handleSave() {
+    const priceNum = parseFloat(form.price);
+    if (isNaN(priceNum) || priceNum < 0) return;
+    const stockNum = parseInt(form.stock, 10);
+    if (isNaN(stockNum) || stockNum < 0) return;
+    if (!form.productTypeId) return;
+
+    create.mutate(
+      {
+        name: form.name.trim(),
+        description: form.description.trim() || null,
+        priceCents: Math.round(priceNum * 100),
+        image: form.image.trim() || null,
+        productTypeId: form.productTypeId,
+        stockQuantity: stockNum,
+      },
+      { onSuccess: onClose },
+    );
+  }
+
+  return (
+    <Dialog open onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="sm:max-w-[28rem]">
+        <DialogHeader>
+          <DialogTitle className="text-sm uppercase tracking-widest font-medium">
+            Thêm sản phẩm mới
+          </DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4 py-2">
+          <div className="space-y-1.5">
+            <Label
+              htmlFor="cp-name"
+              className="text-xs uppercase tracking-wider text-muted-foreground"
+            >
+              Tên sản phẩm
+            </Label>
+            <Input id="cp-name" {...field('name')} placeholder="Tên sản phẩm..." />
+          </div>
+          <div className="space-y-1.5">
+            <Label
+              htmlFor="cp-category"
+              className="text-xs uppercase tracking-wider text-muted-foreground"
+            >
+              Danh mục sản phẩm
+            </Label>
+            <select
+              id="cp-category"
+              className="w-full h-9 rounded-lg border border-input bg-background px-3 py-1 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+              value={form.productTypeId}
+              onChange={(e) => setForm((prev) => ({ ...prev, productTypeId: e.target.value }))}
+            >
+              <option value="" disabled>Chọn danh mục...</option>
+              {categories.map((c) => (
+                <option key={c.id} value={c.id}>{c.name}</option>
+              ))}
+            </select>
+          </div>
+          <div className="space-y-1.5">
+            <Label
+              htmlFor="cp-price"
+              className="text-xs uppercase tracking-wider text-muted-foreground"
+            >
+              Giá bán (USD)
+            </Label>
+            <Input
+              id="cp-price"
+              type="number"
+              step="0.01"
+              min="0"
+              placeholder="0.00"
+              {...field('price')}
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label
+              htmlFor="cp-stock"
+              className="text-xs uppercase tracking-wider text-muted-foreground"
+            >
+              Số lượng tồn kho
+            </Label>
+            <Input
+              id="cp-stock"
+              type="number"
+              step="1"
+              min="0"
+              {...field('stock')}
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label
+              htmlFor="cp-desc"
+              className="text-xs uppercase tracking-wider text-muted-foreground"
+            >
+              Mô tả
+            </Label>
+            <textarea
+              id="cp-desc"
+              rows={3}
+              className="w-full rounded-lg border border-input bg-background px-2.5 py-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 resize-none"
+              placeholder="Mô tả sản phẩm, nguồn gốc và nốt hương..."
+              {...field('description')}
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label
+              htmlFor="cp-img"
+              className="text-xs uppercase tracking-wider text-muted-foreground"
+            >
+              Đường dẫn hình ảnh
+            </Label>
+            <Input id="cp-img" type="url" placeholder="https://..." {...field('image')} />
+          </div>
+          {create.isError && (
+            <p className="text-xs text-destructive">
+              Không thể thêm sản phẩm mới. Vui lòng thử lại.
+            </p>
+          )}
+        </div>
+        <DialogFooter>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onClose}
+            className="uppercase tracking-wider text-xs"
+          >
+            Hủy
+          </Button>
+          <Button
+            size="sm"
+            className="uppercase tracking-wider text-xs"
+            disabled={create.isPending || !form.productTypeId || !form.name}
+            onClick={handleSave}
+          >
+            {create.isPending ? 'Đang thêm…' : 'Thêm mới'}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 export default function AdminProductsPage() {
   const [page, setPage] = useState(1);
   const [editProduct, setEditProduct] = useState<Product | null>(null);
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [deleteProductConfirm, setDeleteProductConfirm] = useState<Product | null>(null);
+  
   const { data, isLoading, error } = useProducts(page, LIMIT);
+  const deleteMut = useDeleteProduct();
 
   const items = data?.items ?? [];
   const total = data?.total ?? 0;
@@ -276,6 +480,7 @@ export default function AdminProductsPage() {
             variant="ghost"
             size="icon"
             className="size-8 hover:text-destructive"
+            onClick={() => setDeleteProductConfirm(r)}
           >
             <Trash2 className="size-4" />
           </Button>
@@ -299,7 +504,7 @@ export default function AdminProductsPage() {
               <Download className="size-4" />
               Xuất tệp CSV
             </Button>
-            <Button size="sm" className="uppercase tracking-wider">
+            <Button size="sm" className="uppercase tracking-wider" onClick={() => setCreateDialogOpen(true)}>
               <Plus className="size-4" />
               Thêm sản phẩm
             </Button>
@@ -379,6 +584,50 @@ export default function AdminProductsPage() {
           product={editProduct}
           onClose={() => setEditProduct(null)}
         />
+      )}
+
+      {createDialogOpen && (
+        <CreateProductDialog
+          onClose={() => setCreateDialogOpen(false)}
+        />
+      )}
+
+      {deleteProductConfirm && (
+        <Dialog open onOpenChange={(open) => !open && setDeleteProductConfirm(null)}>
+          <DialogContent className="sm:max-w-[24rem]">
+            <DialogHeader>
+              <DialogTitle className="text-sm uppercase tracking-widest font-medium">
+                Xác nhận Xóa
+              </DialogTitle>
+            </DialogHeader>
+            <div className="py-2 text-sm text-muted-foreground">
+              Bạn có chắc chắn muốn xóa sản phẩm <strong>{deleteProductConfirm.name}</strong> không? Hành động này không thể hoàn tác.
+            </div>
+            <DialogFooter>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setDeleteProductConfirm(null)}
+                className="uppercase tracking-wider text-xs"
+              >
+                Hủy
+              </Button>
+              <Button
+                variant="destructive"
+                size="sm"
+                className="uppercase tracking-wider text-xs"
+                disabled={deleteMut.isPending}
+                onClick={() => {
+                  deleteMut.mutate(deleteProductConfirm.id, {
+                    onSuccess: () => setDeleteProductConfirm(null),
+                  });
+                }}
+              >
+                {deleteMut.isPending ? 'Đang xóa...' : 'Xóa'}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       )}
     </div>
   );

@@ -20,6 +20,7 @@ export interface Product {
   stockQuantity?: number;
   badge?: string;
   description?: string;
+  productTypeId?: string;
 }
 
 interface ProductCardProps {
