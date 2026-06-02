@@ -59,14 +59,14 @@ export default function LoginPage() {
 
   return (
     <main className="min-h-screen flex items-center justify-center px-4 py-12 bg-background">
-      <div className="w-full max-w-[420px] bg-card border border-border p-8 sm:p-10 space-y-6">
+      <div className="w-full max-w-[420px] bg-card border border-border rounded-2xl p-8 sm:p-10 space-y-6">
         <div className="text-center">
           <h1 className="text-2xl font-light text-foreground mb-2">Đăng Nhập</h1>
           <p className="text-sm text-muted-foreground">Yêu cầu quyền truy cập Quản trị</p>
         </div>
 
         {error && (
-          <div className="p-3 bg-muted border border-border text-destructive text-sm">
+          <div className="p-3 bg-muted border border-border rounded-lg text-destructive text-sm">
             {error}
           </div>
         )}
@@ -84,7 +84,7 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-4 py-3 border border-border bg-background text-foreground placeholder-muted-foreground text-sm"
+              className="w-full px-4 py-3 border border-border rounded-lg bg-background text-foreground placeholder-muted-foreground text-sm"
             />
           </div>
 
@@ -100,7 +100,7 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full px-4 py-3 border border-border bg-background text-foreground placeholder-muted-foreground text-sm"
+              className="w-full px-4 py-3 border border-border rounded-lg bg-background text-foreground placeholder-muted-foreground text-sm"
             />
           </div>
 
@@ -119,7 +119,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full px-4 py-3 bg-foreground text-background uppercase tracking-widest text-xs font-medium hover:opacity-90 disabled:opacity-50 transition-opacity"
+            className="w-full px-4 py-3 bg-foreground text-background uppercase tracking-widest text-xs font-medium rounded-lg hover:opacity-90 disabled:opacity-50 transition-opacity"
           >
             {isLoading ? 'Đang đăng nhập...' : 'Đăng Nhập'}
           </button>

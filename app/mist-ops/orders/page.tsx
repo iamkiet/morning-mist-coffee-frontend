@@ -281,7 +281,7 @@ export default function AdminOrdersPage() {
                   <Button
                     variant="outline"
                     size="icon"
-                    className="size-8 rounded-none"
+                    className="size-8 rounded-lg"
                     disabled={page === 1}
                     onClick={() => setPage((p) => p - 1)}
                   >
@@ -293,7 +293,7 @@ export default function AdminOrdersPage() {
                   <Button
                     variant="outline"
                     size="icon"
-                    className="size-8 rounded-none"
+                    className="size-8 rounded-lg"
                     disabled={page >= totalPages}
                     onClick={() => setPage((p) => p + 1)}
                   >

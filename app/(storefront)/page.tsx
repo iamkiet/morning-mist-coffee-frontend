@@ -32,7 +32,7 @@ export default function HomePage() {
           <Button
             asChild
             size="lg"
-            className="px-6 sm:px-10 py-3 sm:py-4 text-xs sm:text-sm uppercase tracking-widest rounded-none"
+            className="px-6 sm:px-10 py-3 sm:py-4 text-xs sm:text-sm uppercase tracking-widest rounded-lg"
           >
             <Link href="/shop">Mua Ngay Bộ Sưu Tập</Link>
           </Button>
@@ -175,9 +175,9 @@ export default function HomePage() {
             ].map(({ Icon, title, body }) => (
               <div
                 key={title}
-                className="p-6 sm:p-8 md:p-12 bg-card border border-border/40 flex flex-col items-start text-left transition-all duration-500 hover:shadow-sm rounded-none"
+                className="p-6 sm:p-8 md:p-12 bg-card border border-border/40 flex flex-col items-start text-left transition-all duration-500 hover:shadow-sm rounded-2xl"
               >
-                <div className="w-12 h-12 bg-accent flex items-center justify-center mb-8 sm:mb-10 shrink-0 rounded-none">
+                <div className="w-12 h-12 bg-accent flex items-center justify-center mb-8 sm:mb-10 shrink-0 rounded-lg">
                   <Icon className="size-6 text-white" />
                 </div>
                 <h4 className="text-base sm:text-lg md:text-xl uppercase tracking-[0.15em] text-foreground mb-4 sm:mb-6 font-normal">

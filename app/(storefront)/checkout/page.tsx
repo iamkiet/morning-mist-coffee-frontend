@@ -79,7 +79,7 @@ export default function CheckoutPage() {
   };
 
   return (
-    <main className="max-w-7xl mx-auto pt-32 sm:pt-40 pb-12 px-4 sm:px-6 md:px-gutter min-h-screen">
+    <main className="max-w-7xl mx-auto pt-36 pb-12 px-4 sm:px-6 md:px-gutter min-h-screen">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Order Summary - left on desktop, top on mobile */}
         <div className="lg:col-span-5 order-first">
@@ -99,7 +99,7 @@ export default function CheckoutPage() {
                     asChild
                     variant="outline"
                     size="sm"
-                    className="uppercase tracking-widest text-xs rounded-none"
+                    className="uppercase tracking-widest text-xs rounded-lg"
                   >
                     <Link href="/shop">Khám Phá Bộ Sưu Tập</Link>
                   </Button>
@@ -130,7 +130,7 @@ export default function CheckoutPage() {
                               onClick={() =>
                                 updateQuantity(item.slug, item.quantity - 1)
                               }
-                              className="size-5 flex items-center justify-center border border-border rounded text-muted-foreground hover:text-foreground transition-colors"
+                              className="size-5 flex items-center justify-center border border-border rounded-md text-muted-foreground hover:text-foreground transition-colors"
                               aria-label="Decrease quantity"
                             >
                               <Minus className="size-3" />
@@ -142,7 +142,7 @@ export default function CheckoutPage() {
                               onClick={() =>
                                 updateQuantity(item.slug, item.quantity + 1)
                               }
-                              className="size-5 flex items-center justify-center border border-border rounded text-muted-foreground hover:text-foreground transition-colors"
+                              className="size-5 flex items-center justify-center border border-border rounded-md text-muted-foreground hover:text-foreground transition-colors"
                               aria-label="Increase quantity"
                             >
                               <Plus className="size-3" />

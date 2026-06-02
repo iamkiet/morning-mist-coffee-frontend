@@ -74,9 +74,9 @@ export function ChatWidget() {
               {isLoading && (
                 <div className="flex justify-start">
                   <div className="bg-surface-variant text-on-surface max-w-[85%] rounded-2xl rounded-tl-sm px-4 py-2 text-sm flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-current animate-bounce" />
-                    <span className="w-1.5 h-1.5 rounded-full bg-current animate-bounce" style={{ animationDelay: '0.15s' }} />
-                    <span className="w-1.5 h-1.5 rounded-full bg-current animate-bounce" style={{ animationDelay: '0.3s' }} />
+                    <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" style={{ animationDelay: '0.15s' }} />
+                    <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" style={{ animationDelay: '0.3s' }} />
                   </div>
                 </div>
               )}

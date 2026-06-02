@@ -57,7 +57,7 @@ export function ShopContent() {
           <Button
             variant="outline"
             size="sm"
-            className="rounded-none gap-2 text-xs uppercase tracking-wider"
+            className="rounded-lg gap-2 text-xs uppercase tracking-wider"
           >
             Sắp xếp
             <ArrowUpDown className="size-3.5" />
@@ -88,7 +88,7 @@ export function ShopContent() {
           <Button
             variant="outline"
             size="icon"
-            className="rounded-none size-9"
+            className="rounded-lg size-9"
             asChild
             disabled={!prevPage}
           >
@@ -102,7 +102,7 @@ export function ShopContent() {
           <Button
             variant="outline"
             size="icon"
-            className="rounded-none size-9"
+            className="rounded-lg size-9"
             asChild
             disabled={!nextPage}
           >

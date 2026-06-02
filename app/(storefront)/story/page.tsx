@@ -2,7 +2,7 @@ import Image from 'next/image';
 
 export default function StoryPage() {
   return (
-    <main className="pt-24 bg-background">
+    <main className="pt-36 bg-background">
       {/* Hero Section */}
       <section className="relative h-[870px] w-full overflow-hidden flex items-center px-12 justify-center">
         <div className="absolute inset-0 z-0 scale-105">
@@ -53,7 +53,7 @@ export default function StoryPage() {
               diễn ra trong sự tĩnh lặng của làn sương sớm vùng cao.
             </p>
           </div>
-          <div className="md:col-span-6 relative aspect-[4/5] bg-muted overflow-hidden">
+          <div className="md:col-span-6 relative aspect-[4/5] bg-muted overflow-hidden rounded-2xl">
             <Image
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWsTLsdoTDI_GDXjxR54VXkq5h_RompGiymV52_9aRS8Okmf1tqotSJET0IjRNFd3zN390f5hnqkjvFld1ZS6kitoJTxBppidk5_Y0kxkEtfce063cgbps1qSCIB856f8C_s9XisG2Z-n_IKZRyWl08M_RWPyZVk7XkCpsNFtN5Idk3aABLDHb224oGkSq0-UQxJycL7xBnOIyLNKy79h8yDijxRdVBCoFaG6naZ3WfsYUnSe_4ds8NqCMglLDeIz3s9F6E_A8kMk"
               alt="Khoảnh khắc cà phê tĩnh lặng"
@@ -97,7 +97,7 @@ export default function StoryPage() {
             },
           ].map(({ alt, src, title, body }) => (
             <div key={title} className="group">
-              <div className="relative aspect-square bg-muted overflow-hidden mb-6">
+              <div className="relative aspect-square bg-muted overflow-hidden rounded-2xl mb-6">
                 <Image
                   src={src}
                   alt={alt}

@@ -35,7 +35,7 @@ const filters = ['Tất cả', 'Thổ Nhưỡng', 'Pha Chế', 'Rang Xay'];
 
 export default function JournalPage() {
   return (
-    <main className="pt-16 sm:pt-24 bg-background">
+    <main className="pt-36 bg-background">
       {/* Hero */}
       <section className="relative h-[600px] sm:h-[819px] w-full overflow-hidden flex items-center px-4 sm:px-8 md:px-12 max-w-[1920px] mx-auto">
         <div className="absolute inset-0 z-0">
@@ -49,7 +49,7 @@ export default function JournalPage() {
           />
           <div className="absolute inset-0 bg-foreground/10" />
         </div>
-        <div className="relative z-10 max-w-2xl bg-white/40 backdrop-blur-md p-6 sm:p-12 shadow-[0_40px_100px_-20px_rgba(169,183,166,0.15)]">
+        <div className="relative z-10 max-w-2xl bg-white/40 backdrop-blur-md p-6 sm:p-12 rounded-2xl shadow-[0_40px_100px_-20px_rgba(169,183,166,0.15)]">
           <span className="text-xs text-primary mb-4 block uppercase tracking-widest font-medium">
             Câu Chuyện Nổi Bật
           </span>
@@ -100,7 +100,7 @@ export default function JournalPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 md:gap-x-12 gap-y-16 md:gap-y-24">
           {articles.map((a) => (
             <article key={a.title} className="group cursor-pointer">
-              <div className="relative aspect-[4/5] mb-6 sm:mb-8 overflow-hidden bg-muted">
+              <div className="relative aspect-[4/5] mb-6 sm:mb-8 overflow-hidden bg-muted rounded-2xl">
                 <Image
                   src={a.img}
                   alt={a.title}
@@ -149,7 +149,7 @@ export default function JournalPage() {
           <div className="flex-1 w-full">
             <form className="relative">
               <Input
-                className="w-full bg-transparent border-0 border-b border-border rounded-none pl-0 pr-12 py-4 text-sm tracking-widest uppercase focus-visible:ring-0 focus-visible:border-primary placeholder:text-muted-foreground/50"
+                className="w-full bg-transparent border-0 border-b border-border rounded-lg pl-0 pr-12 py-4 text-sm tracking-widest uppercase focus-visible:ring-0 focus-visible:border-primary placeholder:text-muted-foreground/50"
                 placeholder="địa chỉ email của bạn"
                 type="email"
               />
