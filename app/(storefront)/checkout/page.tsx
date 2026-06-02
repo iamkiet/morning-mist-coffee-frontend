@@ -130,7 +130,7 @@ export default function CheckoutPage() {
                               onClick={() =>
                                 updateQuantity(item.slug, item.quantity - 1)
                               }
-                              className="size-5 flex items-center justify-center border border-border rounded-md text-muted-foreground hover:text-foreground transition-colors"
+                              className="size-5 flex items-center justify-center border border-border rounded-md text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                               aria-label="Decrease quantity"
                             >
                               <Minus className="size-3" />
@@ -142,7 +142,7 @@ export default function CheckoutPage() {
                               onClick={() =>
                                 updateQuantity(item.slug, item.quantity + 1)
                               }
-                              className="size-5 flex items-center justify-center border border-border rounded-md text-muted-foreground hover:text-foreground transition-colors"
+                              className="size-5 flex items-center justify-center border border-border rounded-md text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                               aria-label="Increase quantity"
                             >
                               <Plus className="size-3" />
@@ -155,7 +155,7 @@ export default function CheckoutPage() {
                           </span>
                           <button
                             onClick={() => removeItem(item.slug)}
-                            className="text-muted-foreground hover:text-foreground transition-colors"
+                            className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                             aria-label={`Remove ${item.name}`}
                           >
                             <Trash2 className="size-3.5" />

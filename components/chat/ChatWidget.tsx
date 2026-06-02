@@ -32,7 +32,7 @@ export function ChatWidget() {
               </div>
               <button 
                 onClick={() => setIsOpen(false)}
-                className="p-1 hover:bg-white/10 rounded-full transition-colors"
+                className="p-1 hover:bg-white/10 rounded-full transition-colors cursor-pointer"
               >
                 <X size={18} />
               </button>
@@ -95,7 +95,7 @@ export function ChatWidget() {
               <button
                 type="submit"
                 disabled={!input.trim() || isLoading}
-                className="p-2 rounded-full bg-primary text-on-primary disabled:opacity-50 hover:bg-opacity-90 transition-opacity"
+                className="p-2 rounded-full bg-primary text-on-primary disabled:opacity-50 disabled:cursor-not-allowed hover:bg-opacity-90 transition-opacity cursor-pointer"
               >
                 <Send size={16} />
               </button>
@@ -109,7 +109,7 @@ export function ChatWidget() {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="w-14 h-14 rounded-full bg-primary text-on-primary shadow-lg flex items-center justify-center float-right"
+        className="w-14 h-14 rounded-full bg-primary text-on-primary shadow-lg flex items-center justify-center float-right cursor-pointer"
         style={{ 
           boxShadow: '0 10px 25px rgba(85, 98, 84, 0.2)'
         }}
