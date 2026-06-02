@@ -9,7 +9,7 @@ const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
 
 export const metadata: Metadata = {
   title: 'Todaywegrind Coffee',
-  description: 'Specialty coffee, slowly served.',
+  description: 'Cà phê đặc sản, thưởng thức chậm rãi.',
 };
 
 export default function RootLayout({
@@ -19,7 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="vi"
       className={cn('h-full antialiased font-sans', geist.variable)}
     >
       <body className="min-h-full flex flex-col" suppressHydrationWarning>

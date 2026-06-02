@@ -27,7 +27,7 @@ export function ChatWidget() {
             {/* Header */}
             <div className="bg-primary px-4 py-3 flex justify-between items-center text-on-primary">
               <div>
-                <h3 className="font-medium text-sm">Morning Mist Assistant</h3>
+                <h3 className="font-medium text-sm">Trợ lý Morning Mist</h3>
                 <p className="text-xs opacity-80">Trực tuyến</p>
               </div>
               <button 

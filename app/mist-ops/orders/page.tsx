@@ -220,7 +220,7 @@ export default function AdminOrdersPage() {
                 disabled={updateStatus.isPending}
                 onClick={() => updateStatus.mutate({ id: r.id, status: next })}
               >
-                Giao tiếp: {STATUS_VIETNAMESE[next]}
+                Chuyển sang: {STATUS_VIETNAMESE[next]}
               </Button>
             )}
             <Button
