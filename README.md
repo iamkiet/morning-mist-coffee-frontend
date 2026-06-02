@@ -16,7 +16,7 @@ Specialty coffee, slowly served. An editorial storefront and admin panel built w
 ### 1. Install dependencies
 
 ```bash
-pnpm install
+npm install
 ```
 
 ### 2. Configure environment
@@ -32,7 +32,7 @@ cp .env.example .env.local
 ### 3. Run the dev server
 
 ```bash
-pnpm dev
+npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
@@ -40,10 +40,10 @@ Open [http://localhost:3000](http://localhost:3000).
 ## Scripts
 
 ```bash
-pnpm dev          # Start dev server
-pnpm build        # Production build
-pnpm start        # Start production server
-pnpm lint         # Run ESLint
+npm run dev       # Start dev server
+npm run build     # Production build
+npm start         # Start production server
+npm run lint      # Run ESLint
 npx tsc --noEmit  # Type-check
 ```
 

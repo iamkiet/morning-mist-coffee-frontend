@@ -24,13 +24,13 @@ const links = [
   { href: '/track-order', label: 'Theo dõi đơn hàng' },
 ];
 
-export function Nav() {
+export function Nav({ className }: { className?: string } = {}) {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const closeMenu = () => setIsOpen(false);
 
   return (
-    <nav className="fixed top-[24px] w-full z-50 bg-white/70 border-b border-border/20 backdrop-blur-xl">
+    <nav className={`w-full bg-white/70 border-b border-border/20 backdrop-blur-xl ${className ?? ''}`}>
       <div className="flex justify-between items-center px-4 sm:px-6 md:px-12 py-6 max-w-[1920px] mx-auto">
         <Link
           href="/"

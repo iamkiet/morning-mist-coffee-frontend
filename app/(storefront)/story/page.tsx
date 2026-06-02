@@ -4,7 +4,7 @@ export default function StoryPage() {
   return (
     <main className="pt-36 bg-background">
       {/* Hero Section */}
-      <section className="relative h-[870px] w-full overflow-hidden flex items-center px-12 justify-center">
+      <section className="relative h-[600px] sm:h-[750px] md:h-[870px] w-full overflow-hidden flex items-center px-4 sm:px-8 md:px-12 justify-center">
         <div className="absolute inset-0 z-0 scale-105">
           <Image
             src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8QEDeawhSGXwMhz1q7-gtPaK8KLK600UJi2vnA61OerMa6u953F1HjXxWZwbL5f2FU-ggKmHRCYNoio0m0JL5NVNnnkRF207BcSfUWaU4c2rulvMAoZHYJFgACmH4UvBrWW0fM4Z2sB0Ts1FG_uRmA5usQDYSlnH4-6ZKi-JP5snoOpYnPhIiqpfbipwRZU64DQqy4ZN5LLSnrnZ04C2QbkL27sOaSfIlO2mo4dM_2vQU3wKMU55o19cu67BnmiTCqhqsffKmpj0"
@@ -20,7 +20,7 @@ export default function StoryPage() {
           <span className="text-xs uppercase tracking-[0.3em] text-primary mb-6 block">
             Khởi Nguồn
           </span>
-          <h1 className="text-4xl font-light text-foreground mb-8">
+          <h1 className="text-3xl sm:text-4xl font-light text-foreground mb-6 sm:mb-8">
             Nơi đất trời thở nhẹ <br className="hidden md:block" /> và thời gian
             trôi chậm lại.
           </h1>
@@ -117,7 +117,7 @@ export default function StoryPage() {
 
       {/* Commitment Section */}
       <section className="py-xl px-gutter bg-background">
-        <div className="max-w-4xl mx-auto border border-accent/20 p-lg text-center">
+        <div className="max-w-4xl mx-auto border border-accent/20 p-6 sm:p-lg text-center">
           <span className="text-xs uppercase tracking-widest text-primary block mb-6">
             Cam Kết Của Chúng Tôi
           </span>

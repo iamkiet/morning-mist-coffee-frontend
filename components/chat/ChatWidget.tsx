@@ -11,7 +11,7 @@ export function ChatWidget() {
   const { messages, input, setInput, sendMessage, isLoading } = useChat();
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
+    <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 flex flex-col items-end">
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -19,7 +19,7 @@ export function ChatWidget() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.3, ease: 'easeOut' }}
-            className="mb-4 w-80 sm:w-96 rounded-2xl overflow-hidden shadow-2xl border border-surface-container-highest bg-surface-container-lowest"
+            className="mb-4 w-[calc(100vw-2rem)] sm:w-96 rounded-2xl overflow-hidden shadow-2xl border border-border bg-card"
             style={{ 
               boxShadow: '0 20px 40px rgba(85, 98, 84, 0.08)'
             }}
@@ -49,7 +49,7 @@ export function ChatWidget() {
                     className={`max-w-[85%] rounded-2xl px-4 py-2 text-sm ${
                       msg.role === 'user' 
                         ? 'bg-primary text-on-primary rounded-tr-sm' 
-                        : 'bg-surface-variant text-on-surface rounded-tl-sm'
+                        : 'bg-muted text-foreground rounded-tl-sm'
                     }`}
                   >
                     {msg.role === 'user' ? (
@@ -73,7 +73,7 @@ export function ChatWidget() {
               ))}
               {isLoading && (
                 <div className="flex justify-start">
-                  <div className="bg-surface-variant text-on-surface max-w-[85%] rounded-2xl rounded-tl-sm px-4 py-2 text-sm flex items-center gap-1">
+                  <div className="bg-muted text-foreground max-w-[85%] rounded-2xl rounded-tl-sm px-4 py-2 text-sm flex items-center gap-1">
                     <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
                     <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" style={{ animationDelay: '0.15s' }} />
                     <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" style={{ animationDelay: '0.3s' }} />
@@ -83,19 +83,19 @@ export function ChatWidget() {
             </div>
 
             {/* Input Area */}
-            <form onSubmit={sendMessage} className="p-3 bg-surface-container-lowest border-t border-surface-container-highest flex gap-2">
+            <form onSubmit={sendMessage} className="p-3 bg-card border-t border-border flex gap-2">
               <input
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Hỏi về sản phẩm..."
-                className="flex-1 bg-surface-container-low text-sm rounded-full px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary border-none"
+                className="flex-1 bg-muted text-sm rounded-full px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary border-none"
                 disabled={isLoading}
               />
               <button
                 type="submit"
                 disabled={!input.trim() || isLoading}
-                className="size-8 shrink-0 flex items-center justify-center rounded-full bg-primary text-on-primary transition-all duration-300 hover:scale-105 active:scale-95 disabled:bg-surface-variant disabled:text-on-surface-variant/30 disabled:scale-100 disabled:cursor-not-allowed cursor-pointer shadow-sm hover:shadow"
+                className="size-8 shrink-0 flex items-center justify-center rounded-full bg-primary text-on-primary transition-all duration-300 hover:scale-105 active:scale-95 disabled:bg-muted disabled:text-muted-foreground/30 disabled:scale-100 disabled:cursor-not-allowed cursor-pointer shadow-sm hover:shadow"
               >
                 <Send size={14} className="translate-x-[-1px] translate-y-[0.5px]" />
               </button>
@@ -109,7 +109,7 @@ export function ChatWidget() {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="w-14 h-14 rounded-full bg-primary text-on-primary shadow-lg flex items-center justify-center float-right cursor-pointer"
+        className="w-14 h-14 rounded-full bg-primary text-on-primary shadow-lg flex items-center justify-center cursor-pointer shrink-0"
         style={{ 
           boxShadow: '0 10px 25px rgba(85, 98, 84, 0.2)'
         }}

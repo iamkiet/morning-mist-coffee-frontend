@@ -5,15 +5,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-pnpm dev             # dev server on :8196
-pnpm build && pnpm start
-pnpm lint            # ESLint, no --fix
+npm run dev          # dev server on :8196
+npm run build && npm start
+npm run lint         # ESLint, no --fix
 npx tsc --noEmit     # type-check
 ```
 
 ## Tech Stack
 
-Next.js 16.2.4 · React 19 · TypeScript 5 (strict) · Tailwind CSS 4 · shadcn/ui (radix-nova) · TanStack Query v5 · react-hook-form + zod · framer-motion · lucide-react · pnpm
+Next.js 16.2.4 · React 19 · TypeScript 5 (strict) · Tailwind CSS 4 · shadcn/ui (radix-nova) · TanStack Query v5 · react-hook-form + zod · framer-motion · lucide-react · npm
 
 ## Project Structure
 
@@ -61,7 +61,7 @@ hooks/
 
 - Shared: `app/_components/` — Nav, Footer, Container, ProductCard, Chip
 - Admin: `app/mist-ops/_components/` — AdminSidebar, Badge, DataTable, PageHeader, StatCard
-- shadcn: `@/components/ui/*` — add with `pnpm dlx shadcn add <name>`
+- shadcn: `@/components/ui/*` — add with `npx shadcn add <name>`
 
 **Deleted (do not recreate):** Button.tsx · SectionHeading.tsx · AdminTopbar.tsx
 
