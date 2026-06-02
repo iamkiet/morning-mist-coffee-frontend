@@ -1,5 +1,4 @@
 import { type Product } from '@/app/_components/ProductCard';
-import { API_URL } from '@/lib/config';
 import { DEFAULT_PRODUCT_IMAGE } from '@/lib/product-images';
 import { authFetch } from './client';
 
@@ -63,8 +62,7 @@ export async function fetchProducts(
   limit = 8,
   offset = 0,
 ): Promise<ProductsPage> {
-  const url = `${API_URL}/api/v1/products?limit=${limit}&offset=${offset}`;
-  const res = await fetch(url);
+  const res = await authFetch(`/api/v1/products?limit=${limit}&offset=${offset}`);
   if (!res.ok) throw new Error('Failed to fetch products');
   const data = await res.json();
   return {
