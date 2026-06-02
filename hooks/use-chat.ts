@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { authFetch } from '@/lib/api/client';
 
 export type Message = {
   id: string;
@@ -25,8 +26,7 @@ export function useChat() {
     setIsLoading(true);
 
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
-      const response = await fetch(`${baseUrl}/api/v1/chat`, {
+      const response = await authFetch('/api/v1/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
