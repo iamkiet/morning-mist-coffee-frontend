@@ -95,7 +95,7 @@ export function ChatWidget() {
               <button
                 type="submit"
                 disabled={!input.trim() || isLoading}
-                className="p-2 rounded-full bg-primary text-on-primary disabled:opacity-50 disabled:cursor-not-allowed hover:bg-opacity-90 transition-opacity cursor-pointer"
+                className="size-8 shrink-0 flex items-center justify-center rounded-full bg-primary text-on-primary disabled:opacity-50 disabled:cursor-not-allowed hover:bg-opacity-90 transition-opacity cursor-pointer"
               >
                 <Send size={16} />
               </button>
