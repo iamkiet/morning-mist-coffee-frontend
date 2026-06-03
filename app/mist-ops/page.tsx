@@ -15,13 +15,13 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
 const bars = [
-  { day: 'Thứ 2', h: 40 },
-  { day: 'Thứ 3', h: 65 },
-  { day: 'Thứ 4', h: 90, active: true },
-  { day: 'Thứ 5', h: 55 },
-  { day: 'Thứ 6', h: 75 },
-  { day: 'Thứ 7', h: 45 },
-  { day: 'Chủ Nhật', h: 85 },
+  { day: 'T2', h: 40 },
+  { day: 'T3', h: 65 },
+  { day: 'T4', h: 90, active: true },
+  { day: 'T5', h: 55 },
+  { day: 'T6', h: 75 },
+  { day: 'T7', h: 45 },
+  { day: 'CN', h: 85 },
 ];
 
 type ActivityColor = 'primary' | 'secondary' | 'tertiary' | 'neutral';

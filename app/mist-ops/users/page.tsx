@@ -200,7 +200,6 @@ export default function AdminUsersPage() {
       key: 'actions',
       header: 'Thao tác',
       align: 'right',
-      hideOnMobile: true,
       render: (r) => (
         <div className="flex justify-end gap-1">
           <Button

@@ -57,7 +57,6 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             </SheetTrigger>
             <SheetContent
               side="left"
-              showCloseButton={false}
               className="!w-72 !max-w-72 p-0 gap-0"
             >
               <SheetTitle className="sr-only">Admin Navigation</SheetTitle>

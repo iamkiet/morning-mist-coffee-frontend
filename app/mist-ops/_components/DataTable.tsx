@@ -72,25 +72,34 @@ export function DataTable<T extends { id: string | number }>({
       <div className="lg:hidden space-y-4">
         {rows.map((row) => {
           const visibleColumns = columns.filter((c) => !c.hideOnMobile);
-          const [primaryColumn, ...restColumns] = visibleColumns;
+          const actionsColumn = visibleColumns.find((c) => c.key === 'actions');
+          const dataColumns = visibleColumns.filter((c) => c.key !== 'actions');
+          const [primaryColumn, ...restColumns] = dataColumns;
           return (
             <Card key={row.id}>
               <CardContent className="p-4 space-y-4">
-                {primaryColumn && (
-                  <div className="pb-4 border-b border-border/40">
-                    {primaryColumn.render(row)}
-                  </div>
-                )}
+                <div className="pb-4 border-b border-border/40">
+                  {primaryColumn && (
+                    <div className="min-w-0">
+                      {primaryColumn.render(row)}
+                    </div>
+                  )}
+                </div>
                 {restColumns.length > 0 && (
                   <div className="grid grid-cols-2 gap-4">
                     {restColumns.map((c) => (
-                      <div key={c.key} className="flex flex-col gap-1">
+                      <div key={c.key} className="flex flex-col gap-1 min-w-0">
                         <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">
                           {c.header}
                         </span>
                         <div className="text-sm">{c.render(row)}</div>
                       </div>
                     ))}
+                  </div>
+                )}
+                {actionsColumn && (
+                  <div className="pt-4 border-t border-border/40 flex justify-end items-center">
+                    {actionsColumn.render(row)}
                   </div>
                 )}
               </CardContent>

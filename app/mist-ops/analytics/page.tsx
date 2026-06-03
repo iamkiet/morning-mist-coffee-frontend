@@ -73,7 +73,7 @@ export default function AdminAnalyticsPage() {
         }
       />
 
-      <section className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <StatCard
           label="Doanh thu thuần"
           value="$24,500.00"
@@ -128,9 +128,12 @@ export default function AdminAnalyticsPage() {
               fill="url(#revGrad)"
             />
           </svg>
-          <div className="absolute bottom-0 left-0 right-0 flex justify-between text-[10px] text-xs uppercase tracking-wider text-muted-foreground">
+          <div className="absolute bottom-0 left-0 right-0 flex justify-between text-[10px] uppercase tracking-wider text-muted-foreground">
             {Array.from({ length: 10 }, (_, i) => (
-              <span key={i}>Tuần {i + 1}</span>
+              <span key={i}>
+                <span className="inline sm:hidden">T{i + 1}</span>
+                <span className="hidden sm:inline">Tuần {i + 1}</span>
+              </span>
             ))}
           </div>
         </div>

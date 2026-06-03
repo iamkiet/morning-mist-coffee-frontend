@@ -1,14 +1,22 @@
 'use client';
 
 import { useState, ReactNode } from 'react';
+import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageCircle, X, Send } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { useChat } from '../../hooks/use-chat';
 
 export function ChatWidget() {
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const { messages, input, setInput, sendMessage, isLoading } = useChat();
+
+  const isAdminPage = pathname?.startsWith('/mist-ops') || pathname?.startsWith('/login');
+
+  if (isAdminPage) {
+    return null;
+  }
 
   return (
     <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 flex flex-col items-end">

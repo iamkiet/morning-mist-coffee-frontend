@@ -164,11 +164,11 @@ export default function AdminOrdersPage() {
       key: 'customer',
       header: 'Khách hàng',
       render: (r) => (
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-[10px] text-muted-foreground font-bold">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-[10px] text-muted-foreground font-bold shrink-0">
             {r.email.slice(0, 2).toUpperCase()}
           </div>
-          <p className="text-sm text-muted-foreground">{r.email}</p>
+          <p className="text-sm text-muted-foreground truncate min-w-0">{r.email}</p>
         </div>
       ),
     },

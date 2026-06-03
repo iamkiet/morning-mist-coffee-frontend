@@ -427,13 +427,11 @@ export default function AdminProductsPage() {
     {
       key: 'price',
       header: 'Giá',
-      hideOnMobile: true,
       render: (r) => <span className="font-medium">${r.price.toFixed(2)}</span>,
     },
     {
       key: 'stock',
       header: 'Kho hàng',
-      hideOnMobile: true,
       render: (r) => {
         const qty = r.stockQuantity ?? 0;
         if (qty === 0)
@@ -465,9 +463,8 @@ export default function AdminProductsPage() {
       key: 'actions',
       header: 'Thao tác',
       align: 'right',
-      hideOnMobile: true,
       render: (r) => (
-        <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="flex items-center justify-end gap-1 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
           <Button
             variant="ghost"
             size="icon"
