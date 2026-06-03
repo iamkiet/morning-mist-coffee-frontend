@@ -578,7 +578,7 @@ export default function AdminProductsPage() {
           }
         />
       )
-    )}
+      }
 
       {editProduct && (
         <EditProductDialog
