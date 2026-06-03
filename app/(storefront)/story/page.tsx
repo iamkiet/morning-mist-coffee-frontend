@@ -2,7 +2,7 @@ import Image from 'next/image';
 
 export default function StoryPage() {
   return (
-    <main className="pt-36 bg-background">
+    <main className="bg-background">
       {/* Hero Section */}
       <section className="relative h-[600px] sm:h-[750px] md:h-[870px] w-full overflow-hidden flex items-center px-4 sm:px-8 md:px-12 justify-center">
         <div className="absolute inset-0 z-0 scale-105">

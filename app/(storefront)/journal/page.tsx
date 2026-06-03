@@ -35,7 +35,7 @@ const filters = ['Tất cả', 'Thổ Nhưỡng', 'Pha Chế', 'Rang Xay'];
 
 export default function JournalPage() {
   return (
-    <main className="pt-36 bg-background">
+    <main className="bg-background">
       {/* Hero */}
       <section className="relative h-[600px] sm:h-[819px] w-full overflow-hidden flex items-center px-4 sm:px-8 md:px-12 max-w-[1920px] mx-auto">
         <div className="absolute inset-0 z-0">
