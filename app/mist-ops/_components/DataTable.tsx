@@ -78,10 +78,15 @@ export function DataTable<T extends { id: string | number }>({
           return (
             <Card key={row.id}>
               <CardContent className="p-4 space-y-4">
-                <div className="pb-4 border-b border-border/40">
+                <div className="pb-4 border-b border-border/40 flex justify-between items-start gap-4">
                   {primaryColumn && (
-                    <div className="min-w-0">
+                    <div className="min-w-0 flex-1">
                       {primaryColumn.render(row)}
+                    </div>
+                  )}
+                  {actionsColumn && (
+                    <div className="shrink-0 flex items-center justify-end">
+                      {actionsColumn.render(row)}
                     </div>
                   )}
                 </div>
@@ -95,11 +100,6 @@ export function DataTable<T extends { id: string | number }>({
                         <div className="text-sm">{c.render(row)}</div>
                       </div>
                     ))}
-                  </div>
-                )}
-                {actionsColumn && (
-                  <div className="pt-4 border-t border-border/40 flex justify-end items-center">
-                    {actionsColumn.render(row)}
                   </div>
                 )}
               </CardContent>
