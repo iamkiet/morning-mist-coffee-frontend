@@ -37,7 +37,7 @@ export default function JournalPage() {
   return (
     <main className="bg-background">
       {/* Hero */}
-      <section className="relative h-[600px] sm:h-[819px] w-full overflow-hidden flex items-center px-4 sm:px-8 md:px-12 max-w-[1920px] mx-auto">
+      <section className="relative h-[600px] sm:h-[819px] w-full overflow-hidden flex items-center pt-28 sm:pt-32 md:pt-36 px-4 sm:px-8 md:px-12 max-w-[1920px] mx-auto">
         <div className="absolute inset-0 z-0">
           <Image
             src="/statics/journal_hero_bg.png"

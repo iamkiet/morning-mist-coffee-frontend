@@ -4,7 +4,7 @@ export default function StoryPage() {
   return (
     <main className="bg-background">
       {/* Hero Section */}
-      <section className="relative h-[600px] sm:h-[750px] md:h-[870px] w-full overflow-hidden flex items-center px-4 sm:px-8 md:px-12 justify-center">
+      <section className="relative h-[600px] sm:h-[750px] md:h-[870px] w-full overflow-hidden flex items-center pt-28 sm:pt-32 md:pt-36 px-4 sm:px-8 md:px-12 justify-center">
         <div className="absolute inset-0 z-0 scale-105">
           <Image
             src="/statics/story_hero_bg.png"

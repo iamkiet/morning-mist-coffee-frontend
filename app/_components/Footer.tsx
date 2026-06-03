@@ -115,7 +115,7 @@ export function Footer() {
         {/* Bottom bar */}
         <div className="pt-8 md:pt-12 border-t border-border/30 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
           <p className="text-[11px] uppercase tracking-widest text-muted-foreground/60">
-            © 2026 Todaywegrind Coffee. Được tạo ra cho lối sống chậm.
+            © 2026 Todaywegrind Coffee.
           </p>
           <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 sm:gap-x-8">
             {legalLinks.map(({ label, href }) => (
