@@ -67,6 +67,12 @@ hooks/
 
 **Shared product type:** `Product` is defined in `app/_components/ProductCard.tsx` and used across hooks, API, and admin pages. `product.description` from the API is split into `origin` (first line) and `notes` (remaining lines) during `transform()` in `lib/api/products.ts`.
 
+## Admin Dashboard Best Practices
+
+- **Search Inputs**: Place search inputs directly inside `<PageHeader actions={...}>` on all admin table pages (`products`, `users`, `orders`). Use unified styling (`pl-10 bg-card w-full`) and wrap with `<div className="relative w-full sm:w-64">` so the search bar spans full-width on mobile and behaves consistently on desktop.
+- **Search Filtering**: Bind search inputs to a local state (`const [search, setSearch] = useState('')`) and perform client-side filtering on the fetched data items (e.g., `filteredItems`) before passing them to the `<DataTable>` component.
+- **Action Buttons**: Keep table action buttons (`Thao tác` column) always visible on mobile/tablet viewports. Avoid hover-only visibility modifiers (like `group-hover:opacity-100`) on touch devices since they don't support hover events. In mobile card view, render action buttons on the same row as the primary column (via `flex justify-between items-start gap-4` in `DataTable.tsx`).
+
 ## Images — MANDATORY
 
 - **Never `<img>`** — always `import Image from "next/image"` and `<Image>`.

@@ -391,11 +391,21 @@ export default function AdminProductsPage() {
   const [editProduct, setEditProduct] = useState<Product | null>(null);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [deleteProductConfirm, setDeleteProductConfirm] = useState<Product | null>(null);
+  const [search, setSearch] = useState('');
   
   const { data, isLoading, error } = useProducts(page, LIMIT);
   const deleteMut = useDeleteProduct();
 
   const items = data?.items ?? [];
+  const filteredItems = items.filter((item) => {
+    const s = search.toLowerCase();
+    return (
+      item.name.toLowerCase().includes(s) ||
+      (item.origin && item.origin.toLowerCase().includes(s)) ||
+      (item.description && item.description.toLowerCase().includes(s)) ||
+      item.notes.some((note) => note.toLowerCase().includes(s))
+    );
+  });
   const total = data?.total ?? 0;
   const totalPages = Math.ceil(total / LIMIT);
   const offset = (page - 1) * LIMIT;
@@ -464,7 +474,7 @@ export default function AdminProductsPage() {
       header: 'Thao tác',
       align: 'right',
       render: (r) => (
-        <div className="flex items-center justify-end gap-1 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
+        <div className="flex items-center justify-end gap-1">
           <Button
             variant="ghost"
             size="icon"
@@ -493,6 +503,15 @@ export default function AdminProductsPage() {
         description="Todaywegrind được khai sinh từ làn sương sớm tĩnh lặng nơi đại ngàn, nơi mỗi hạt cà phê là một câu chuyện kể về vùng thổ nhưỡng đã nuôi dưỡng chúng."
         actions={
           <>
+            <div className="relative w-full sm:w-64">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+              <Input
+                placeholder="Tìm kiếm sản phẩm..."
+                className="pl-10 bg-card w-full"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
             <Button
               variant="outline"
               size="sm"
@@ -508,22 +527,6 @@ export default function AdminProductsPage() {
           </>
         }
       />
-
-      <Card className="mb-4">
-        <CardContent className="p-4 flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
-          <div className="relative flex-grow w-full sm:max-w-[32rem]">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-            <Input
-              className="pl-10 bg-muted border-0"
-              placeholder="Tìm kiếm hạt cà phê, bình pha, hoặc phụ kiện..."
-            />
-          </div>
-          <p className="text-xs text-muted-foreground uppercase tracking-widest">
-            {isLoading ? 'Đang tải...' : `Tổng cộng ${total} sản phẩm`}
-          </p>
-        </CardContent>
-      </Card>
-
       {error && (
         <div className="mb-4 p-3 border border-border text-destructive text-sm">
           Không thể tải danh sách sản phẩm. Vui lòng thử lại.
@@ -539,14 +542,14 @@ export default function AdminProductsPage() {
       ) : (
         <DataTable
           columns={columns}
-          rows={items}
+          rows={filteredItems}
           footer={
-            totalPages > 1 ? (
-              <div className="px-4 py-3 flex items-center justify-between">
-                <p className="text-xs uppercase tracking-widest text-muted-foreground">
-                  Hiển thị {offset + 1}–{Math.min(offset + items.length, total)}{' '}
-                  trên {total}
-                </p>
+            <div className="px-4 py-3 flex items-center justify-between">
+              <p className="text-xs uppercase tracking-widest text-muted-foreground">
+                Hiển thị {offset + 1}–{Math.min(offset + filteredItems.length, total)}{' '}
+                trên {total}
+              </p>
+              {totalPages > 1 && (
                 <div className="flex items-center gap-2">
                   <Button
                     variant="outline"
@@ -570,11 +573,12 @@ export default function AdminProductsPage() {
                     <ChevronRight className="size-4" />
                   </Button>
                 </div>
-              </div>
-            ) : null
+              )}
+            </div>
           }
         />
-      )}
+      )
+    )}
 
       {editProduct && (
         <EditProductDialog

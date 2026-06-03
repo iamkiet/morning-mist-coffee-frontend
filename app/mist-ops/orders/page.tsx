@@ -142,10 +142,19 @@ export default function AdminOrdersPage() {
   const [page, setPage] = useState(1);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [editOrder, setEditOrder] = useState<Order | null>(null);
+  const [search, setSearch] = useState('');
   const { data, isLoading, error } = useOrders(page, LIMIT);
   const updateStatus = useUpdateOrderStatus();
 
   const orders = data?.items ?? [];
+  const filteredOrders = orders.filter((o) => {
+    const s = search.toLowerCase();
+    return (
+      o.id.toLowerCase().includes(s) ||
+      o.email.toLowerCase().includes(s) ||
+      o.status.toLowerCase().includes(s)
+    );
+  });
   const total = data?.total ?? 0;
   const totalPages = Math.ceil(total / LIMIT);
   const offset = (page - 1) * LIMIT;
@@ -244,11 +253,13 @@ export default function AdminOrdersPage() {
         title="Quản lý Đơn hàng Todaywegrind"
         description="Mỗi đơn hàng đều được chuẩn bị và trân trọng tận tâm."
         actions={
-          <div className="relative">
+          <div className="relative w-full sm:w-64">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
             <Input
               placeholder="Tìm kiếm đơn hàng..."
-              className="pl-10 w-full sm:w-64 bg-card"
+              className="pl-10 bg-card w-full"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
             />
           </div>
         }
@@ -269,14 +280,14 @@ export default function AdminOrdersPage() {
       ) : (
         <DataTable
           columns={columns}
-          rows={orders}
+          rows={filteredOrders}
           footer={
-            totalPages > 1 ? (
-              <div className="px-4 py-3 flex items-center justify-between">
-                <p className="text-xs uppercase tracking-widest text-muted-foreground">
-                  Hiển thị {offset + 1}–{Math.min(offset + orders.length, total)}{' '}
-                  trên {total}
-                </p>
+            <div className="px-4 py-3 flex items-center justify-between">
+              <p className="text-xs uppercase tracking-widest text-muted-foreground">
+                Hiển thị {offset + 1}–{Math.min(offset + filteredOrders.length, total)}{' '}
+                trên {total}
+              </p>
+              {totalPages > 1 && (
                 <div className="flex items-center gap-2">
                   <Button
                     variant="outline"
@@ -300,8 +311,8 @@ export default function AdminOrdersPage() {
                     <ChevronRight className="size-4" />
                   </Button>
                 </div>
-              </div>
-            ) : null
+              )}
+            </div>
           }
         />
       )}

@@ -153,8 +153,20 @@ function EditUserDialog({
 }
 
 export default function AdminUsersPage() {
+  const [search, setSearch] = useState('');
   const { data, isLoading, isError } = useUsers();
   const [editUser, setEditUser] = useState<ApiUser | null>(null);
+
+  const users = data?.items ?? [];
+  const filteredUsers = users.filter((u) => {
+    const s = search.toLowerCase();
+    return (
+      u.firstName.toLowerCase().includes(s) ||
+      u.lastName.toLowerCase().includes(s) ||
+      u.email.toLowerCase().includes(s) ||
+      u.role.toLowerCase().includes(s)
+    );
+  });
 
   const columns: Column<ApiUser>[] = [
     {
@@ -239,11 +251,13 @@ export default function AdminUsersPage() {
         title="Quản lý Người dùng"
         actions={
           <>
-            <div className="relative">
+            <div className="relative w-full sm:w-64">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
               <Input
                 placeholder="Tìm kiếm tài khoản..."
-                className="w-full sm:w-64 pl-10 bg-card"
+                className="pl-10 bg-card w-full"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
               />
             </div>
             <Button>
@@ -291,7 +305,7 @@ export default function AdminUsersPage() {
           Đang tải danh sách người dùng…
         </div>
       ) : (
-        <DataTable columns={columns} rows={data?.items ?? []} />
+        <DataTable columns={columns} rows={filteredUsers} />
       )}
 
       {editUser && (
