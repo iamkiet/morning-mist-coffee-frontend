@@ -10,7 +10,7 @@ const articles = [
     category: 'Nhà Rang',
     categoryClass: 'bg-accent/20 text-accent-foreground',
     title: 'Nghệ Thuật Của Mẻ Rang Sáng (Light Roast)',
-    body: 'Khám phá sự cân biến tinh tế cần thiết để lưu giữ vị chua thanh hoa cỏ trong khi phát triển vị ngọt sâu lắng ở các giống cà phê cổ truyền Ethiopia.',
+    body: 'Khám phá sự cân bằng tinh tế cần thiết để lưu giữ vị chua thanh hoa cỏ trong khi phát triển vị ngọt sâu lắng ở các giống cà phê cổ truyền Ethiopia.',
     img: '/statics/journal_light_roast.png',
   },
   {
