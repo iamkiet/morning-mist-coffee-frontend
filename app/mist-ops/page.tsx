@@ -191,7 +191,7 @@ export default function AdminOverviewPage() {
       <section className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="relative rounded-xl overflow-hidden h-64 border border-border/30 group">
           <Image
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQ3Jyip5nRIN3QyLB7MQ8HCPJ1nu_Kzb9UMGA3zEoO0pxOtgbSC51vvolk3aWVow_HDWU-FzQ4VcNM3Ri700_KkvPLidGj6If26K1W8dE8_w5kQZdjnKH9xl8BMlpv4ruPw3i2g7tIw8BHLKAX1wwk8v1CrN-ZcCDGG0kmDzTb-d2PjqlvUOW8q0K03kT6hURtQ0kvpFQ6588StRndETpiVVs8hD29SxVvEKLGNBc4Y3ltn0s7BkWI9csRjQ6kNqFgegoARohKQ1I"
+            src="/statics/ops_roastery.png"
             alt="Roastery Process"
             fill
             sizes="(max-width: 768px) 100vw, 50vw"

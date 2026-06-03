@@ -7,7 +7,7 @@ export default function StoryPage() {
       <section className="relative h-[600px] sm:h-[750px] md:h-[870px] w-full overflow-hidden flex items-center px-4 sm:px-8 md:px-12 justify-center">
         <div className="absolute inset-0 z-0 scale-105">
           <Image
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8QEDeawhSGXwMhz1q7-gtPaK8KLK600UJi2vnA61OerMa6u953F1HjXxWZwbL5f2FU-ggKmHRCYNoio0m0JL5NVNnnkRF207BcSfUWaU4c2rulvMAoZHYJFgACmH4UvBrWW0fM4Z2sB0Ts1FG_uRmA5usQDYSlnH4-6ZKi-JP5snoOpYnPhIiqpfbipwRZU64DQqy4ZN5LLSnrnZ04C2QbkL27sOaSfIlO2mo4dM_2vQU3wKMU55o19cu67BnmiTCqhqsffKmpj0"
+            src="/statics/story_hero_bg.png"
             alt="Đồi chè cà phê trong sương sớm"
             fill
             priority
@@ -55,7 +55,7 @@ export default function StoryPage() {
           </div>
           <div className="md:col-span-6 relative aspect-[4/5] bg-muted overflow-hidden rounded-2xl">
             <Image
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWsTLsdoTDI_GDXjxR54VXkq5h_RompGiymV52_9aRS8Okmf1tqotSJET0IjRNFd3zN390f5hnqkjvFld1ZS6kitoJTxBppidk5_Y0kxkEtfce063cgbps1qSCIB856f8C_s9XisG2Z-n_IKZRyWl08M_RWPyZVk7XkCpsNFtN5Idk3aABLDHb224oGkSq0-UQxJycL7xBnOIyLNKy79h8yDijxRdVBCoFaG6naZ3WfsYUnSe_4ds8NqCMglLDeIz3s9F6E_A8kMk"
+              src="/statics/story_philosophy.png"
               alt="Khoảnh khắc cà phê tĩnh lặng"
               fill
               sizes="(max-width: 768px) 100vw, 50vw"
@@ -79,19 +79,19 @@ export default function StoryPage() {
           {[
             {
               alt: 'Nguồn cung cấp bền vững và đạo đức',
-              src: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCG07lb1YGXB-tjqfZdAveDZgc4RWZ3dM3mFo8BTs5LMC7273947PO5VdRS8TYs0QRTl-VXLxEEtKZKscs5Es3sDBxhYeQprq_lJUL3G__FH0NZbzskBM9V0nk32XVH1ljK5e4kdJms1AKy1q-pGhNPNe8Ji6Avp0lp3VH6k_4rFIimtmCs7aMwVx5j9Tbgp8YWiXsW4Kz_sAEUakvcCpjUdu2v-HsDNiYDHNGLEPJmId9yjpkM9Wvi24UXDR1xNqN9VLuJimFNWc8',
+              src: '/statics/story_sourcing.png',
               title: '01. Nguồn Cung Có Trách Nhiệm',
               body: 'Chúng tôi hợp tác trực tiếp với các nông hộ quy mô nhỏ theo đuổi nông nghiệp tái sinh, đảm bảo mỗi hạt cà phê đều được nâng niu và trân trọng.',
             },
             {
               alt: 'Nghệ nhân rang mộc tỉ mỉ',
-              src: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDAILILoSx2SeXS78uco3b96treOJnEtLeyigSYMkDBgMst6Xoz2OdAVhvGNP8kafR28xApDiB2RgiwU6S6GACKCEG2mDs8MR24p7_WvYEgtZprymO1hxYs9cEjWw1OIi6PqFiwEm2MGvAERTPjCsx2Li2gL9YmB_mnxAxT5nYhMBvgjUdQ6oIVKV6jYxqkIWI-zKuPuZJxHk1bZcL8BlAjbafDOkP7StHcDPQr5iSVIwoaqeh0bSlbC3VjYKKOEYExaiNEkgUJE9E',
+              src: '/statics/story_roasting.png',
               title: '02. Nghệ Thuật Rang Chậm',
               body: 'Từng mẻ nhỏ được rang bằng công nghệ đối lưu khí nóng (air-flow) để giữ trọn nốt hương hoa thanh tao và vị sương sớm đặc trưng từ vùng thổ nhưỡng.',
             },
             {
               alt: 'Đóng gói sản phẩm thủ công bảo vệ môi trường',
-              src: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBTA30OBJ_4dfGpiSJGR5MbrAOaqLA3esSzJI_1doEfpjBaci-1p3-5ufEFiUnvDJSEp2pGVlQ-Jtp9ky-WNx0pP-pqyTqb-Im0IksoeRhPlBm_JZCB1nuuMv7OF8YarIqdhKKaoDQjZk06AiQhTW2MAMmvlTcKiq26dvRImkUkR4NyYsm0dvEUrmHusyAe4rfoRFScgRXrEQ3fM2nGEM3LiPgLZyDs9gIv1eqWewj2dWO85s_aIYRH4J3WHm-iqIM7UNhFAhFZuj0',
+              src: '/statics/story_packaging.png',
               title: '03. Đóng Gói Tận Tâm',
               body: 'Mỗi túi cà phê đều được đóng dấu bằng tay, đựng trong bao bì tự phân hủy sinh học và đi kèm cẩm nang pha chế hướng dẫn tận hưởng lối sống chậm.',
             },

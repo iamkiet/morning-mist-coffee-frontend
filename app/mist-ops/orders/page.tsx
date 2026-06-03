@@ -388,7 +388,7 @@ export default function AdminOrdersPage() {
             </div>
             <div className="hidden sm:block relative w-48 h-32 rounded-lg overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-700">
               <Image
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWsTLsdoTDI_GDXjxR54VXkq5h_RompGiymV52_9aRS8Okmf1tqotSJET0IjRNFd3zN390f5hnqkjvFld1ZS6kitoJTxBppidk5_Y0kxkEtfce063cgbps1qSCIB856f8C_s9XisG2Z-n_IKZRyWl08M_RWPyZVk7XkCpsNFtN5Idk3aABLDHb224oGkSq0-UQxJycL7xBnOIyLNKy79h8yDijxRdVBCoFaG6naZ3WfsYUnSe_4ds8NqCMglLDeIz3s9F6E_A8kMk"
+                src="/statics/ops_roasting.png"
                 alt="Roasting"
                 fill
                 sizes="192px"

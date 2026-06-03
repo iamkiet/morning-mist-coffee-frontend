@@ -10,7 +10,7 @@ export default function HomePage() {
       <section className="relative min-h-screen w-full flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <Image
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDSfhF3-krjMmBranRpxy2Zf_1dqU6-zYPNqrX6uXestvYx5Ps3kHZl-k8Kqm8Y72Ld3t1OR3IqHOVjRge2yijVuJQ3R0Z8ceQD6vy4wtFNs6q9QR0_tlceh__7BZigUdSnWgVVG2h4PG0q95tC7myWQ2QhHx6PmEOHqBryMrjdA8FydUgvPzV2mMvnAMuI-mkzA5XnUhddg8oTktDcT8XzX9vWOlgbuAD_RdN8UanFx1_KxKb9P8l3evroOR3Ubd2qlbfymC2BeOI"
+            src="/statics/hero_bg.png"
             alt="Misty highland coffee plantation"
             fill
             priority
@@ -54,7 +54,7 @@ export default function HomePage() {
           <div className="md:col-span-7 group cursor-pointer">
             <div className="relative aspect-[4/5] overflow-hidden bg-card mb-6">
               <Image
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBWbadIzgvuAbSrnaWcueBpAMHwtHukoxy2AYiZ1JsqRVRbAlWbElcqOGWOGyyDV4gZsftnYmWcigtls8SZXGI1W7wd4fTP9i7BI0wqRo8-O0eKqyLvAGH7aufjW-SazMkXyqejMzwXw0g1F0IXcj3N1-u31kD8_kuUwHv6SQB6pK6RaflABl0-p8aXd-NJMWsVDq-6Rq2izIHvSCdq3USUva9lONwqMrf-P9AEhwW9INAkJAdnuolP15iRWot9W14osQZwse62uuk"
+                src="/statics/ethereal_glass.png"
                 alt="Minimalist coffee brewing apparatus"
                 fill
                 sizes="(max-width: 768px) 100vw, 58vw"
@@ -78,7 +78,7 @@ export default function HomePage() {
             <div className="group cursor-pointer">
               <div className="relative aspect-square overflow-hidden bg-card mb-4 sm:mb-6">
                 <Image
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZQtGwrRNsn4ENNFSjECNF0e3d44uU0fvvF9_X3GdsAqKg8Qx35qEs0noq8h7Kf-TRySFS7-GS6l4bCLrJxUDKSe9uRqF3khdx03HUbhb829oh6lWDnZwXZxqX_0iiMOHJUWSFoQmoWM21vfnU28d_TD6OlF_Z0LqXQFQWuWcIYB3rsu_VmUQDaauRsLA9IkrZ1o14TkfYoSnIwssgT8aUYO1tJd2jCW5cgykAwcDvj3kGj3_Eyg_PE4eF9KOS3AVOfjheFd4aTJE"
+                  src="/statics/roasted_beans.png"
                   alt="Roasted coffee beans"
                   fill
                   sizes="(max-width: 768px) 100vw, 42vw"
@@ -95,7 +95,7 @@ export default function HomePage() {
             <div className="group cursor-pointer">
               <div className="relative aspect-square overflow-hidden bg-card mb-4 sm:mb-6">
                 <Image
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGCY0lqdGenwYCBL8JEZn2cdmRNAcnsS-zKkrY15MwLT6msYGsE1SkmrOvUsOVVdt-lnWOSeujI8W98njqy6dsZ7L5XJXmgL9cUXg2bi-fj8VUKPwYJaBGcZvDXpJgtV5zERZ_GaXuE2G_bgda6D5YSJfUsKYtVmBH3jr7npNbb0R9oB7GrtfGyhZ2kQl2BmkXoP7_FOxz1Ydl-K8F5ouDlHr6NXbbvSsRvI46P2C3kx6uGl8S3uT-1HZiKtMXynTYOBlwPK6A64"
+                  src="/statics/ceramic_mugs.png"
                   alt="Minimalist sage and grey ceramic mugs"
                   fill
                   sizes="(max-width: 768px) 100vw, 42vw"
@@ -119,7 +119,7 @@ export default function HomePage() {
           <div className="relative order-2 md:order-1">
             <div className="relative aspect-[3/4] overflow-hidden border-[8px] sm:border-[12px] md:border-[16px] border-white/50 shadow-sm">
               <Image
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYI7P2r_cpASZVX3FpoCKu05fAxq52v0Zht8kJM_46TtfMsAOjSraNT3uVY01jMf1iPNinKtC4C_1UZ-i9T8HqbUzob1yr4_2tkd7cSrv64VZSJKgt3Uq0dDuv5l1Bisxxq_hIZB5YsFGGOoPTWYIpHIwN87FG-XLa2zmqzEZf4iUfjxDgiXOCX8io861tvnWrJgW2wKDnM6a5qnDxbftJshCNiqFyRnmCNMf41rpCATV-OG0PdohHQJKAvbDi5ya6jMO_3MPmOHk"
+                src="/statics/pouring_coffee.png"
                 alt="Craftsman pouring coffee"
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"

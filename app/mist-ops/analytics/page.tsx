@@ -9,19 +9,19 @@ const topProducts = [
     name: 'Morning Mist Blend',
     sold: 342,
     revenue: '$6,840',
-    img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDuQBHxJhtIZi_sbq64m4yk8ORb9QXxS853Ps5E7Ib_8bqIATGx6lTYLAdgPpnLVWaLwpfSwp7usyYY0CnUPstT7DUXjGcMUhdrJL44poKdPOhHe4PWxo1_I9mFOQcU61awaQN4SEL7aNltGElJ6dKnNz9PacRODfF5SQaFqbvz62yUSn295VuJXbocZahd_DTtmys0O-sVybA_GGvqeyC5IL3L2Dy2gi8TXtTpFnInxtJtlNBe5-rbYzF1GEYQUqG6cG_Z26CWg6E',
+    img: '/statics/analytics_top1.png',
   },
   {
     name: 'Ethereal Dusk',
     sold: 215,
     revenue: '$5,375',
-    img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAWsTLsdoTDI_GDXjxR54VXkq5h_RompGiymV52_9aRS8Okmf1tqotSJET0IjRNFd3zN390f5hnqkjvFld1ZS6kitoJTxBppidk5_Y0kxkEtfce063cgbps1qSCIB856f8C_s9XisG2Z-n_IKZRyWl08M_RWPyZVk7XkCpsNFtN5Idk3aABLDHb224oGkSq0-UQxJycL7xBnOIyLNKy79h8yDijxRdVBCoFaG6naZ3WfsYUnSe_4ds8NqCMglLDeIz3s9F6E_A8kMk',
+    img: '/statics/analytics_top2.png',
   },
   {
     name: 'Ceramic V60',
     sold: 98,
     revenue: '$4,410',
-    img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDqlu9gOLFxMTIBNUj1TN0E0ddkkQkDp7Ux1G5G-tLoquyslc_SEKBV67LWzI4uVi0zUoQxgni-LtnaVCHJ5Zxnw79x627NncoUP5oHa_laO4l9Dqwv7zUebo747kYYyRwjjqIsrO_PsglmRUN7S1ExQdR_9Ik7TFpAJCYZ-WPgBQJJP_zHgPLwcK8nCNlPVoy1m-6zmTJtxqqw4tkciTd7uUe4_v6ox6try48lWgZEmaABevEW4uTEtwksHIMtop0lSZwTZ2ryDV0',
+    img: '/statics/analytics_top3.png',
   },
 ];
 

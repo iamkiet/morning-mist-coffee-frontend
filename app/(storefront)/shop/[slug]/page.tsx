@@ -31,7 +31,7 @@ export default async function ProductPage(props: {
           <div className="grid grid-cols-2 gap-md">
             <div className="relative aspect-square bg-muted rounded-lg overflow-hidden">
               <Image
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBVv_Y7AuV3SQ2_PInfb9DQSheu6W6SyJqmxNjMwMuXT-YYPPcxhxBxB78t4G8j_VcP3jFRkvE6QVYPbD5Mm0RCeEbLH7_pT9MKeGnEpWhEkeiZ16CfQnlHDadO0aUWnZBkabhA6OLjZhlIfIiQV8Lv_HIG7y9CfyP_0-lpsn2Oh4fjuPdm-sqdCt3CQIs94h2RruM2QTWOU3LCaLITpgwHhiNY62lyEpSKVk6dxSA1TaWV3dsdu6DpwEBtmjVtSodNG7drDkN39xA"
+                src="/statics/detail_brewing.png"
                 alt="Phương pháp pha chế"
                 fill
                 sizes="(max-width: 1024px) 50vw, 29vw"
@@ -40,7 +40,7 @@ export default async function ProductPage(props: {
             </div>
             <div className="relative aspect-square bg-muted rounded-lg overflow-hidden">
               <Image
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8xylaIsY0XklHfzDTO3hjarmJ2FFCMxExe7_z_ngPwh_3_RF8PX5dIGN3e_Wq9BZ-6ZFOBInB0QHfC3_Gw5zooK3zPWsv0lvSZQ9e9mg4kmbyGS_JkfXbP0JwhkDQ-OS4mXvhoTYH3QWQtjsC-5_bPKNjKjl3d78PFm1cuEAR7eX8Xh3xrYok2qPUXPCAvMMacXiE8xC-F7b6zeoU8CB8M-UuWVy7jvoczC_0gYP-Wx-cVPEiMHwQCK5b6oVAQUG3b1q5jWizQDI"
+                src="/statics/detail_enjoying.png"
                 alt="Không gian thưởng thức"
                 fill
                 sizes="(max-width: 1024px) 50vw, 29vw"

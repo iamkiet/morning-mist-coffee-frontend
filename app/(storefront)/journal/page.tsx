@@ -10,8 +10,8 @@ const articles = [
     category: 'Nhà Rang',
     categoryClass: 'bg-accent/20 text-accent-foreground',
     title: 'Nghệ Thuật Của Mẻ Rang Sáng (Light Roast)',
-    body: 'Khám phá sự cân bằng tinh tế cần thiết để lưu giữ vị chua thanh hoa cỏ trong khi phát triển vị ngọt sâu lắng ở các giống cà phê cổ truyền Ethiopia.',
-    img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDl_57By8KpPbF48CuhXYe9ODWW8d8uWDvZfhYZoQeLYkz79MIgmvh1HKr4Rby_OSEiVfzRIwcb71cibzA43gmKTHNUCDHReN_i-JuxSeeCwBYarDdduBq90vH-sPci6GoPZAzLl7bNa6eWA_gAb1i0TxzhdS01JtePFdLez5JdN74dWxui5I5HrNUp67xj6PmOEW-veiHDK7dlV_lIXlcgE-Gc3z5FtCXS-HVSgk577c0ZgnDTOSsAEEj7XczFAFwey12jip5ugTw',
+    body: 'Khám phá sự cân biến tinh tế cần thiết để lưu giữ vị chua thanh hoa cỏ trong khi phát triển vị ngọt sâu lắng ở các giống cà phê cổ truyền Ethiopia.',
+    img: '/statics/journal_light_roast.png',
   },
   {
     date: '18 Tháng 10, 2026',
@@ -19,7 +19,7 @@ const articles = [
     categoryClass: 'bg-primary/10 text-primary',
     title: 'Cấu Trúc Của Nghi Thức Pour Over Buổi Sáng',
     body: 'Cẩm nang hướng dẫn sự chính xác về mặt hình học của phương pháp pha V60, tập trung vào tính ổn định nhiệt độ và nhịp điệu của quá trình ngấm nở (bloom).',
-    img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCbRJKd8DDfCjazsjEOCzW3zN3Pm9w2Q3fZ5-As907pXHfEipH9e6cB-1yEDEGRjzCwIBLGBrKctd9x9ow5zUa-tD5XdVB2vqywp-rK4jS8xu8CjIkQ2Ve5v0QNL_cKN9md6EC49P_lZ3TTYUISxXaSOAGcB2MUDKX2CZvMo8bq2wOWue3scAP9QpZMdg8-w3Hn958wofsklLr1gRNDDvCtwfrvwHPSkoSvcIJP5XjOq0JZcukiccNIhhOqa4IDAQAufIWNZ5uG88s',
+    img: '/statics/journal_brewing.png',
   },
   {
     date: '12 Tháng 10, 2026',
@@ -27,7 +27,7 @@ const articles = [
     categoryClass: 'bg-muted text-muted-foreground',
     title: 'Bóng Râm và Đất Mẹ: Thổ Nhưỡng Vùng Huila',
     body: 'Tìm hiểu sâu về vùng đất núi lửa giàu khoáng chất của Huila, Colombia và cách phương pháp canh tác dưới bóng râm thay đổi mật độ hạt cà phê.',
-    img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCbifeXvfG8KnZvU0VFdkZOzhGcFj_kqeiFpZ9wfrggND9sKIPe7bi0WTnff2z16Z0Pq90uPzu0AsBFwTYxuvGuv4j4LgU2r-JEbJ8heG0X6Bfi2sd4saiKnuB3luLs6CSX9qfLCt4KpBrBae-XGZkqOR1kkCoOj6_EQJncEfjlH6h0naAgoCpq3nxFA9TsiqxQGPXdUHMwzHdeaS47zIFvAvDtw5dTBsxPT8z77lXPCn7NrVRhyuCbQa0_nKhyeaM6Ll4kcRKX_wY',
+    img: '/statics/journal_terroir.png',
   },
 ];
 
@@ -40,7 +40,7 @@ export default function JournalPage() {
       <section className="relative h-[600px] sm:h-[819px] w-full overflow-hidden flex items-center px-4 sm:px-8 md:px-12 max-w-[1920px] mx-auto">
         <div className="absolute inset-0 z-0">
           <Image
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPaacO7tQx3YPcRFDHlHh8s_p6Ok8T8z7t-HLYOpfsfc_Cw-TfeexNmazgrggtmknuiqgFVxupxjWGYPIlP03ahhgDcOklPYYnCpeS_2X4tLkum7dmQz90MsZAVqD4t6054vkVY5h6XELAN923wSHuCu_mJb-hs6wO7zzPYMnK72FCsX7Bv3jUPAWDnZjyDAGePJQJvP49x0cvq0zkFM10cBeJSDRXxSqeG1CLzK9AUpMqcBh5vk7FPS4EsdtwWdA8aRJnXnLPAsE"
+            src="/statics/journal_hero_bg.png"
             alt="Misty coffee plantation"
             fill
             priority
