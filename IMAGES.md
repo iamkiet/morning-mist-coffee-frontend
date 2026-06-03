@@ -14,7 +14,7 @@ Please download the images from the clickable links below, rename them according
 - **Target Location**: `public/static/roasted_beans.png`
   - **Download Link**: [Download roasted_beans.png](https://lh3.googleusercontent.com/aida-public/AB6AXuDZQtGwrRNsn4ENNFSjECNF0e3d44uU0fvvF9_X3GdsAqKg8Qx35qEs0noq8h7Kf-TRySFS7-GS6l4bCLrJxUDKSe9uRqF3khdx03HUbhb829oh6lWDnZwXZxqX_0iiMOHJUWSFoQmoWM21vfnU28d_TD6OlF_Z0LqXQFQWuWcIYB3rsu_VmUQDaauRsLA9IkrZ1o14TkfYoSnIwssgT8aUYO1tJd2jCW5cgykAwcDvj3kGj3_Eyg_PE4eF9KOS3AVOfjheFd4aTJE)
 - **Target Location**: `public/static/ceramic_mugs.png`
-  - **Download Link**: [Download ceramic_mugs.png](https://lh3.googleusercontent.com/aida-public/AB6AXuAGCY0lqdGenwYCBL8JEZn2cdmRNAcnsS-zKkrY15MwLT6msYGsE1SkmrOvUsOVVdt-lnWOSeujI8W98njqy6dsZ7L5XJXmgL9cUXg2bi-fj8VUKPwYJaBGcZvDXpJgtV5zERZ_GaXuE2G_bgda6D5YSJfUsKYtVmBH3jr7npNbb0R9oB7GrtfGyhZ2kQl2BmkXoP7_FOxz1Ydl-K8F5ouDlHr6NXbbvSsRvI46P2C3kx6uGl8S3uT-1HZiKtMXynTYOBlwPK6A64)
+  - **Download Link**: [Download ceramic_mugs.png (Local Backup)](file:///Users/kietnguyen/.gemini/antigravity-ide/brain/bf3f4367-e5fd-4115-b73e-fb4cb9c89bea/ceramic_mugs_1780461537969.png)
 - **Target Location**: `public/static/pouring_coffee.png`
   - **Download Link**: [Download pouring_coffee.png](https://lh3.googleusercontent.com/aida-public/AB6AXuDYI7P2r_cpASZVX3FpoCKu05fAxq52v0Zht8kJM_46TtfMsAOjSraNT3uVY01jMf1iPNinKtC4C_1UZ-i9T8HqbUzob1yr4_2tkd7cSrv64VZSJKgt3Uq0dDuv5l1Bisxxq_hIZB5YsFGGOoPTWYIpHIwN87FG-XLa2zmqzEZf4iUfjxDgiXOCX8io861tvnWrJgW2wKDnM6a5qnDxbftJshCNiqFyRnmCNMf41rpCATV-OG0PdohHQJKAvbDi5ya6jMO_3MPmOHk)
 
