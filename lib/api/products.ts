@@ -76,7 +76,8 @@ export async function fetchProducts(
 
 export async function fetchProduct(slug: string): Promise<Product | undefined> {
   const { items } = await fetchProducts(50, 0);
-  return items.find((p) => p.slug === slug);
+  const decoded = decodeURIComponent(slug);
+  return items.find((p) => p.slug === decoded);
 }
 
 export interface UpdateProductPayload {
