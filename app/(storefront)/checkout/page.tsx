@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Lock, Leaf, ShoppingBag, Minus, Plus, Trash2, CheckCircle, CreditCard, Coins } from 'lucide-react';
+import { Lock, Leaf, ShoppingBag, Minus, Plus, Trash2, CreditCard, Coins } from 'lucide-react';
 import {
   Form,
   FormControl,
@@ -55,7 +55,7 @@ export default function CheckoutPage() {
   const [submitError, setSubmitError] = useState('');
   const [paymentMethod, setPaymentMethod] = useState<'cash' | 'card'>('cash');
   const [cashReceived, setCashReceived] = useState<string>('');
-  const [placedOrder, setPlacedOrder] = useState<Order | null>(null);
+
 
   const cashReceivedAmount = parseFloat(cashReceived) || 0;
   const changeAmount = paymentMethod === 'cash' && cashReceivedAmount >= total
@@ -81,12 +81,10 @@ export default function CheckoutPage() {
         quantity: item.quantity,
       }));
       const cashReceivedCents = paymentMethod === 'cash' ? Math.round(cashReceivedAmount) : undefined;
-      const order = await createOrder(_data.email, totalCents, orderItems, 'VND', cashReceivedCents);
+      await createOrder(_data.email, totalCents, orderItems, 'VND', cashReceivedCents);
       clearCart();
-      setPlacedOrder(order);
-      toast.success('Đặt hàng thành công!', {
-        description: "Chúng tôi đã nhận được đơn hàng của bạn và đang tiến hành xử lý.",
-      });
+      alert('Đặt hàng thành công!');
+      window.location.href = '/checkout';
     } catch (err) {
       setSubmitError(
         err instanceof Error ? err.message : 'Đặt hàng thất bại. Vui lòng thử lại sau.',
@@ -96,70 +94,7 @@ export default function CheckoutPage() {
     }
   };
 
-  if (placedOrder) {
-    const orderId = placedOrder.id ? placedOrder.id.slice(0, 8).toUpperCase() : '';
-    const orderItemsList = placedOrder.items || [];
-    const totalCentsFormatted = (placedOrder.totalCents ?? 0).toLocaleString('vi-VN');
-    const hasCashDetails = placedOrder.cashReceivedCents !== null && placedOrder.cashReceivedCents !== undefined;
-    const cashReceivedFormatted = hasCashDetails ? (placedOrder.cashReceivedCents ?? 0).toLocaleString('vi-VN') : '';
-    const changeFormatted = hasCashDetails ? (placedOrder.changeCents ?? 0).toLocaleString('vi-VN') : '';
 
-    return (
-      <div className="w-full max-w-xl mx-auto pt-36 pb-12 px-4 sm:px-6 min-h-screen flex flex-col justify-center animate-in fade-in duration-500">
-        <Card className="border-primary/20 shadow-lg w-full">
-          <CardContent className="p-8 space-y-6 text-center">
-            <div className="mx-auto w-16 h-16 rounded-full bg-accent/10 flex items-center justify-center text-primary mb-4">
-              <CheckCircle className="size-10 text-primary" />
-            </div>
-            <h1 className="text-3xl text-primary font-light">Đặt Hàng Thành Công!</h1>
-            <p className="text-muted-foreground text-sm">
-              Cảm ơn bạn đã mua sắm tại <strong>Morning Mist Coffee</strong>. Đơn hàng của bạn đã được nhận và đang chuẩn bị.
-            </p>
-            <div className="border border-border rounded-lg p-5 text-left space-y-4 bg-muted/20">
-              <div className="flex justify-between text-xs text-muted-foreground uppercase tracking-widest">
-                <span>Mã đơn hàng:</span>
-                <span className="font-mono text-foreground font-medium">#{orderId}</span>
-              </div>
-              <Separator />
-              <div className="space-y-2">
-                {orderItemsList.map((item) => (
-                  <div key={item.id} className="flex justify-between text-sm">
-                    <span>{item.name} <span className="text-muted-foreground">×{item.quantity}</span></span>
-                    <span>{((item.priceCents ?? 0) * (item.quantity ?? 1)).toLocaleString('vi-VN')} ₫</span>
-                  </div>
-                ))}
-              </div>
-              <Separator />
-              <div className="flex justify-between text-base font-semibold">
-                <span>Tổng cộng:</span>
-                <span>{totalCentsFormatted} ₫</span>
-              </div>
-              {hasCashDetails && (
-                <div className="space-y-1 text-xs text-muted-foreground pt-2 border-t border-dashed border-border">
-                  <div className="flex justify-between">
-                    <span>Tiền nhận từ khách:</span>
-                    <span>{cashReceivedFormatted} ₫</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Tiền thối lại:</span>
-                    <span className="font-medium text-foreground">{changeFormatted} ₫</span>
-                  </div>
-                </div>
-              )}
-            </div>
-            <div className="flex flex-col sm:flex-row gap-3 pt-4">
-              <Button asChild variant="outline" className="flex-1 uppercase tracking-widest text-xs h-11">
-                <Link href="/shop">Tiếp tục mua sắm</Link>
-              </Button>
-              <Button asChild className="flex-1 uppercase tracking-widest text-xs h-11">
-                <Link href="/track-order">Theo dõi đơn hàng</Link>
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
 
   return (
     <div className="w-full max-w-7xl mx-auto pt-36 pb-12 px-4 sm:px-6 md:px-gutter min-h-screen">
