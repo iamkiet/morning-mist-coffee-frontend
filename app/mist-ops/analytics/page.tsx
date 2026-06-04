@@ -8,19 +8,19 @@ const topProducts = [
   {
     name: 'Morning Mist Blend',
     sold: 342,
-    revenue: '$6,840',
+    revenue: '₫6.840.000',
     img: '/statics/analytics_top1.png',
   },
   {
     name: 'Ethereal Dusk',
     sold: 215,
-    revenue: '$5,375',
+    revenue: '₫5.375.000',
     img: '/statics/analytics_top2.png',
   },
   {
     name: 'Ceramic V60',
     sold: 98,
-    revenue: '$4,410',
+    revenue: '₫4.410.000',
     img: '/statics/analytics_top3.png',
   },
 ];
@@ -29,7 +29,7 @@ const feed = [
   {
     dot: 'active',
     title: 'Đơn hàng mới',
-    body: ' từ Julian A. trị giá $42.00',
+    body: ' từ Julian A. trị giá ₫1.050.000',
     when: 'Vừa xong',
   },
   {
@@ -76,12 +76,12 @@ export default function AdminAnalyticsPage() {
       <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <StatCard
           label="Doanh thu thuần"
-          value="$24,500.00"
+          value="₫24.500.000"
           delta="+12%"
           progress={70}
         />
         <StatCard label="Tổng đơn hàng" value="842" delta="+5%" progress={55} />
-        <StatCard label="Giá trị đơn hàng TB" value="$29.10" progress={45} />
+        <StatCard label="Giá trị đơn hàng TB" value="₫727.500" progress={45} />
         <StatCard label="Khách hàng hoạt động" value="1,284" progress={82} />
       </section>
 

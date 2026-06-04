@@ -50,7 +50,7 @@ function transform(p: BackendProduct): Product {
     slug,
     name: p.name,
     origin,
-    price: p.priceCents / 100,
+    price: p.priceCents,
     image: p.image ?? DEFAULT_PRODUCT_IMAGE,
     notes,
     stockQuantity: p.stockQuantity,

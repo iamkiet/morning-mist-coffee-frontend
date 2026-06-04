@@ -32,7 +32,7 @@ export function AddToBag({ product }: { product: Product }) {
     <div className="space-y-md">
       <div className="flex items-center justify-between">
         <span className="text-3xl text-foreground">
-          ${product.price.toFixed(2)}
+          ₫{product.price.toLocaleString('vi-VN')}
         </span>
         <div className="flex items-center border border-border rounded-lg bg-card">
           <Button

@@ -59,7 +59,7 @@ function EditProductDialog({
   const [form, setForm] = useState<EditState>({
     id: product.id,
     name: product.name,
-    price: product.price.toFixed(2),
+    price: String(Math.round(product.price)),
     description: buildDescription(product.origin, product.notes),
     image: product.image,
     stock: String(product.stockQuantity ?? 0),
@@ -83,7 +83,7 @@ function EditProductDialog({
         payload: {
           name: form.name.trim() || undefined,
           description: form.description.trim() || null,
-          priceCents: Math.round(priceNum * 100),
+          priceCents: Math.round(priceNum),
           image: form.image.trim() || null,
           stockQuantity: stockNum,
           productTypeId: form.productTypeId || undefined,
@@ -135,7 +135,7 @@ function EditProductDialog({
               htmlFor="ep-price"
               className="text-xs uppercase tracking-wider text-muted-foreground"
             >
-              Giá bán (USD)
+              Giá bán (VNĐ)
             </Label>
             <Input
               id="ep-price"
@@ -256,7 +256,7 @@ function CreateProductDialog({
       {
         name: form.name.trim(),
         description: form.description.trim() || null,
-        priceCents: Math.round(priceNum * 100),
+        priceCents: Math.round(priceNum),
         image: form.image.trim() || null,
         productTypeId: form.productTypeId,
         stockQuantity: stockNum,
@@ -307,7 +307,7 @@ function CreateProductDialog({
               htmlFor="cp-price"
               className="text-xs uppercase tracking-wider text-muted-foreground"
             >
-              Giá bán (USD)
+              Giá bán (VNĐ)
             </Label>
             <Input
               id="cp-price"
@@ -437,7 +437,7 @@ export default function AdminProductsPage() {
     {
       key: 'price',
       header: 'Giá',
-      render: (r) => <span className="font-medium">${r.price.toFixed(2)}</span>,
+      render: (r) => <span className="font-medium">₫{r.price.toLocaleString('vi-VN')}</span>,
     },
     {
       key: 'stock',

@@ -46,10 +46,7 @@ function OrderCard({ order }: { order: Order }) {
     month: 'short',
     day: 'numeric',
   });
-  const total = (order.totalCents / 100).toLocaleString('en-US', {
-    style: 'currency',
-    currency: order.currency,
-  });
+  const total = `₫${order.totalCents.toLocaleString('vi-VN')}`;
 
   return (
     <Card>
@@ -80,7 +77,7 @@ function OrderCard({ order }: { order: Order }) {
                   <span className="text-muted-foreground ml-1">×{item.quantity}</span>
                 </span>
                 <span className="text-muted-foreground">
-                  ${((item.priceCents * item.quantity) / 100).toFixed(2)}
+                  ₫{(item.priceCents * item.quantity).toLocaleString('vi-VN')}
                 </span>
               </div>
             ))}
@@ -91,6 +88,21 @@ function OrderCard({ order }: { order: Order }) {
           <span className="text-muted-foreground">{date}</span>
           <span className="font-medium text-foreground">{total}</span>
         </div>
+        {order.cashReceivedCents !== undefined && order.cashReceivedCents !== null && (
+          <>
+            <Separator />
+            <div className="space-y-1 text-xs text-muted-foreground pt-1">
+              <div className="flex justify-between">
+                <span>Tiền khách đưa:</span>
+                <span className="font-medium text-foreground">₫{order.cashReceivedCents.toLocaleString('vi-VN')}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Tiền thối lại:</span>
+                <span className="font-medium text-foreground">₫{(order.changeCents ?? 0).toLocaleString('vi-VN')}</span>
+              </div>
+            </div>
+          </>
+        )}
       </CardContent>
     </Card>
   );

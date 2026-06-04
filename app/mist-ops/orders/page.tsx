@@ -164,9 +164,12 @@ export default function AdminOrdersPage() {
       key: 'id',
       header: 'Mã đơn hàng',
       render: (r) => (
-        <span className="text-xs font-medium text-muted-foreground">
+        <button
+          onClick={() => setExpandedId(expandedId === r.id ? null : r.id)}
+          className="text-xs font-mono font-medium text-primary hover:underline cursor-pointer focus:outline-none"
+        >
           #{r.id.slice(0, 8).toUpperCase()}
-        </span>
+        </button>
       ),
     },
     {
@@ -197,9 +200,7 @@ export default function AdminOrdersPage() {
       hideOnMobile: true,
       render: (r) => (
         <span className="font-medium">
-          {r.currency === 'VND'
-            ? `₫${r.totalCents.toLocaleString()}`
-            : `$${(r.totalCents / 100).toFixed(2)}`}
+          ₫{r.totalCents.toLocaleString('vi-VN')}
         </span>
       ),
     },
@@ -353,8 +354,7 @@ export default function AdminOrdersPage() {
                           </span>
                         </span>
                         <span className="text-muted-foreground">
-                          $
-                          {((item.priceCents * item.quantity) / 100).toFixed(2)}
+                          ₫{(item.priceCents * item.quantity).toLocaleString('vi-VN')}
                         </span>
                       </div>
                     ))}
@@ -363,11 +363,21 @@ export default function AdminOrdersPage() {
                         Tổng cộng
                       </span>
                       <span>
-                        {order.currency === 'VND'
-                          ? `₫${order.totalCents.toLocaleString()}`
-                          : `$${(order.totalCents / 100).toFixed(2)}`}
+                        ₫{order.totalCents.toLocaleString('vi-VN')}
                       </span>
                     </div>
+                    {order.cashReceivedCents !== null && order.cashReceivedCents !== undefined && (
+                      <div className="space-y-1 text-xs text-muted-foreground pt-2 border-t border-dashed border-border mt-2">
+                        <div className="flex justify-between">
+                          <span>Tiền nhận từ khách:</span>
+                          <span className="text-foreground font-medium">₫{order.cashReceivedCents.toLocaleString('vi-VN')}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Tiền thối lại:</span>
+                          <span className="text-foreground font-medium">₫{(order.changeCents ?? 0).toLocaleString('vi-VN')}</span>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
               </CardContent>

@@ -22,6 +22,8 @@ export interface Order {
   status: OrderStatus;
   totalCents: number;
   currency: string;
+  cashReceivedCents?: number | null;
+  changeCents?: number | null;
   items: OrderItem[];
   createdAt: string;
   updatedAt: string;
@@ -70,13 +72,14 @@ export async function createOrder(
   email: string,
   totalCents: number,
   items: CreateOrderItemInput[],
-  currency = 'USD',
+  currency = 'VND',
+  cashReceivedCents?: number,
 ): Promise<Order> {
   const res = await fetch(`${API_URL}/api/v1/orders`, {
     method: 'POST',
     credentials: 'include',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, totalCents, currency, items }),
+    body: JSON.stringify({ email, totalCents, currency, cashReceivedCents, items }),
   });
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
