@@ -336,13 +336,13 @@ export default function AdminOrdersPage() {
                     Đóng
                   </button>
                 </div>
-                {order.items.length === 0 ? (
+                {(order.items || []).length === 0 ? (
                   <p className="text-sm text-muted-foreground">
                     Không có sản phẩm nào được ghi nhận.
                   </p>
                 ) : (
                   <div className="space-y-2">
-                    {order.items.map((item) => (
+                    {(order.items || []).map((item) => (
                       <div
                         key={item.id}
                         className="flex items-center justify-between text-sm"

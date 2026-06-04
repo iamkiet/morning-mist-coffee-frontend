@@ -97,6 +97,13 @@ export default function CheckoutPage() {
   };
 
   if (placedOrder) {
+    const orderId = placedOrder.id ? placedOrder.id.slice(0, 8).toUpperCase() : '';
+    const orderItemsList = placedOrder.items || [];
+    const totalCentsFormatted = (placedOrder.totalCents ?? 0).toLocaleString('vi-VN');
+    const hasCashDetails = placedOrder.cashReceivedCents !== null && placedOrder.cashReceivedCents !== undefined;
+    const cashReceivedFormatted = hasCashDetails ? (placedOrder.cashReceivedCents ?? 0).toLocaleString('vi-VN') : '';
+    const changeFormatted = hasCashDetails ? (placedOrder.changeCents ?? 0).toLocaleString('vi-VN') : '';
+
     return (
       <main className="max-w-xl mx-auto pt-36 pb-12 px-4 sm:px-6 min-h-screen flex flex-col justify-center animate-in fade-in duration-500">
         <Card className="border-primary/20 shadow-lg">
@@ -111,31 +118,31 @@ export default function CheckoutPage() {
             <div className="border border-border rounded-lg p-5 text-left space-y-4 bg-muted/20">
               <div className="flex justify-between text-xs text-muted-foreground uppercase tracking-widest">
                 <span>Mã đơn hàng:</span>
-                <span className="font-mono text-foreground font-medium">#{placedOrder.id.slice(0, 8).toUpperCase()}</span>
+                <span className="font-mono text-foreground font-medium">#{orderId}</span>
               </div>
               <Separator />
               <div className="space-y-2">
-                {placedOrder.items.map((item) => (
+                {orderItemsList.map((item) => (
                   <div key={item.id} className="flex justify-between text-sm">
                     <span>{item.name} <span className="text-muted-foreground">×{item.quantity}</span></span>
-                    <span>{(item.priceCents * item.quantity).toLocaleString('vi-VN')} ₫</span>
+                    <span>{((item.priceCents ?? 0) * (item.quantity ?? 1)).toLocaleString('vi-VN')} ₫</span>
                   </div>
                 ))}
               </div>
               <Separator />
               <div className="flex justify-between text-base font-semibold">
                 <span>Tổng cộng:</span>
-                <span>{placedOrder.totalCents.toLocaleString('vi-VN')} ₫</span>
+                <span>{totalCentsFormatted} ₫</span>
               </div>
-              {placedOrder.cashReceivedCents !== null && placedOrder.cashReceivedCents !== undefined && (
+              {hasCashDetails && (
                 <div className="space-y-1 text-xs text-muted-foreground pt-2 border-t border-dashed border-border">
                   <div className="flex justify-between">
                     <span>Tiền nhận từ khách:</span>
-                    <span>{placedOrder.cashReceivedCents.toLocaleString('vi-VN')} ₫</span>
+                    <span>{cashReceivedFormatted} ₫</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Tiền thối lại:</span>
-                    <span className="font-medium text-foreground">{(placedOrder.changeCents ?? 0).toLocaleString('vi-VN')} ₫</span>
+                    <span className="font-medium text-foreground">{changeFormatted} ₫</span>
                   </div>
                 </div>
               )}
