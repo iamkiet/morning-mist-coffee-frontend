@@ -83,8 +83,10 @@ export default function CheckoutPage() {
       const cashReceivedCents = paymentMethod === 'cash' ? Math.round(cashReceivedAmount) : undefined;
       await createOrder(_data.email, totalCents, orderItems, 'VND', cashReceivedCents);
       clearCart();
-      alert('Đặt hàng thành công!');
-      window.location.href = '/checkout';
+      form.reset();
+      toast.success('Đặt hàng thành công!', {
+        description: 'Chúng tôi đã nhận được đơn hàng của bạn và đang tiến hành xử lý.',
+      });
     } catch (err) {
       setSubmitError(
         err instanceof Error ? err.message : 'Đặt hàng thất bại. Vui lòng thử lại sau.',
