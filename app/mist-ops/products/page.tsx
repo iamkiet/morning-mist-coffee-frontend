@@ -437,7 +437,7 @@ export default function AdminProductsPage() {
     {
       key: 'price',
       header: 'Giá',
-      render: (r) => <span className="font-medium">₫{r.price.toLocaleString('vi-VN')}</span>,
+      render: (r) => <span className="font-medium">{r.price.toLocaleString('vi-VN')} ₫</span>,
     },
     {
       key: 'stock',

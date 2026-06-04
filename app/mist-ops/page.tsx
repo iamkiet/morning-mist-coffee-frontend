@@ -87,7 +87,7 @@ export default function AdminOverviewPage() {
       <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-8">
         <StatCard
           label="Tổng doanh thu"
-          value="₫14.280.000"
+          value="14.280.000 ₫"
           delta="+12% so với tuần trước"
           icon={Wallet}
           tone="primary"

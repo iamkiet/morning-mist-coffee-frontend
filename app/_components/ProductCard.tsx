@@ -72,7 +72,7 @@ export function ProductCard({ product }: ProductCardProps) {
             ))}
           </div>
           <p className="text-sm text-muted-foreground">
-            ₫{product.price.toLocaleString('vi-VN')}
+            {product.price.toLocaleString('vi-VN')} ₫
           </p>
         </div>
       </Link>

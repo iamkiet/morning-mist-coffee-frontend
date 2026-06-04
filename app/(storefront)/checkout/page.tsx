@@ -118,24 +118,24 @@ export default function CheckoutPage() {
                 {placedOrder.items.map((item) => (
                   <div key={item.id} className="flex justify-between text-sm">
                     <span>{item.name} <span className="text-muted-foreground">×{item.quantity}</span></span>
-                    <span>₫{(item.priceCents * item.quantity).toLocaleString('vi-VN')}</span>
+                    <span>{(item.priceCents * item.quantity).toLocaleString('vi-VN')} ₫</span>
                   </div>
                 ))}
               </div>
               <Separator />
               <div className="flex justify-between text-base font-semibold">
                 <span>Tổng cộng:</span>
-                <span>₫{placedOrder.totalCents.toLocaleString('vi-VN')}</span>
+                <span>{placedOrder.totalCents.toLocaleString('vi-VN')} ₫</span>
               </div>
               {placedOrder.cashReceivedCents !== null && placedOrder.cashReceivedCents !== undefined && (
                 <div className="space-y-1 text-xs text-muted-foreground pt-2 border-t border-dashed border-border">
                   <div className="flex justify-between">
                     <span>Tiền nhận từ khách:</span>
-                    <span>₫{placedOrder.cashReceivedCents.toLocaleString('vi-VN')}</span>
+                    <span>{placedOrder.cashReceivedCents.toLocaleString('vi-VN')} ₫</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Tiền thối lại:</span>
-                    <span className="font-medium text-foreground">₫{(placedOrder.changeCents ?? 0).toLocaleString('vi-VN')}</span>
+                    <span className="font-medium text-foreground">{(placedOrder.changeCents ?? 0).toLocaleString('vi-VN')} ₫</span>
                   </div>
                 </div>
               )}
@@ -227,7 +227,7 @@ export default function CheckoutPage() {
                         </div>
                         <div className="flex flex-col items-end gap-1 shrink-0">
                           <span className="text-sm font-medium text-primary">
-                            ₫{(item.price * item.quantity).toLocaleString('vi-VN')}
+                            {(item.price * item.quantity).toLocaleString('vi-VN')} ₫
                           </span>
                           <button
                             onClick={() => removeItem(item.slug)}
@@ -244,7 +244,7 @@ export default function CheckoutPage() {
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm text-muted-foreground">
                       <span>Tạm tính</span>
-                      <span>₫{total.toLocaleString('vi-VN')}</span>
+                      <span>{total.toLocaleString('vi-VN')} ₫</span>
                     </div>
                     <div className="flex justify-between text-sm text-muted-foreground">
                       <span>Vận chuyển</span>
@@ -252,7 +252,7 @@ export default function CheckoutPage() {
                     </div>
                     <div className="flex justify-between text-base font-medium pt-2 uppercase tracking-widest">
                       <span>Tổng cộng</span>
-                      <span>₫{total.toLocaleString('vi-VN')}</span>
+                      <span>{total.toLocaleString('vi-VN')} ₫</span>
                     </div>
                   </div>
                   <div className="bg-accent/20 p-4 rounded-lg flex items-start gap-3">
@@ -448,7 +448,7 @@ export default function CheckoutPage() {
                         <span className="text-muted-foreground">Tiền thối lại (Change):</span>
                         <span className={`text-base font-semibold ${cashReceivedAmount >= total ? 'text-primary' : 'text-destructive'}`}>
                           {cashReceivedAmount >= total
-                            ? `₫${changeAmount.toLocaleString('vi-VN')}`
+                            ? `${changeAmount.toLocaleString('vi-VN')} ₫`
                             : 'Chưa đủ tiền thanh toán'}
                         </span>
                       </div>
