@@ -134,7 +134,7 @@ export default function TrackOrderPage() {
   }
 
   return (
-    <main className="max-w-2xl mx-auto pt-36 pb-16 px-4 sm:px-6 min-h-screen">
+    <div className="w-full max-w-2xl mx-auto pt-36 pb-16 px-4 sm:px-6 min-h-screen">
       <div className="mb-10">
         <div className="flex items-center gap-3 mb-3">
           <Package className="size-5 text-primary" />
@@ -184,6 +184,6 @@ export default function TrackOrderPage() {
             ))}
           </div>
         ))}
-    </main>
+    </div>
   );
 }

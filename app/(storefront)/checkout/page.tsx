@@ -105,8 +105,8 @@ export default function CheckoutPage() {
     const changeFormatted = hasCashDetails ? (placedOrder.changeCents ?? 0).toLocaleString('vi-VN') : '';
 
     return (
-      <div className="max-w-xl mx-auto pt-36 pb-12 px-4 sm:px-6 min-h-screen flex flex-col justify-center animate-in fade-in duration-500">
-        <Card className="border-primary/20 shadow-lg">
+      <div className="w-full max-w-xl mx-auto pt-36 pb-12 px-4 sm:px-6 min-h-screen flex flex-col justify-center animate-in fade-in duration-500">
+        <Card className="border-primary/20 shadow-lg w-full">
           <CardContent className="p-8 space-y-6 text-center">
             <div className="mx-auto w-16 h-16 rounded-full bg-accent/10 flex items-center justify-center text-primary mb-4">
               <CheckCircle className="size-10 text-primary" />
@@ -162,7 +162,7 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto pt-36 pb-12 px-4 sm:px-6 md:px-gutter min-h-screen">
+    <div className="w-full max-w-7xl mx-auto pt-36 pb-12 px-4 sm:px-6 md:px-gutter min-h-screen">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Order Summary - left on desktop, top on mobile */}
         <div className="lg:col-span-5 order-first">
