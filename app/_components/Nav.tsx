@@ -37,7 +37,7 @@ export function Nav({ className }: { className?: string } = {}) {
           onClick={closeMenu}
           className="text-xl sm:text-2xl font-light tracking-tighter text-accent uppercase transition-opacity hover:opacity-70"
         >
-          Todaywegrind Coffee
+          Morning Mist Coffee
         </Link>
 
         {/* Desktop Menu */}

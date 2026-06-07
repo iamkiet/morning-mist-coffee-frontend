@@ -29,7 +29,7 @@ export function Footer() {
           {/* Brand — col 4 */}
           <div className="md:col-span-4 flex flex-col space-y-6">
             <span className="text-2xl font-light tracking-tighter text-accent uppercase">
-              Todaywegrind Coffee
+              Morning Mist Coffee
             </span>
             <p className="text-base text-muted-foreground font-light leading-relaxed">
               Sự khám phá của sự chính xác giác quan. Kiến tạo sự tĩnh lặng thông qua cà phê thủ công và gốm sứ.
@@ -93,10 +93,10 @@ export function Footer() {
             </h5>
             <div className="flex flex-col space-y-4">
               <a
-                href="mailto:hello@todaywegrind.com"
+                href="mailto:hello@morningmist.com"
                 className="text-base text-muted-foreground hover:text-primary transition-colors font-light"
               >
-                hello@todaywegrind.com
+                hello@morningmist.com
               </a>
               <p className="text-base text-muted-foreground font-light">
                 +1 234 567 890
@@ -115,7 +115,7 @@ export function Footer() {
         {/* Bottom bar */}
         <div className="pt-8 md:pt-12 border-t border-border/30 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
           <p className="text-[11px] uppercase tracking-widest text-muted-foreground/60">
-            © 2026 Todaywegrind Coffee.
+            © 2026 Morning Mist Coffee.
           </p>
           <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 sm:gap-x-8">
             {legalLinks.map(({ label, href }) => (

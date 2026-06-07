@@ -500,7 +500,7 @@ export default function AdminProductsPage() {
     <div className="p-4 sm:p-8">
       <PageHeader
         title="Quản lý Kho hàng"
-        description="Todaywegrind được khai sinh từ làn sương sớm tĩnh lặng nơi đại ngàn, nơi mỗi hạt cà phê là một câu chuyện kể về vùng thổ nhưỡng đã nuôi dưỡng chúng."
+        description="Morning Mist được khai sinh từ làn sương sớm tĩnh lặng nơi đại ngàn, nơi mỗi hạt cà phê là một câu chuyện kể về vùng thổ nhưỡng đã nuôi dưỡng chúng."
         actions={
           <>
             <div className="relative w-full sm:w-64">

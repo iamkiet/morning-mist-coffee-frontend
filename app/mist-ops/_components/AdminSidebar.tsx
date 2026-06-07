@@ -48,7 +48,7 @@ export function AdminSidebar({ onClose }: AdminSidebarProps) {
       {/* Logo */}
       <div className="px-4">
         <p className="text-sm font-medium text-foreground tracking-tight leading-none">
-          Todaywegrind Coffee
+          Morning Mist Coffee
         </p>
         <p className="text-[10px] text-muted-foreground tracking-widest uppercase mt-0.5">
           Quản trị

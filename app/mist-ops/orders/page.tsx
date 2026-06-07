@@ -251,7 +251,7 @@ export default function AdminOrdersPage() {
     <div className="p-4 sm:p-8">
       <PageHeader
         eyebrow="Đơn hàng"
-        title="Quản lý Đơn hàng Todaywegrind"
+        title="Quản lý Đơn hàng Morning Mist"
         description="Mỗi đơn hàng đều được chuẩn bị và trân trọng tận tâm."
         actions={
           <div className="relative w-full sm:w-64">
@@ -390,7 +390,7 @@ export default function AdminOrdersPage() {
           <CardContent className="p-6 flex items-center justify-between">
             <div>
               <p className="text-[10px] text-muted-foreground uppercase tracking-widest">
-                Quản trị Todaywegrind Coffee
+                Quản trị Morning Mist Coffee
               </p>
               <h3 className="text-base mb-4 font-medium">
                 Hiệu suất xưởng rang

@@ -25,7 +25,7 @@ export default function StoryPage() {
             trôi chậm lại.
           </h1>
           <p className="text-base text-muted-foreground max-w-2xl mx-auto italic">
-            Todaywegrind được khai sinh từ làn sương sớm tĩnh lặng nơi đại ngàn,
+            Morning Mist được khai sinh từ làn sương sớm tĩnh lặng nơi đại ngàn,
             nơi mỗi hạt cà phê là một câu chuyện kể về vùng đất trù phú đã nuôi dưỡng chúng.
           </p>
         </div>
@@ -44,7 +44,7 @@ export default function StoryPage() {
             <div className="w-12 h-px bg-accent" />
             <p className="text-sm text-muted-foreground leading-relaxed max-w-[28rem]">
               Chúng tôi tin rằng cà phê không chỉ đơn thuần là thức uống, mà là nghi thức của sự hiện diện.
-              Giữa một thế giới hối hả và đòi hỏi tốc độ, Todaywegrind mời gọi bạn dừng lại và sống trọn từng khoảnh khắc.
+              Giữa một thế giới hối hả và đòi hỏi tốc độ, Morning Mist mời gọi bạn dừng lại và sống trọn từng khoảnh khắc.
               Triết lý của chúng tôi được định nghĩa bằng &ldquo;Tối Giản Hữu Cơ&rdquo; — cam kết gạt bỏ những tạp âm
               cuộc sống và tôn vinh vẻ đẹp nguyên bản, mộc mạc của nghệ thuật thủ công tinh xảo.
             </p>
@@ -127,13 +127,13 @@ export default function StoryPage() {
           </h2>
           <p className="text-base text-muted-foreground mb-lg italic">
             &ldquo;Chúng tôi không mong muốn trở thành nhà rang xay lớn nhất, mà muốn là thương hiệu tận tâm nhất.
-            Lời hứa của Todaywegrind là luôn giữ trọn sự minh bạch trong chuỗi cung ứng và mang lại cảm giác bình yên trong từng trải nghiệm của bạn.&rdquo;
+            Lời hứa của Morning Mist là luôn giữ trọn sự minh bạch trong chuỗi cung ứng và mang lại cảm giác bình yên trong từng trải nghiệm của bạn.&rdquo;
           </p>
           <div className="flex justify-center">
             <div className="h-16 w-px bg-accent/30" />
           </div>
           <p className="mt-8 text-xs uppercase tracking-wider text-muted-foreground">
-            Những người sáng lập Todaywegrind
+            Những người sáng lập Morning Mist
           </p>
         </div>
       </section>

@@ -8,7 +8,7 @@ import { ChatWidget } from '../components/chat/ChatWidget';
 const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
 
 export const metadata: Metadata = {
-  title: 'Todaywegrind Coffee',
+  title: 'Morning Mist Coffee',
   description: 'Cà phê đặc sản, thưởng thức chậm rãi.',
 };
 

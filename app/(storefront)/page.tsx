@@ -27,7 +27,7 @@ export default function HomePage() {
             Nghệ Thuật Sống <br /> Qua Lăng Kính Cà Phê.
           </h1>
           <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto mb-8 sm:mb-12 font-light">
-            Todaywegrind là cuộc thám hiểm của sự chính xác giác quan. Chúng tôi tuyển chọn những hạt cà phê quý hiếm và tác phẩm gốm sứ thủ công để biến thói quen buổi sáng của bạn thành một khoảnh khắc thiền định yên bình.
+            Morning Mist là cuộc thám hiểm của sự chính xác giác quan. Chúng tôi tuyển chọn những hạt cà phê quý hiếm và tác phẩm gốm sứ thủ công để biến thói quen buổi sáng của bạn thành một khoảnh khắc thiền định yên bình.
           </p>
           <Button
             asChild
@@ -136,7 +136,7 @@ export default function HomePage() {
               Kiến Tạo <br /> Những Khoảnh Khắc Tĩnh Lặng.
             </h2>
             <p className="text-base sm:text-lg text-muted-foreground font-light leading-relaxed">
-              Todaywegrind Coffee được thành lập trên niềm tin rằng cà phê không đơn thuần là một sản phẩm thương mại, mà là một vũ điệu của nghệ thuật. Chúng tôi dành hàng tháng trời để tìm kiếm những hạt cà phê từ các trang trại vùng cao bền vững, rang chúng theo từng mẻ nhỏ nhằm tôn vinh hương hoa quả tự nhiên vốn có của hạt.
+              Morning Mist Coffee được thành lập trên niềm tin rằng cà phê không đơn thuần là một sản phẩm thương mại, mà là một vũ điệu của nghệ thuật. Chúng tôi dành hàng tháng trời để tìm kiếm những hạt cà phê từ các trang trại vùng cao bền vững, rang chúng theo từng mẻ nhỏ nhằm tôn vinh hương hoa quả tự nhiên vốn có của hạt.
             </p>
             <p className="text-base sm:text-lg text-muted-foreground font-light leading-relaxed">
               Các tác phẩm gốm sứ của chúng tôi là sự hợp tác với các nghệ nhân gốm địa phương, được thiết kế để mang lại cảm giác đằm tay nhưng vô cùng thanh thoát trong lòng bàn tay bạn — điểm tựa vật lý cho khoảng thời gian yên bình nhất trong ngày.
