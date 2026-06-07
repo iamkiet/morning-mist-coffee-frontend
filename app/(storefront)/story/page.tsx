@@ -4,7 +4,7 @@ export default function StoryPage() {
   return (
     <div className="w-full bg-background">
       {/* Hero Section */}
-      <section className="relative h-[600px] sm:h-[750px] md:h-[870px] w-full overflow-hidden flex items-center pt-28 sm:pt-32 md:pt-36 px-4 sm:px-8 md:px-12 justify-center">
+      <section className="relative h-[600px] sm:h-[750px] md:h-[870px] w-full overflow-hidden flex items-center pt-28 sm:pt-32 md:pt-36 px-4 sm:px-6 md:px-gutter justify-center">
         <div className="absolute inset-0 z-0 scale-105">
           <Image
             src="/statics/story_hero_bg.png"
@@ -32,7 +32,7 @@ export default function StoryPage() {
       </section>
 
       {/* Philosophy Section */}
-      <section className="py-xl px-gutter bg-background">
+      <section className="py-xl px-4 sm:px-6 md:px-gutter bg-background">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-lg items-center">
           <div className="md:col-span-6 space-y-md">
             <span className="text-xs uppercase tracking-widest text-primary">
@@ -66,7 +66,7 @@ export default function StoryPage() {
       </section>
 
       {/* Process Section */}
-      <section className="py-xl px-gutter bg-card">
+      <section className="py-xl px-4 sm:px-6 md:px-gutter bg-card">
         <div className="max-w-7xl mx-auto text-center mb-xl">
           <span className="text-xs uppercase tracking-widest text-primary block mb-4">
             Nghệ Thuật Thủ Công
@@ -75,7 +75,7 @@ export default function StoryPage() {
             Sự Tỉ Mỉ Và Chính Xác Thủ Công
           </h2>
         </div>
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-md">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-md">
           {[
             {
               alt: 'Nguồn cung cấp bền vững và đạo đức',
@@ -116,7 +116,7 @@ export default function StoryPage() {
       </section>
 
       {/* Commitment Section */}
-      <section className="py-xl px-gutter bg-background">
+      <section className="py-xl px-4 sm:px-6 md:px-gutter bg-background">
         <div className="max-w-4xl mx-auto border border-accent/20 p-6 sm:p-lg text-center">
           <span className="text-xs uppercase tracking-widest text-primary block mb-6">
             Cam Kết Của Chúng Tôi

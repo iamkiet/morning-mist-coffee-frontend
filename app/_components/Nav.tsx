@@ -31,7 +31,7 @@ export function Nav({ className }: { className?: string } = {}) {
 
   return (
     <nav className={`w-full bg-white/70 border-b border-border/20 backdrop-blur-xl ${className ?? ''}`}>
-      <div className="flex justify-between items-center px-4 sm:px-6 md:px-12 py-6 max-w-[1920px] mx-auto">
+      <div className="flex justify-between items-center px-4 sm:px-6 md:px-gutter py-6 max-w-7xl mx-auto">
         <Link
           href="/"
           onClick={closeMenu}

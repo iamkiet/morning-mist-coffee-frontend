@@ -37,7 +37,7 @@ export default function JournalPage() {
   return (
     <div className="w-full bg-background">
       {/* Hero */}
-      <section className="relative h-[600px] sm:h-[819px] w-full overflow-hidden flex items-center pt-28 sm:pt-32 md:pt-36 px-4 sm:px-8 md:px-12 max-w-[1920px] mx-auto">
+      <section className="relative h-[600px] sm:h-[819px] w-full overflow-hidden flex items-center pt-28 sm:pt-32 md:pt-36 px-4 sm:px-6 md:px-gutter max-w-7xl mx-auto">
         <div className="absolute inset-0 z-0">
           <Image
             src="/statics/journal_hero_bg.png"
@@ -70,7 +70,7 @@ export default function JournalPage() {
       </section>
 
       {/* Filter Bar */}
-      <section className="w-full px-4 sm:px-8 md:px-12 py-12 sm:py-16 flex flex-col md:flex-row justify-between items-end gap-8 border-b border-border max-w-[1920px] mx-auto">
+      <section className="w-full px-4 sm:px-6 md:px-gutter py-12 sm:py-16 flex flex-col md:flex-row justify-between items-end gap-8 border-b border-border max-w-7xl mx-auto">
         <div>
           <h2 className="text-2xl sm:text-3xl text-foreground font-light">
             Tạp Chí (Journal)
@@ -96,8 +96,8 @@ export default function JournalPage() {
       </section>
 
       {/* Article Grid */}
-      <section className="px-4 sm:px-8 md:px-12 py-16 sm:py-24 max-w-[1920px] mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 md:gap-x-12 gap-y-16 md:gap-y-24">
+      <section className="px-4 sm:px-6 md:px-gutter py-16 sm:py-24 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 md:gap-x-12 gap-y-16 md:gap-y-24">
           {articles.map((a) => (
             <article key={a.title} className="group cursor-pointer">
               <div className="relative aspect-[4/5] mb-6 sm:mb-8 overflow-hidden bg-muted rounded-2xl">
@@ -133,7 +133,7 @@ export default function JournalPage() {
       </section>
 
       {/* Newsletter */}
-      <section className="w-full py-16 sm:py-24 md:py-32 px-4 sm:px-8 md:px-12 bg-muted">
+      <section className="w-full py-16 sm:py-24 md:py-32 px-4 sm:px-6 md:px-gutter bg-muted">
         <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-8 md:gap-16">
           <div className="flex-1">
             <span className="text-xs text-primary mb-4 block uppercase tracking-widest font-medium">

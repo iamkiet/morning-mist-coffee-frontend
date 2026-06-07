@@ -155,7 +155,7 @@ export default function HomePage() {
       {/* Philosophy Feature Cards */}
       <section className="py-12 sm:py-16 md:py-32 bg-muted/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-gutter">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 md:gap-md">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-md">
             {[
               {
                 Icon: Leaf,
