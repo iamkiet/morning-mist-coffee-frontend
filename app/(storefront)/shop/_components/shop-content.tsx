@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ProductCard } from '../../../_components/ProductCard';
+import { ProductCard } from '@/app/_components/ProductCard';
 import { useProducts } from '@/hooks/use-products';
 
 const LIMIT = 8;

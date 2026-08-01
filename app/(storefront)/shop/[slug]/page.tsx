@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { Coffee, Thermometer, Leaf } from 'lucide-react';
-import { Container } from '../../../_components/Container';
+import { Container } from '@/app/_components/Container';
 import { Badge } from '@/components/ui/badge';
 import { fetchProduct } from '@/lib/api/products';
 import { AddToBag } from './AddToBag';

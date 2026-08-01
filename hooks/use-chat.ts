@@ -1,61 +1,42 @@
 'use client';
 
 import { useState } from 'react';
-import { authFetch } from '@/lib/api/client';
+import { useMutation } from '@tanstack/react-query';
+import { sendChatMessage, type ChatMessage } from '@/lib/api/chat';
 
-export type Message = {
+export interface Message extends ChatMessage {
   id: string;
-  role: 'user' | 'assistant';
-  content: string;
-};
+}
 
 export function useChat() {
   const [messages, setMessages] = useState<Message[]>([
     { id: '1', role: 'assistant', content: 'Xin chào! Tôi có thể giúp gì cho bạn hôm nay?' },
   ]);
   const [input, setInput] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
 
-  const sendMessage = async (e: React.FormEvent) => {
+  function appendAssistant(content: string) {
+    setMessages((prev) => [...prev, { id: crypto.randomUUID(), role: 'assistant', content }]);
+  }
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: (history: Message[]) =>
+      sendChatMessage(history.map(({ role, content }) => ({ role, content }))),
+    onSuccess: appendAssistant,
+    onError: () => appendAssistant('Xin lỗi, hệ thống đang bận. Vui lòng thử lại sau.'),
+  });
+
+  function sendMessage(e: React.FormEvent) {
     e.preventDefault();
-    if (!input.trim()) return;
+    if (!input.trim() || isPending) return;
 
-    const userMessage: Message = { id: Date.now().toString(), role: 'user', content: input };
-    setMessages((prev) => [...prev, userMessage]);
+    const history: Message[] = [
+      ...messages,
+      { id: crypto.randomUUID(), role: 'user', content: input },
+    ];
+    setMessages(history);
     setInput('');
-    setIsLoading(true);
+    mutate(history);
+  }
 
-    try {
-      const response = await authFetch('/api/v1/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          messages: [...messages, userMessage].map((m) => ({
-            role: m.role,
-            content: m.content,
-          })),
-        }),
-      });
-
-      if (!response.ok) throw new Error('Network response was not ok');
-      const data = await response.json();
-
-      setMessages((prev) => [
-        ...prev,
-        { id: Date.now().toString(), role: 'assistant', content: data.message },
-      ]);
-    } catch (error) {
-      console.error('Failed to send message:', error);
-      setMessages((prev) => [
-        ...prev,
-        { id: Date.now().toString(), role: 'assistant', content: 'Xin lỗi, hệ thống đang bận. Vui lòng thử lại sau.' },
-      ]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  return { messages, input, setInput, sendMessage, isLoading };
+  return { messages, input, setInput, sendMessage, isLoading: isPending };
 }

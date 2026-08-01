@@ -6,7 +6,6 @@ export function useUsers(page = 1, limit = 20) {
   return useQuery({
     queryKey: ['users', page, limit],
     queryFn: () => fetchUsers(limit, offset),
-    staleTime: 1000 * 60,
   });
 }
 

@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageCircle, X, Send } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
-import { useChat } from '../../hooks/use-chat';
+import { useChat } from '@/hooks/use-chat';
 
 export function ChatWidget() {
   const pathname = usePathname();
@@ -33,7 +33,7 @@ export function ChatWidget() {
             }}
           >
             {/* Header */}
-            <div className="bg-primary px-4 py-3 flex justify-between items-center text-on-primary">
+            <div className="bg-primary px-4 py-3 flex justify-between items-center text-primary-foreground">
               <div>
                 <h3 className="font-medium text-sm">Trợ lý Morning Mist</h3>
                 <p className="text-xs opacity-80">Trực tuyến</p>
@@ -47,7 +47,7 @@ export function ChatWidget() {
             </div>
 
             {/* Chat Area */}
-            <div className="h-80 overflow-y-auto p-4 flex flex-col gap-3 bg-surface">
+            <div className="h-80 overflow-y-auto p-4 flex flex-col gap-3 bg-background">
               {messages.map((msg) => (
                 <div 
                   key={msg.id} 
@@ -56,7 +56,7 @@ export function ChatWidget() {
                   <div 
                     className={`max-w-[85%] rounded-2xl px-4 py-2 text-sm ${
                       msg.role === 'user' 
-                        ? 'bg-primary text-on-primary rounded-tr-sm' 
+                        ? 'bg-primary text-primary-foreground rounded-tr-sm' 
                         : 'bg-muted text-foreground rounded-tl-sm'
                     }`}
                   >
@@ -103,7 +103,7 @@ export function ChatWidget() {
               <button
                 type="submit"
                 disabled={!input.trim() || isLoading}
-                className="size-8 shrink-0 flex items-center justify-center rounded-full bg-primary text-on-primary transition-all duration-300 hover:scale-105 active:scale-95 disabled:bg-muted disabled:text-muted-foreground/30 disabled:scale-100 disabled:cursor-not-allowed cursor-pointer shadow-sm hover:shadow"
+                className="size-8 shrink-0 flex items-center justify-center rounded-full bg-primary text-primary-foreground transition-all duration-300 hover:scale-105 active:scale-95 disabled:bg-muted disabled:text-muted-foreground/30 disabled:scale-100 disabled:cursor-not-allowed cursor-pointer shadow-sm hover:shadow"
               >
                 <Send size={14} className="translate-x-[-1px] translate-y-[0.5px]" />
               </button>
@@ -117,7 +117,7 @@ export function ChatWidget() {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="w-14 h-14 rounded-full bg-primary text-on-primary shadow-lg flex items-center justify-center cursor-pointer shrink-0"
+        className="w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center cursor-pointer shrink-0"
         style={{ 
           boxShadow: '0 10px 25px rgba(85, 98, 84, 0.2)'
         }}

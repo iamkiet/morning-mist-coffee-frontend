@@ -3,7 +3,7 @@ import { Geist } from 'next/font/google';
 import './globals.css';
 import { cn } from '@/lib/utils';
 import { Providers } from './providers';
-import { ChatWidget } from '../components/chat/ChatWidget';
+import { ChatWidget } from './_components/ChatWidget';
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
 

@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { searchProductsByVoice, type Product } from '@/lib/api/products';
+import { useMutation } from '@tanstack/react-query';
+import { searchProductsByVoice } from '@/lib/api/products';
 
 export type VoiceSearchStatus = 'idle' | 'recording' | 'loading' | 'success' | 'error';
 
@@ -15,11 +16,12 @@ function pickMimeType(): string | undefined {
 }
 
 export function useVoiceSearch() {
-  const [status, setStatus] = useState<VoiceSearchStatus>('idle');
-  const [items, setItems] = useState<Product[]>([]);
-  const [transcript, setTranscript] = useState<string | null>(null);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  // Recorder lifecycle stays local — TanStack Query owns only the network call
+  const [isRecording, setIsRecording] = useState(false);
+  const [recorderError, setRecorderError] = useState<string | null>(null);
   const [secondsRemaining, setSecondsRemaining] = useState(MAX_RECORDING_SECONDS);
+
+  const search = useMutation({ mutationFn: searchProductsByVoice });
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
@@ -54,31 +56,19 @@ export function useVoiceSearch() {
     };
   }, []);
 
-  async function handleStop() {
-    setStatus('loading');
+  function handleStop() {
+    setIsRecording(false);
     const rawMimeType = mediaRecorderRef.current?.mimeType || 'audio/webm';
     const mimeType = rawMimeType.split(';')[0];
-    const blob = new Blob(chunksRef.current, { type: mimeType });
-
-    try {
-      const result = await searchProductsByVoice(blob);
-      setItems(result.items);
-      setTranscript(result.transcript);
-      setStatus('success');
-    } catch {
-      setErrorMessage('Đã có lỗi xảy ra khi tìm kiếm. Vui lòng thử lại.');
-      setStatus('error');
-    }
+    search.mutate(new Blob(chunksRef.current, { type: mimeType }));
   }
 
   async function startRecording() {
-    setErrorMessage(null);
-    setTranscript(null);
-    setItems([]);
+    setRecorderError(null);
+    search.reset();
 
     if (typeof navigator === 'undefined' || !navigator.mediaDevices?.getUserMedia) {
-      setErrorMessage('Trình duyệt không hỗ trợ ghi âm.');
-      setStatus('error');
+      setRecorderError('Trình duyệt không hỗ trợ ghi âm.');
       return;
     }
 
@@ -95,11 +85,11 @@ export function useVoiceSearch() {
       recorder.onstop = () => {
         clearCountdown();
         stopStream();
-        void handleStop();
+        handleStop();
       };
       mediaRecorderRef.current = recorder;
       recorder.start();
-      setStatus('recording');
+      setIsRecording(true);
 
       setSecondsRemaining(MAX_RECORDING_SECONDS);
       countdownRef.current = setInterval(() => {
@@ -112,25 +102,34 @@ export function useVoiceSearch() {
         });
       }, 1000);
     } catch {
-      setErrorMessage('Không thể truy cập micro. Vui lòng cấp quyền và thử lại.');
-      setStatus('error');
+      setRecorderError('Không thể truy cập micro. Vui lòng cấp quyền và thử lại.');
     }
   }
 
   function reset() {
     clearCountdown();
-    setStatus('idle');
-    setItems([]);
-    setTranscript(null);
-    setErrorMessage(null);
+    setIsRecording(false);
+    setRecorderError(null);
     setSecondsRemaining(MAX_RECORDING_SECONDS);
+    search.reset();
+  }
+
+  function deriveStatus(): VoiceSearchStatus {
+    if (recorderError) return 'error';
+    if (isRecording) return 'recording';
+    if (search.isPending) return 'loading';
+    if (search.isError) return 'error';
+    if (search.isSuccess) return 'success';
+    return 'idle';
   }
 
   return {
-    status,
-    items,
-    transcript,
-    errorMessage,
+    status: deriveStatus(),
+    items: search.data?.items ?? [],
+    transcript: search.data?.transcript ?? null,
+    errorMessage:
+      recorderError ??
+      (search.isError ? 'Đã có lỗi xảy ra khi tìm kiếm. Vui lòng thử lại.' : null),
     secondsRemaining,
     startRecording,
     stopRecording,

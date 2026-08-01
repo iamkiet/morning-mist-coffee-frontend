@@ -22,30 +22,40 @@ app/
   layout.tsx              — root layout, Geist font (no Inter, no Material Symbols)
   providers.tsx           — QueryClient + AuthProvider + CartProvider + Toaster
   globals.css             — Tailwind 4 global styles
-  _components/            — shared: Nav, Footer, Container, ProductCard, Chip
+  _components/            — shared: Nav, Footer, Container, ProductCard, Chip,
+                            CartCount, ChatWidget, VoiceSearchDialog
   _data/                  — static data constants
   (storefront)/           — public storefront routes (layout has Nav + Footer)
   login/                  — admin login page (admin-only, checks role before redirect)
   mist-ops/               — admin panel (/mist-ops, not /admin)
     layout.tsx            — auth guard: redirects non-admin to /login
     _components/          — AdminSidebar, Badge, DataTable, PageHeader, StatCard
-components/ui/            — shadcn components (button, card, dialog, form, input, …)
+components/ui/            — shadcn components ONLY (button, card, dialog, …).
+                            App components belong in app/_components/, never here.
 lib/
   auth-context.tsx        — AuthProvider: in-memory access token, HttpOnly refresh cookie
   cart.tsx                — CartProvider: localStorage-based cart, keyed by slug
   api/client.ts           — authFetch() with auto-retry on 401 (deduped refresh)
-  api/products.ts         — fetchProducts(), fetchProduct(), updateProduct()
+  api/products.ts         — fetchProducts(), fetchProduct(), updateProduct(),
+                            searchProductsByVoice()
   api/orders.ts           — fetchOrders(), updateOrderStatus()
   api/users.ts            — fetchUsers(), updateUser()
+  api/chat.ts             — sendChatMessage()
 hooks/
   use-products.ts         — useProducts(), useProduct(slug), useUpdateProduct()
   use-orders.ts           — useOrders(), useUpdateOrderStatus()
   use-users.ts            — useUsers(), useUpdateUser()
+  use-chat.ts             — useChat()
+  use-voice-search.ts     — useVoiceSearch()
 ```
 
 **Data fetching pattern:** server components call `fetchProducts()` directly; client components use TanStack Query hooks.
 
-**Global staleTime:** `providers.tsx` sets `staleTime: 60_000` on the `QueryClient` — do not add per-hook `staleTime`.
+**No `fetch`/`authFetch` in components or hooks.** Every network call goes through a `lib/api/*` module; hooks wrap it in `useQuery`/`useMutation`. Hand-rolled `useState` loading/error state for a network call is a bug, not a style choice.
+
+**Browser-API state stays local.** `useVoiceSearch` keeps the `MediaRecorder` lifecycle (`isRecording`, countdown, stream refs) in `useState`/`useRef` and hands only the resulting `Blob` to `useMutation` — Query owns the request, not the device.
+
+**Global staleTime:** `providers.tsx` sets `staleTime: 60_000` on the `QueryClient`. Do not restate it per hook. Override only when the value genuinely differs from the global, and add a comment saying why (see `use-product-types.ts`).
 
 ## Auth flow
 
@@ -59,7 +69,7 @@ hooks/
 
 **Do not recreate** any of these — grep before adding:
 
-- Shared: `app/_components/` — Nav, Footer, Container, ProductCard, Chip
+- Shared: `app/_components/` — Nav, Footer, Container, ProductCard, Chip, CartCount, ChatWidget, VoiceSearchDialog
 - Admin: `app/mist-ops/_components/` — AdminSidebar, Badge, DataTable, PageHeader, StatCard
 - shadcn: `@/components/ui/*` — add with `npx shadcn add <name>`
 

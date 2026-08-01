@@ -6,7 +6,6 @@ export function useProducts(page = 1, limit = 8) {
   return useQuery({
     queryKey: ['products', page, limit],
     queryFn: () => fetchProducts(limit, offset),
-    staleTime: 1000 * 60,
   });
 }
 

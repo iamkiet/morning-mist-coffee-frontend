@@ -13,7 +13,7 @@ import {
   SheetDescription,
 } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
-import { VoiceSearchDialog } from '@/components/voice-search/VoiceSearchDialog';
+import { VoiceSearchDialog } from './VoiceSearchDialog';
 
 const CartCount = dynamic(() => import('./CartCount'), { ssr: false });
 
