@@ -43,19 +43,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // On page load: access token is gone (in-memory), so try refresh via HttpOnly cookie
   useEffect(() => {
-    const isClient = typeof window !== 'undefined';
-    const isAdminPath =
-      isClient &&
-      (window.location.pathname.startsWith('/mist-ops') ||
-        window.location.pathname.startsWith('/login'));
-
-    if (!isAdminPath) {
-      setUser(null);
-      setIsLoading(false);
-      return;
-    }
-
     async function loadUser() {
+      const isClient = typeof window !== 'undefined';
+      const isAdminPath =
+        isClient &&
+        (window.location.pathname.startsWith('/mist-ops') ||
+          window.location.pathname.startsWith('/login'));
+
+      if (!isAdminPath) {
+        setUser(null);
+        setIsLoading(false);
+        return;
+      }
+
       try {
         const refreshRes = await fetch(`${API_URL}/api/v1/auth/refresh`, {
           method: 'POST',

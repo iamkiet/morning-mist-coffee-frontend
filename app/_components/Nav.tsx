@@ -13,6 +13,7 @@ import {
   SheetDescription,
 } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
+import { VoiceSearchDialog } from '@/components/voice-search/VoiceSearchDialog';
 
 const CartCount = dynamic(() => import('./CartCount'), { ssr: false });
 
@@ -58,6 +59,8 @@ export function Nav({ className }: { className?: string } = {}) {
         </div>
 
         <div className="flex items-center gap-1">
+          <VoiceSearchDialog />
+
           <Button
             asChild
             variant="ghost"

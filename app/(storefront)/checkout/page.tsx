@@ -21,7 +21,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Label } from '@/components/ui/label';
 import { useCart } from '@/lib/cart';
-import { createOrder, type Order } from '@/lib/api/orders';
+import { createOrder } from '@/lib/api/orders';
 import { toast } from 'sonner';
 
 const checkoutSchema = z.object({

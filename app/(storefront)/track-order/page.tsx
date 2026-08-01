@@ -115,6 +115,7 @@ function OrderCard({ order }: { order: Order }) {
 
 export default function TrackOrderPage() {
   const [email, setEmail] = useState('');
+  const [code, setCode] = useState('');
   const [orders, setOrders] = useState<Order[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -124,7 +125,7 @@ export default function TrackOrderPage() {
     setError('');
     setIsLoading(true);
     try {
-      const result = await lookupOrders(email);
+      const result = await lookupOrders(email, code.trim());
       setOrders(result);
     } catch {
       setError('Đã xảy ra lỗi. Vui lòng thử lại sau.');
@@ -143,11 +144,11 @@ export default function TrackOrderPage() {
           </h1>
         </div>
         <p className="text-sm text-muted-foreground">
-          Nhập địa chỉ email bạn đã sử dụng khi đặt hàng để tra cứu thông tin đơn hàng.
+          Nhập email và mã đơn hàng (8 ký tự in trên biên nhận) để tra cứu thông tin đơn hàng.
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="flex gap-3 mb-8">
+      <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 mb-8">
         <Input
           type="email"
           placeholder="email_cua_ban@example.com"
@@ -155,6 +156,18 @@ export default function TrackOrderPage() {
           onChange={(e) => setEmail(e.target.value)}
           required
           className="flex-1"
+        />
+        <Input
+          type="text"
+          placeholder="Mã đơn hàng"
+          value={code}
+          onChange={(e) => setCode(e.target.value)}
+          required
+          minLength={8}
+          maxLength={8}
+          pattern="[0-9a-fA-F]{8}"
+          title="Mã đơn hàng gồm 8 ký tự, in trên biên nhận"
+          className="font-mono uppercase sm:w-44"
         />
         <Button
           type="submit"
@@ -172,7 +185,9 @@ export default function TrackOrderPage() {
         (orders.length === 0 ? (
           <div className="text-center py-16 text-muted-foreground">
             <Package className="size-10 mx-auto mb-4 opacity-40" />
-            <p className="text-sm">Không tìm thấy đơn hàng nào liên kết với email này.</p>
+            <p className="text-sm">
+              Không tìm thấy đơn hàng nào khớp với email và mã đơn hàng này.
+            </p>
           </div>
         ) : (
           <div className="space-y-3">

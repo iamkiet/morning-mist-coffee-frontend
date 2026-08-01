@@ -8,8 +8,10 @@ export function setAccessToken(token: string | null) {
 }
 
 function request(path: string, options: RequestInit = {}): Promise<Response> {
+  // Let the browser set its own multipart Content-Type (with boundary) for FormData bodies
+  const isFormData = typeof FormData !== 'undefined' && options.body instanceof FormData;
   const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
+    ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
     ...(options.headers as Record<string, string>),
   };
   if (accessToken) headers['Authorization'] = `Bearer ${accessToken}`;

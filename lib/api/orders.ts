@@ -54,8 +54,10 @@ export async function updateOrderStatus(
   return res.json();
 }
 
-export async function lookupOrders(email: string): Promise<Order[]> {
-  const res = await authFetch(`/api/v1/orders/lookup?email=${encodeURIComponent(email)}`);
+export async function lookupOrders(email: string, code: string): Promise<Order[]> {
+  const res = await authFetch(
+    `/api/v1/orders/lookup?email=${encodeURIComponent(email)}&code=${encodeURIComponent(code)}`,
+  );
   if (!res.ok) throw new Error('Failed to look up orders');
   const data: { items: Order[] } = await res.json();
   return data.items;
