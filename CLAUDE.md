@@ -34,7 +34,8 @@ components/ui/            — shadcn components ONLY (button, card, dialog, …)
                             App components belong in app/_components/, never here.
 lib/
   auth-context.tsx        — AuthProvider: in-memory access token, HttpOnly refresh cookie
-  cart.tsx                — CartProvider: localStorage-based cart, keyed by slug
+  cart.tsx                — CartProvider: localStorage cart via useSyncExternalStore
+  product-attributes.ts   — roast/process inferred from product name (stopgap)
   api/client.ts           — authFetch() with auto-retry on 401 (deduped refresh)
   api/products.ts         — fetchProducts(), fetchProduct(), updateProduct(),
                             searchProductsByVoice()
@@ -42,11 +43,14 @@ lib/
   api/users.ts            — fetchUsers(), updateUser()
   api/chat.ts             — sendChatMessage()
 hooks/
-  use-products.ts         — useProducts(), useProduct(slug), useUpdateProduct()
+  use-products.ts         — useProducts(), useUpdateProduct(), useCreateProduct(),
+                            useDeleteProduct()
   use-orders.ts           — useOrders(), useUpdateOrderStatus()
   use-users.ts            — useUsers(), useUpdateUser()
+  use-product-types.ts    — useProductTypes()
   use-chat.ts             — useChat()
   use-voice-search.ts     — useVoiceSearch()
+  use-temporary-flag.ts   — useTemporaryFlag(): self-clearing "Đã thêm" confirmations
 ```
 
 **Data fetching pattern:** server components call `fetchProducts()` directly; client components use TanStack Query hooks.
@@ -70,7 +74,7 @@ hooks/
 **Do not recreate** any of these — grep before adding:
 
 - Shared: `app/_components/` — Nav, Footer, Container, ProductCard, Chip, CartCount, ChatWidget, VoiceSearchDialog
-- Admin: `app/mist-ops/_components/` — AdminSidebar, Badge, DataTable, PageHeader, StatCard
+- Admin: `app/mist-ops/_components/` — AdminSidebar, Badge, DataTable, Pagination, PageHeader, StatCard
 - shadcn: `@/components/ui/*` — add with `npx shadcn add <name>`
 
 **Deleted (do not recreate):** Button.tsx · SectionHeading.tsx · AdminTopbar.tsx
@@ -81,6 +85,8 @@ hooks/
 
 - **Search Inputs**: Place search inputs directly inside `<PageHeader actions={...}>` on all admin table pages (`products`, `users`, `orders`). Use unified styling (`pl-10 bg-card w-full`) and wrap with `<div className="relative w-full sm:w-64">` so the search bar spans full-width on mobile and behaves consistently on desktop.
 - **Search Filtering**: Bind search inputs to a local state (`const [search, setSearch] = useState('')`) and perform client-side filtering on the fetched data items (e.g., `filteredItems`) before passing them to the `<DataTable>` component.
+- **Pagination**: Use `<Pagination>` from `DataTable.tsx` in the `<DataTable footer={…}>` slot. Do not hand-roll prev/next markup per page.
+- **`disabled` never works on `<Button asChild>`**: Slot renders an `<a>`, and anchors do not match the `:disabled` pseudo-class, so `disabled:opacity-50` and `disabled:pointer-events-none` silently do nothing. Render a real `<button>` for the disabled case (see `PageArrow` in `shop-content.tsx`).
 - **Action Buttons**: Keep table action buttons (`Thao tác` column) always visible on mobile/tablet viewports. Avoid hover-only visibility modifiers (like `group-hover:opacity-100`) on touch devices since they don't support hover events. In mobile card view, render action buttons on the same row as the primary column (via `flex justify-between items-start gap-4` in `DataTable.tsx`).
 
 ## Images — MANDATORY

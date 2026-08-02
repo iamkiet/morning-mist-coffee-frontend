@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import dynamic from 'next/dynamic';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { Menu, ShoppingBag } from 'lucide-react';
@@ -14,8 +13,7 @@ import {
 } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { VoiceSearchDialog } from './VoiceSearchDialog';
-
-const CartCount = dynamic(() => import('./CartCount'), { ssr: false });
+import CartCount from './CartCount';
 
 const links = [
   { href: '/', label: 'Trang chủ' },
@@ -31,7 +29,7 @@ export function Nav({ className }: { className?: string } = {}) {
   const closeMenu = () => setIsOpen(false);
 
   return (
-    <nav className={`w-full bg-white/70 border-b border-border/20 backdrop-blur-xl ${className ?? ''}`}>
+    <nav className={`w-full bg-background/70 border-b border-border/20 backdrop-blur-xl ${className ?? ''}`}>
       <div className="flex justify-between items-center px-4 sm:px-6 md:px-gutter py-6 max-w-7xl mx-auto">
         <Link
           href="/"

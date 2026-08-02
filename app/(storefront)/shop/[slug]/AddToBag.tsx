@@ -4,12 +4,13 @@ import { useState } from 'react';
 import { Minus, Plus, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/lib/cart';
+import { useTemporaryFlag } from '@/hooks/use-temporary-flag';
 import type { Product } from '@/app/_components/ProductCard';
 
 export function AddToBag({ product }: { product: Product }) {
   const { addItem } = useCart();
   const [quantity, setQuantity] = useState(1);
-  const [added, setAdded] = useState(false);
+  const [added, flashAdded] = useTemporaryFlag();
 
   function decrement() {
     setQuantity((q) => Math.max(1, q - 1));
@@ -21,11 +22,7 @@ export function AddToBag({ product }: { product: Product }) {
 
   function handleAdd() {
     addItem(product, quantity);
-    setAdded(true);
-    setTimeout(() => {
-      setAdded(false);
-      setQuantity(1);
-    }, 1500);
+    flashAdded(() => setQuantity(1));
   }
 
   return (

@@ -1,4 +1,8 @@
+'use client';
+
 import type { ReactNode } from 'react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import {
   Table,
   TableBody,
@@ -115,45 +119,49 @@ export function DataTable<T extends { id: string | number }>({
 
 interface PaginationProps {
   showing: string;
-  current: number;
-  total: number;
-  showEllipsis?: boolean;
+  page: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
 }
 
 export function Pagination({
   showing,
-  current,
-  total,
-  showEllipsis,
+  page,
+  totalPages,
+  onPageChange,
 }: PaginationProps) {
-  const pages = Array.from({ length: Math.min(3, total) }, (_, i) => i + 1);
   return (
     <div className="px-4 py-3 flex items-center justify-between">
       <p className="text-xs uppercase tracking-widest text-muted-foreground">
         {showing}
       </p>
-      <div className="flex items-center gap-2">
-        {pages.map((p) => (
-          <button
-            key={p}
-            className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium cursor-pointer transition-colors ${
-              p === current
-                ? 'bg-accent text-accent-foreground'
-                : 'text-muted-foreground hover:bg-muted'
-            }`}
+      {totalPages > 1 && (
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="icon"
+            className="size-8 rounded-lg"
+            aria-label="Trang trước"
+            disabled={page === 1}
+            onClick={() => onPageChange(page - 1)}
           >
-            {p}
-          </button>
-        ))}
-        {showEllipsis && (
-          <>
-            <span className="text-muted-foreground mx-1">...</span>
-            <button className="w-8 h-8 rounded-full flex items-center justify-center text-xs text-muted-foreground hover:bg-muted cursor-pointer">
-              {total}
-            </button>
-          </>
-        )}
-      </div>
+            <ChevronLeft className="size-4" />
+          </Button>
+          <span className="text-xs text-muted-foreground">
+            {page} / {totalPages}
+          </span>
+          <Button
+            variant="outline"
+            size="icon"
+            className="size-8 rounded-lg"
+            aria-label="Trang sau"
+            disabled={page >= totalPages}
+            onClick={() => onPageChange(page + 1)}
+          >
+            <ChevronRight className="size-4" />
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

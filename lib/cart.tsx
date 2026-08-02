@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useSyncExternalStore } from 'react';
 import type { Product } from '@/app/_components/ProductCard';
 
 const STORAGE_KEY = 'morning-mist-cart';
@@ -26,47 +26,79 @@ interface CartContextValue {
 
 const CartContext = createContext<CartContextValue | null>(null);
 
-export function CartProvider({ children }: { children: React.ReactNode }) {
-  const [items, setItems] = useState<CartItem[]>(() => {
-    if (typeof window === 'undefined') return [];
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      return stored ? (JSON.parse(stored) as CartItem[]) : [];
-    } catch {
-      return [];
-    }
-  });
+// localStorage is an external store, so the cart is read through
+// useSyncExternalStore: the server and the first client render both see
+// EMPTY_CART, then React re-renders with the stored cart. Reading storage
+// during render instead would hydrate a tree the server never produced.
+const EMPTY_CART: CartItem[] = [];
 
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-  }, [items]);
+const listeners = new Set<() => void>();
+let cachedRaw: string | null = null;
+let cachedItems: CartItem[] = EMPTY_CART;
+
+function getSnapshot(): CartItem[] {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  // Re-parsing on every call would return a new array each time and loop forever
+  if (raw !== cachedRaw) {
+    cachedRaw = raw;
+    try {
+      cachedItems = raw ? (JSON.parse(raw) as CartItem[]) : EMPTY_CART;
+    } catch {
+      cachedItems = EMPTY_CART;
+    }
+  }
+  return cachedItems;
+}
+
+function getServerSnapshot(): CartItem[] {
+  return EMPTY_CART;
+}
+
+function subscribe(onChange: () => void) {
+  listeners.add(onChange);
+  // 'storage' fires for other tabs, keeping carts in sync across them
+  window.addEventListener('storage', onChange);
+  return () => {
+    listeners.delete(onChange);
+    window.removeEventListener('storage', onChange);
+  };
+}
+
+function writeCart(items: CartItem[]) {
+  cachedItems = items;
+  cachedRaw = JSON.stringify(items);
+  localStorage.setItem(STORAGE_KEY, cachedRaw);
+  listeners.forEach((notify) => notify());
+}
+
+export function CartProvider({ children }: { children: React.ReactNode }) {
+  const items = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
   function addItem(product: Product, quantity = 1) {
-    setItems((prev) => {
-      const existing = prev.find((i) => i.slug === product.slug);
-      if (existing) {
-        return prev.map((i) =>
-          i.slug === product.slug
-            ? { ...i, quantity: i.quantity + quantity }
-            : i,
-        );
-      }
-      return [
-        ...prev,
-        {
-          id: product.id,
-          slug: product.slug,
-          name: product.name,
-          price: product.price,
-          image: product.image,
-          quantity,
-        },
-      ];
-    });
+    const existing = items.find((i) => i.slug === product.slug);
+    writeCart(
+      existing
+        ? items.map((i) =>
+            i.slug === product.slug
+              ? { ...i, quantity: i.quantity + quantity }
+              : i,
+          )
+        : [
+            ...items,
+            {
+              id: product.id,
+              slug: product.slug,
+              name: product.name,
+              price: product.price,
+              image: product.image,
+              quantity,
+            },
+          ],
+    );
   }
 
   function removeItem(slug: string) {
-    setItems((prev) => prev.filter((i) => i.slug !== slug));
+    writeCart(items.filter((i) => i.slug !== slug));
   }
 
   function updateQuantity(slug: string, quantity: number) {
@@ -74,13 +106,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       removeItem(slug);
       return;
     }
-    setItems((prev) =>
-      prev.map((i) => (i.slug === slug ? { ...i, quantity } : i)),
-    );
+    writeCart(items.map((i) => (i.slug === slug ? { ...i, quantity } : i)));
   }
 
   function clearCart() {
-    setItems([]);
+    writeCart(EMPTY_CART);
   }
 
   const itemCount = items.reduce((sum, i) => sum + i.quantity, 0);

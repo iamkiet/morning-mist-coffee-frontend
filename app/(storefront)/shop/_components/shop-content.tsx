@@ -15,6 +15,45 @@ import { useProducts } from '@/hooks/use-products';
 
 const LIMIT = 8;
 
+// A disabled <Button asChild> renders an <a>, and anchors never match the
+// :disabled pseudo-class — the arrow would stay lit and clickable. Render a
+// real disabled <button> instead when there is no page to go to.
+function PageArrow({
+  page,
+  label,
+  children,
+}: {
+  page: number | null;
+  label: string;
+  children: React.ReactNode;
+}) {
+  if (!page) {
+    return (
+      <Button
+        variant="outline"
+        size="icon"
+        className="rounded-lg size-9"
+        aria-label={label}
+        disabled
+      >
+        {children}
+      </Button>
+    );
+  }
+  return (
+    <Button
+      variant="outline"
+      size="icon"
+      className="rounded-lg size-9"
+      asChild
+    >
+      <Link href={`/shop?page=${page}`} aria-label={label}>
+        {children}
+      </Link>
+    </Button>
+  );
+}
+
 export function ShopContent() {
   const searchParams = useSearchParams();
   const page = Math.max(1, parseInt(searchParams.get('page') ?? '1', 10));
@@ -52,7 +91,9 @@ export function ShopContent() {
           <span className="text-muted-foreground text-[10px] uppercase tracking-widest">
             {isLoading
               ? 'Đang tải...'
-              : `Hiển thị ${offset + 1}–${Math.min(offset + items.length, total)} trên ${total}`}
+              : total === 0
+                ? 'Không có sản phẩm'
+                : `Hiển thị ${offset + 1}–${Math.min(offset + items.length, total)} trên ${total}`}
           </span>
           <Button
             variant="outline"
@@ -71,45 +112,35 @@ export function ShopContent() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8 md:gap-10">
-        {isLoading
-          ? Array.from({ length: LIMIT }).map((_, i) => (
-              <div key={i} className="flex flex-col gap-4">
-                <Skeleton className="aspect-[4/5] rounded-xl" />
-                <Skeleton className="h-4 w-3/4" />
-                <Skeleton className="h-4 w-1/2" />
-              </div>
-            ))
-          : items.map((p) => <ProductCard key={p.id} product={p} />)}
-      </div>
+      {!isLoading && !error && items.length === 0 ? (
+        <p className="text-center py-16 text-muted-foreground">
+          Hiện chưa có sản phẩm nào để hiển thị.
+        </p>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8 md:gap-10">
+          {isLoading
+            ? Array.from({ length: LIMIT }).map((_, i) => (
+                <div key={i} className="flex flex-col gap-4">
+                  <Skeleton className="aspect-[4/5] rounded-xl" />
+                  <Skeleton className="h-4 w-3/4" />
+                  <Skeleton className="h-4 w-1/2" />
+                </div>
+              ))
+            : items.map((p) => <ProductCard key={p.id} product={p} />)}
+        </div>
+      )}
 
       {totalPages > 1 && (
         <div className="mt-16 sm:mt-xl flex justify-center items-center gap-6">
-          <Button
-            variant="outline"
-            size="icon"
-            className="rounded-lg size-9"
-            asChild
-            disabled={!prevPage}
-          >
-            <Link href={prevPage ? `/shop?page=${prevPage}` : '#'}>
-              <ChevronLeft className="size-4" />
-            </Link>
-          </Button>
+          <PageArrow page={prevPage} label="Trang trước">
+            <ChevronLeft className="size-4" />
+          </PageArrow>
           <span className="text-foreground text-[10px] uppercase tracking-widest">
             {page} / {totalPages}
           </span>
-          <Button
-            variant="outline"
-            size="icon"
-            className="rounded-lg size-9"
-            asChild
-            disabled={!nextPage}
-          >
-            <Link href={nextPage ? `/shop?page=${nextPage}` : '#'}>
-              <ChevronRight className="size-4" />
-            </Link>
-          </Button>
+          <PageArrow page={nextPage} label="Trang sau">
+            <ChevronRight className="size-4" />
+          </PageArrow>
         </div>
       )}
     </>

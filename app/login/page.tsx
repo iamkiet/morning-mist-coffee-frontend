@@ -1,40 +1,42 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useSyncExternalStore } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
 
+// Only this tab writes 'remembered_email', and it rereads it on submit —
+// nothing to subscribe to, so the store never notifies
+function subscribeToRememberedEmail() {
+  return () => {};
+}
+
 export default function LoginPage() {
-  const [email, setEmail] = useState('');
+  // The remembered email lives in localStorage, so it is read as an external
+  // store rather than copied into state from an effect. `null` means the user
+  // has not touched the field yet, so the stored value still applies.
+  const rememberedEmail = useSyncExternalStore(
+    subscribeToRememberedEmail,
+    () => localStorage.getItem('remembered_email') ?? '',
+    () => '',
+  );
+  const [emailInput, setEmail] = useState<string | null>(null);
+  const [rememberInput, setRememberMe] = useState<boolean | null>(null);
+  const email = emailInput ?? rememberedEmail;
+  const rememberMe = rememberInput ?? rememberedEmail !== '';
+
   const [password, setPassword] = useState('');
-  const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { login, logout, user, isLoading: authLoading } = useAuth();
   const router = useRouter();
 
+  // Already signed in as admin (session restored via refresh cookie) — skip the form
   useEffect(() => {
-    const saved = localStorage.getItem('remembered_email');
-    if (saved) {
-      setTimeout(() => {
-        setEmail(saved);
-        setRememberMe(true);
-      }, 0);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (authLoading || !user) return;
-    if (user.role === 'admin') {
+    if (!authLoading && user?.role === 'admin') {
       router.replace('/mist-ops');
-    } else {
-      setTimeout(() => {
-        setError('Tài khoản này không có quyền truy cập quản trị viên.');
-        logout();
-      }, 0);
     }
-  }, [user, authLoading, router, logout]);
+  }, [user, authLoading, router]);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -47,7 +49,15 @@ export default function LoginPage() {
       } else {
         localStorage.removeItem('remembered_email');
       }
-      await login(email, password);
+      const signedIn = await login(email, password);
+      // Reject non-admins here rather than in an effect — letting them reach
+      // the admin layout bounces them straight back and loops
+      if (signedIn.role !== 'admin') {
+        await logout();
+        setError('Tài khoản này không có quyền truy cập quản trị viên.');
+        return;
+      }
+      router.replace('/mist-ops');
     } catch (err) {
       setError(
         err instanceof Error ? err.message : 'Email hoặc mật khẩu không hợp lệ',

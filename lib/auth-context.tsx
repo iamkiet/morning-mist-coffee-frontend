@@ -21,7 +21,9 @@ export interface User {
 interface AuthContextValue {
   user: User | null;
   isLoading: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  // Returns the signed-in user so callers can branch on role without
+  // waiting for a context re-render
+  login: (email: string, password: string) => Promise<User>;
   logout: () => Promise<void>;
 }
 
@@ -102,6 +104,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const data = await res.json();
     setAccessToken(data.accessToken);
     setUser(data.user);
+    return data.user as User;
   }
 
   async function logout() {

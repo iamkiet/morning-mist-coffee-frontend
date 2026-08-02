@@ -39,8 +39,19 @@ const STATUS_CONFIG: Record<
   },
 };
 
+// A status the API adds later must not blank out the whole page
+const UNKNOWN_STATUS = {
+  label: 'Không xác định',
+  icon: Package,
+  className: 'text-muted-foreground',
+};
+
 function OrderCard({ order }: { order: Order }) {
-  const { label, icon: Icon, className } = STATUS_CONFIG[order.status];
+  const {
+    label,
+    icon: Icon,
+    className,
+  } = STATUS_CONFIG[order.status] ?? UNKNOWN_STATUS;
   const date = new Date(order.createdAt).toLocaleDateString('vi-VN', {
     year: 'numeric',
     month: 'short',

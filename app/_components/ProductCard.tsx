@@ -2,12 +2,12 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
 import { ShoppingBag, Check } from 'lucide-react';
 import { Chip } from './Chip';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/lib/cart';
+import { useTemporaryFlag } from '@/hooks/use-temporary-flag';
 
 export interface Product {
   id: string;
@@ -29,12 +29,11 @@ interface ProductCardProps {
 
 export function ProductCard({ product }: ProductCardProps) {
   const { addItem } = useCart();
-  const [added, setAdded] = useState(false);
+  const [added, flashAdded] = useTemporaryFlag();
 
   function handleAddToBag() {
     addItem(product);
-    setAdded(true);
-    setTimeout(() => setAdded(false), 1500);
+    flashAdded();
   }
 
   return (

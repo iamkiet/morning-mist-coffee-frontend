@@ -40,7 +40,7 @@ export function ChatWidget() {
               </div>
               <button 
                 onClick={() => setIsOpen(false)}
-                className="p-1 hover:bg-white/10 rounded-full transition-colors cursor-pointer"
+                className="p-1 hover:bg-primary-foreground/10 rounded-full transition-colors cursor-pointer"
               >
                 <X size={18} />
               </button>

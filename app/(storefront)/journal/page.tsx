@@ -49,7 +49,7 @@ export default function JournalPage() {
           />
           <div className="absolute inset-0 bg-foreground/10" />
         </div>
-        <div className="relative z-10 max-w-2xl bg-white/40 backdrop-blur-md p-6 sm:p-12 rounded-2xl shadow-[0_40px_100px_-20px_rgba(169,183,166,0.15)]">
+        <div className="relative z-10 max-w-2xl bg-card/40 backdrop-blur-md p-6 sm:p-12 rounded-2xl shadow-[0_40px_100px_-20px_rgba(169,183,166,0.15)]">
           <span className="text-xs text-primary mb-4 block uppercase tracking-widest font-medium">
             Câu Chuyện Nổi Bật
           </span>

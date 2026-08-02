@@ -7,12 +7,10 @@ import {
   Download,
   Plus,
   Search,
-  ChevronLeft,
-  ChevronRight,
 } from 'lucide-react';
 import { useState } from 'react';
 import { PageHeader } from '../_components/PageHeader';
-import { DataTable, type Column } from '../_components/DataTable';
+import { DataTable, Pagination, type Column } from '../_components/DataTable';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -543,37 +541,16 @@ export default function AdminProductsPage() {
           columns={columns}
           rows={filteredItems}
           footer={
-            <div className="px-4 py-3 flex items-center justify-between">
-              <p className="text-xs uppercase tracking-widest text-muted-foreground">
-                Hiển thị {offset + 1}–{Math.min(offset + filteredItems.length, total)}{' '}
-                trên {total}
-              </p>
-              {totalPages > 1 && (
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="size-8 rounded-lg"
-                    disabled={page === 1}
-                    onClick={() => setPage((p) => p - 1)}
-                  >
-                    <ChevronLeft className="size-4" />
-                  </Button>
-                  <span className="text-xs text-muted-foreground">
-                    {page} / {totalPages}
-                  </span>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="size-8 rounded-lg"
-                    disabled={page >= totalPages}
-                    onClick={() => setPage((p) => p + 1)}
-                  >
-                    <ChevronRight className="size-4" />
-                  </Button>
-                </div>
-              )}
-            </div>
+            <Pagination
+              showing={
+                search
+                  ? `Tìm thấy ${filteredItems.length} trên trang ${page}`
+                  : `Hiển thị ${offset + 1}–${Math.min(offset + items.length, total)} trên ${total}`
+              }
+              page={page}
+              totalPages={totalPages}
+              onPageChange={setPage}
+            />
           }
         />
       )

@@ -5,13 +5,11 @@ import {
   MoreHorizontal,
   Search,
   TrendingUp,
-  ChevronLeft,
-  ChevronRight,
 } from 'lucide-react';
 import { useState } from 'react';
 import { PageHeader } from '../_components/PageHeader';
 import { Badge } from '../_components/Badge';
-import { DataTable, type Column } from '../_components/DataTable';
+import { DataTable, Pagination, type Column } from '../_components/DataTable';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
@@ -283,37 +281,16 @@ export default function AdminOrdersPage() {
           columns={columns}
           rows={filteredOrders}
           footer={
-            <div className="px-4 py-3 flex items-center justify-between">
-              <p className="text-xs uppercase tracking-widest text-muted-foreground">
-                Hiển thị {offset + 1}–{Math.min(offset + filteredOrders.length, total)}{' '}
-                trên {total}
-              </p>
-              {totalPages > 1 && (
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="size-8 rounded-lg"
-                    disabled={page === 1}
-                    onClick={() => setPage((p) => p - 1)}
-                  >
-                    <ChevronLeft className="size-4" />
-                  </Button>
-                  <span className="text-xs text-muted-foreground">
-                    {page} / {totalPages}
-                  </span>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="size-8 rounded-lg"
-                    disabled={page >= totalPages}
-                    onClick={() => setPage((p) => p + 1)}
-                  >
-                    <ChevronRight className="size-4" />
-                  </Button>
-                </div>
-              )}
-            </div>
+            <Pagination
+              showing={
+                search
+                  ? `Tìm thấy ${filteredOrders.length} trên trang ${page}`
+                  : `Hiển thị ${offset + 1}–${Math.min(offset + orders.length, total)} trên ${total}`
+              }
+              page={page}
+              totalPages={totalPages}
+              onPageChange={setPage}
+            />
           }
         />
       )}

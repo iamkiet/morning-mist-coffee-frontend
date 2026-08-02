@@ -8,7 +8,7 @@ export type VoiceSearchStatus = 'idle' | 'recording' | 'loading' | 'success' | '
 
 const PREFERRED_MIME_TYPES = ['audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus'];
 
-export const MAX_RECORDING_SECONDS = 60;
+const MAX_RECORDING_SECONDS = 60;
 
 function pickMimeType(): string | undefined {
   if (typeof MediaRecorder === 'undefined') return undefined;

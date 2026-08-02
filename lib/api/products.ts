@@ -74,10 +74,22 @@ export async function fetchProducts(
   };
 }
 
+const PRODUCT_LOOKUP_BATCH = 50;
+
+/**
+ * There is no by-slug endpoint yet, so this scans the catalogue. It reads one
+ * batch first and only re-fetches the whole list when the slug was not in it —
+ * previously it read a fixed 50 and 404'd on every product past that point.
+ */
 export async function fetchProduct(slug: string): Promise<Product | undefined> {
-  const { items } = await fetchProducts(50, 0);
   const decoded = decodeURIComponent(slug);
-  return items.find((p) => p.slug === decoded);
+
+  const firstBatch = await fetchProducts(PRODUCT_LOOKUP_BATCH, 0);
+  const match = firstBatch.items.find((p) => p.slug === decoded);
+  if (match || firstBatch.total <= firstBatch.items.length) return match;
+
+  const all = await fetchProducts(firstBatch.total, 0);
+  return all.items.find((p) => p.slug === decoded);
 }
 
 export interface UpdateProductPayload {

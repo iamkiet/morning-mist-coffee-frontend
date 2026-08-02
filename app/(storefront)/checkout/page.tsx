@@ -62,7 +62,7 @@ export default function CheckoutPage() {
     ? cashReceivedAmount - total
     : 0;
 
-  const onSubmit = async (_data: CheckoutForm) => {
+  const onSubmit = async (data: CheckoutForm) => {
     setIsSubmitting(true);
     setSubmitError('');
 
@@ -81,7 +81,7 @@ export default function CheckoutPage() {
         quantity: item.quantity,
       }));
       const cashReceivedCents = paymentMethod === 'cash' ? Math.round(cashReceivedAmount) : undefined;
-      await createOrder(_data.email, totalCents, orderItems, 'VND', cashReceivedCents);
+      await createOrder(data.email, totalCents, orderItems, 'VND', cashReceivedCents);
       clearCart();
       form.reset();
       toast.success('Đặt hàng thành công!', {
