@@ -24,7 +24,8 @@ import {
 import { Label } from '@/components/ui/label';
 import { useProducts, useUpdateProduct, useCreateProduct, useDeleteProduct } from '@/hooks/use-products';
 import { useProductTypes } from '@/hooks/use-product-types';
-import type { Product } from '@/app/_components/ProductCard';
+import { useDebouncedValue } from '@/hooks/use-debounced-value';
+import type { Product } from '@/lib/types';
 
 const LIMIT = 10;
 
@@ -32,14 +33,20 @@ interface EditState {
   id: string;
   name: string;
   price: string;
+  origin: string;
+  tastingNotes: string;
   description: string;
   image: string;
   stock: string;
   productTypeId: string;
 }
 
-function buildDescription(origin: string, notes: string[]): string {
-  return [origin, ...notes].filter(Boolean).join('\n');
+// The API stores tasting notes as an array; the form edits them one per line
+function parseNotes(raw: string): string[] {
+  return raw
+    .split('\n')
+    .map((l) => l.trim())
+    .filter(Boolean);
 }
 
 function EditProductDialog({
@@ -57,7 +64,9 @@ function EditProductDialog({
     id: product.id,
     name: product.name,
     price: String(Math.round(product.price)),
-    description: buildDescription(product.origin, product.notes),
+    origin: product.origin,
+    tastingNotes: product.tastingNotes.join('\n'),
+    description: product.description,
     image: product.image,
     stock: String(product.stockQuantity ?? 0),
     productTypeId: product.productTypeId || '',
@@ -79,6 +88,8 @@ function EditProductDialog({
         id: form.id,
         payload: {
           name: form.name.trim() || undefined,
+          origin: form.origin.trim() || null,
+          tastingNotes: parseNotes(form.tastingNotes),
           description: form.description.trim() || null,
           priceCents: Math.round(priceNum),
           image: form.image.trim() || null,
@@ -159,6 +170,29 @@ function EditProductDialog({
           </div>
           <div className="space-y-1.5">
             <Label
+              htmlFor="ep-origin"
+              className="text-xs uppercase tracking-wider text-muted-foreground"
+            >
+              Nguồn gốc
+            </Label>
+            <Input id="ep-origin" {...field('origin')} />
+          </div>
+          <div className="space-y-1.5">
+            <Label
+              htmlFor="ep-notes"
+              className="text-xs uppercase tracking-wider text-muted-foreground"
+            >
+              Nốt hương (mỗi dòng một nốt)
+            </Label>
+            <textarea
+              id="ep-notes"
+              rows={3}
+              className="w-full rounded-lg border border-input bg-background px-2.5 py-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 resize-none"
+              {...field('tastingNotes')}
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label
               htmlFor="ep-desc"
               className="text-xs uppercase tracking-wider text-muted-foreground"
             >
@@ -212,6 +246,8 @@ function EditProductDialog({
 interface CreateState {
   name: string;
   price: string;
+  origin: string;
+  tastingNotes: string;
   description: string;
   image: string;
   stock: string;
@@ -230,6 +266,8 @@ function CreateProductDialog({
   const [form, setForm] = useState<CreateState>({
     name: '',
     price: '',
+    origin: '',
+    tastingNotes: '',
     description: '',
     image: '',
     stock: '0',
@@ -252,6 +290,8 @@ function CreateProductDialog({
     create.mutate(
       {
         name: form.name.trim(),
+        origin: form.origin.trim() || null,
+        tastingNotes: parseNotes(form.tastingNotes),
         description: form.description.trim() || null,
         priceCents: Math.round(priceNum),
         image: form.image.trim() || null,
@@ -332,6 +372,30 @@ function CreateProductDialog({
           </div>
           <div className="space-y-1.5">
             <Label
+              htmlFor="cp-origin"
+              className="text-xs uppercase tracking-wider text-muted-foreground"
+            >
+              Nguồn gốc
+            </Label>
+            <Input id="cp-origin" placeholder="Cầu Đất • Đà Lạt" {...field('origin')} />
+          </div>
+          <div className="space-y-1.5">
+            <Label
+              htmlFor="cp-notes"
+              className="text-xs uppercase tracking-wider text-muted-foreground"
+            >
+              Nốt hương (mỗi dòng một nốt)
+            </Label>
+            <textarea
+              id="cp-notes"
+              rows={3}
+              className="w-full rounded-lg border border-input bg-background px-2.5 py-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 resize-none"
+              placeholder={'Hoa nhài\nChua thanh\nHậu vị sạch'}
+              {...field('tastingNotes')}
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label
               htmlFor="cp-desc"
               className="text-xs uppercase tracking-wider text-muted-foreground"
             >
@@ -341,7 +405,7 @@ function CreateProductDialog({
               id="cp-desc"
               rows={3}
               className="w-full rounded-lg border border-input bg-background px-2.5 py-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 resize-none"
-              placeholder="Mô tả sản phẩm, nguồn gốc và nốt hương..."
+              placeholder="Mô tả ngắn về hương vị..."
               {...field('description')}
             />
           </div>
@@ -389,20 +453,12 @@ export default function AdminProductsPage() {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [deleteProductConfirm, setDeleteProductConfirm] = useState<Product | null>(null);
   const [search, setSearch] = useState('');
-  
-  const { data, isLoading, error } = useProducts(page, LIMIT);
+  const debouncedSearch = useDebouncedValue(search);
+
+  const { data, isLoading, error } = useProducts(page, LIMIT, debouncedSearch);
   const deleteMut = useDeleteProduct();
 
   const items = data?.items ?? [];
-  const filteredItems = items.filter((item) => {
-    const s = search.toLowerCase();
-    return (
-      item.name.toLowerCase().includes(s) ||
-      (item.origin && item.origin.toLowerCase().includes(s)) ||
-      (item.description && item.description.toLowerCase().includes(s)) ||
-      item.notes.some((note) => note.toLowerCase().includes(s))
-    );
-  });
   const total = data?.total ?? 0;
   const totalPages = Math.ceil(total / LIMIT);
   const offset = (page - 1) * LIMIT;
@@ -462,7 +518,7 @@ export default function AdminProductsPage() {
       hideOnMobile: true,
       render: (r) => (
         <span className="text-muted-foreground text-sm">
-          {r.notes.length > 0 ? r.notes[0] : '—'}
+          {r.tastingNotes.length > 0 ? r.tastingNotes[0] : '—'}
         </span>
       ),
     },
@@ -506,7 +562,11 @@ export default function AdminProductsPage() {
                 placeholder="Tìm kiếm sản phẩm..."
                 className="pl-10 bg-card w-full"
                 value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  // A new query restarts paging — page 3 of the old result set is meaningless
+                  setPage(1);
+                }}
               />
             </div>
             <Button
@@ -539,12 +599,12 @@ export default function AdminProductsPage() {
       ) : (
         <DataTable
           columns={columns}
-          rows={filteredItems}
+          rows={items}
           footer={
             <Pagination
               showing={
-                search
-                  ? `Tìm thấy ${filteredItems.length} trên trang ${page}`
+                total === 0
+                  ? 'Không tìm thấy sản phẩm nào'
                   : `Hiển thị ${offset + 1}–${Math.min(offset + items.length, total)} trên ${total}`
               }
               page={page}

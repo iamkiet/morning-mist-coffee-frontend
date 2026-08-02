@@ -5,7 +5,7 @@ import { Minus, Plus, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/lib/cart';
 import { useTemporaryFlag } from '@/hooks/use-temporary-flag';
-import type { Product } from '@/app/_components/ProductCard';
+import type { Product } from '@/lib/types';
 
 export function AddToBag({ product }: { product: Product }) {
   const { addItem } = useCart();

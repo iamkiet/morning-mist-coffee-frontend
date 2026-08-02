@@ -5,22 +5,23 @@ import {
   useContext,
   useEffect,
   useCallback,
+  useRef,
   useState,
 } from 'react';
-import { API_URL } from '@/lib/config';
-import { setAccessToken, setAuthFailureHandler } from '@/lib/api/client';
+import { useQueryClient } from '@tanstack/react-query';
+import { setAccessToken, setAuthFailureHandler, refreshAccessToken } from '@/lib/api/client';
+import { fetchMe, postLogin, postLogout, type User } from '@/lib/api/auth';
 
-export interface User {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  role: 'user' | 'admin';
-}
+export type { User };
 
 interface AuthContextValue {
   user: User | null;
   isLoading: boolean;
+  // Restores the session from the refresh cookie. Idempotent — the routes that
+  // need a session (admin, login) call this on mount, so public pages never
+  // fire an auth request. Keeping the decision here rather than sniffing
+  // `window.location` means it also survives client-side navigation.
+  ensureSession: () => void;
   // Returns the signed-in user so callers can branch on role without
   // waiting for a context re-render
   login: (email: string, password: string) => Promise<User>;
@@ -29,97 +30,66 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  // 'idle' until a route asks for a session; 'ready' once an attempt settled
+  const [status, setStatus] = useState<'idle' | 'loading' | 'ready'>('idle');
+  const queryClient = useQueryClient();
+  const restoreStarted = useRef(false);
 
   const clearSession = useCallback(() => {
     setAccessToken(null);
     setUser(null);
-  }, []);
+    // Admin data cached under the previous identity must not leak into the next
+    queryClient.clear();
+  }, [queryClient]);
 
   useEffect(() => {
     setAuthFailureHandler(clearSession);
   }, [clearSession]);
 
-  // On page load: access token is gone (in-memory), so try refresh via HttpOnly cookie
-  useEffect(() => {
-    async function loadUser() {
-      const isClient = typeof window !== 'undefined';
-      const isAdminPath =
-        isClient &&
-        (window.location.pathname.startsWith('/mist-ops') ||
-          window.location.pathname.startsWith('/login'));
+  const ensureSession = useCallback(() => {
+    if (restoreStarted.current) return;
+    restoreStarted.current = true;
+    setStatus('loading');
 
-      if (!isAdminPath) {
-        setUser(null);
-        setIsLoading(false);
-        return;
-      }
-
+    // On page load the access token is gone (in-memory), so try the HttpOnly cookie
+    (async () => {
       try {
-        const refreshRes = await fetch(`${API_URL}/api/v1/auth/refresh`, {
-          method: 'POST',
-          credentials: 'include',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({}),
-        });
-
-        if (!refreshRes.ok) {
-          setUser(null);
-          return;
-        }
-
-        const { accessToken } = await refreshRes.json();
-        setAccessToken(accessToken);
-
-        const meRes = await fetch(`${API_URL}/api/v1/auth/me`, {
-          credentials: 'include',
-          headers: { Authorization: `Bearer ${accessToken}` },
-        });
-        setUser(meRes.ok ? await meRes.json() : null);
+        const token = await refreshAccessToken();
+        setUser(token ? await fetchMe(token) : null);
       } catch {
         setUser(null);
       } finally {
-        setIsLoading(false);
+        setStatus('ready');
       }
-    }
-    loadUser();
+    })();
   }, []);
 
-  async function login(email: string, password: string) {
-    const res = await fetch(`${API_URL}/api/v1/auth/login`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
-    });
+  const login = useCallback(async (email: string, password: string) => {
+    const { accessToken, user: signedIn } = await postLogin(email, password);
+    setAccessToken(accessToken);
+    setUser(signedIn);
+    restoreStarted.current = true;
+    setStatus('ready');
+    return signedIn;
+  }, []);
 
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.message ?? 'Invalid email or password');
-    }
-
-    const data = await res.json();
-    setAccessToken(data.accessToken);
-    setUser(data.user);
-    return data.user as User;
-  }
-
-  async function logout() {
-    await fetch(`${API_URL}/api/v1/auth/logout`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({}),
-    }).catch(() => {});
-    setAccessToken(null);
-    setUser(null);
-  }
+  const logout = useCallback(async () => {
+    await postLogout();
+    clearSession();
+  }, [clearSession]);
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, logout }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        isLoading: status !== 'ready',
+        ensureSession,
+        login,
+        logout,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

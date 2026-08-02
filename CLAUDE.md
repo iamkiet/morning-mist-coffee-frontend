@@ -20,7 +20,8 @@ Next.js 16.2.4 · React 19 · TypeScript 5 (strict) · Tailwind CSS 4 · shadcn/
 ```
 app/
   layout.tsx              — root layout, Geist font (no Inter, no Material Symbols)
-  providers.tsx           — QueryClient + AuthProvider + CartProvider + Toaster
+  providers.tsx           — QueryClient > AuthProvider > CartProvider + Toaster
+                            (Auth is inside Query so logout can clear the cache)
   globals.css             — Tailwind 4 global styles
   _components/            — shared: Nav, Footer, Container, ProductCard, Chip,
                             CartCount, ChatWidget, VoiceSearchDialog
@@ -33,24 +34,31 @@ app/
 components/ui/            — shadcn components ONLY (button, card, dialog, …).
                             App components belong in app/_components/, never here.
 lib/
+  types.ts                — shared domain types (Product). Never import these
+                            from a component module.
   auth-context.tsx        — AuthProvider: in-memory access token, HttpOnly refresh cookie
   cart.tsx                — CartProvider: localStorage cart via useSyncExternalStore
   product-attributes.ts   — roast/process inferred from product name (stopgap)
-  api/client.ts           — authFetch() with auto-retry on 401 (deduped refresh)
-  api/products.ts         — fetchProducts(), fetchProduct(), updateProduct(),
-                            searchProductsByVoice()
-  api/orders.ts           — fetchOrders(), updateOrderStatus()
+  api/client.ts           — authFetch() with auto-retry on 401,
+                            refreshAccessToken() (deduped), listQuery()
+  api/auth.ts             — postLogin(), postLogout(), postRefresh(), fetchMe()
+  api/products.ts         — fetchProducts(), fetchProduct() (by slug),
+                            updateProduct(), searchProductsByVoice()
+  api/orders.ts           — fetchOrders(), updateOrderStatus(), createOrder(),
+                            lookupOrders()
   api/users.ts            — fetchUsers(), updateUser()
   api/chat.ts             — sendChatMessage()
 hooks/
   use-products.ts         — useProducts(), useUpdateProduct(), useCreateProduct(),
                             useDeleteProduct()
-  use-orders.ts           — useOrders(), useUpdateOrderStatus()
+  use-orders.ts           — useOrders(), useUpdateOrderStatus(), useCreateOrder(),
+                            useLookupOrders()
   use-users.ts            — useUsers(), useUpdateUser()
   use-product-types.ts    — useProductTypes()
   use-chat.ts             — useChat()
   use-voice-search.ts     — useVoiceSearch()
   use-temporary-flag.ts   — useTemporaryFlag(): self-clearing "Đã thêm" confirmations
+  use-debounced-value.ts  — useDebouncedValue(): one request per typing pause
 ```
 
 **Data fetching pattern:** server components call `fetchProducts()` directly; client components use TanStack Query hooks.
@@ -63,7 +71,11 @@ hooks/
 
 ## Auth flow
 
-`AuthProvider` (in `lib/auth-context.tsx`) holds the in-memory access token and user object. On mount it calls `POST /api/v1/auth/refresh` via HttpOnly cookie to restore the session. `authFetch()` in `lib/api/client.ts` handles 401 → refresh → retry automatically with a shared deduped promise.
+`AuthProvider` (in `lib/auth-context.tsx`) holds the in-memory access token and user object. It does **not** restore the session on mount — the routes that need one (`app/mist-ops/layout.tsx`, `app/login/page.tsx`) call `ensureSession()` in an effect, so public pages fire no auth request. `ensureSession()` is idempotent; `isLoading` stays `true` until an attempt settles.
+
+All auth endpoints live in `lib/api/auth.ts` — never call them with a bare `fetch()`. The deduped refresh lives in `lib/api/client.ts` as `refreshAccessToken()`; `authFetch()` and `ensureSession()` share it, so a 401 retry and a session restore never race. `authFetch()` handles 401 → refresh → retry automatically.
+
+`logout()` calls `queryClient.clear()`, so cached admin data cannot leak across accounts.
 
 **Admin guard:** `app/mist-ops/layout.tsx` shows a loading state for any render where `isLoading || !user || user.role !== 'admin'`, then `router.replace('/login')` via `useEffect`. Always use `router.replace` (not `push`) for auth redirects to avoid history stacking.
 
@@ -79,12 +91,17 @@ hooks/
 
 **Deleted (do not recreate):** Button.tsx · SectionHeading.tsx · AdminTopbar.tsx
 
-**Shared product type:** `Product` is defined in `app/_components/ProductCard.tsx` and used across hooks, API, and admin pages. `product.description` from the API is split into `origin` (first line) and `notes` (remaining lines) during `transform()` in `lib/api/products.ts`.
+**Shared product type:** `Product` is defined in `lib/types.ts` — not in a component, so `lib/api` and the hooks do not depend on a `'use client'` module.
+
+**`slug` comes from the API — never derive it.** The backend owns `products.slug` (unique, stable across renames). `fetchProduct(slug)` hits `GET /api/v1/products/slug/:slug` in a single request. Do not reconstruct a slug from `name`: it collides on duplicate names and mangles Vietnamese diacritics.
+
+**`origin` / `tastingNotes` / `description` are three real API fields** — not parsed out of one string any more. `transform()` maps them straight through (`origin` falls back to a placeholder when null). Never re-introduce line-count parsing, and never merge them back into a single textarea: the admin form edits each one separately and sends `tastingNotes` as an array.
 
 ## Admin Dashboard Best Practices
 
 - **Search Inputs**: Place search inputs directly inside `<PageHeader actions={...}>` on all admin table pages (`products`, `users`, `orders`). Use unified styling (`pl-10 bg-card w-full`) and wrap with `<div className="relative w-full sm:w-64">` so the search bar spans full-width on mobile and behaves consistently on desktop.
-- **Search Filtering**: Bind search inputs to a local state (`const [search, setSearch] = useState('')`) and perform client-side filtering on the fetched data items (e.g., `filteredItems`) before passing them to the `<DataTable>` component.
+- **Search Filtering is server-side.** Bind the input to `useState`, pass it through `useDebouncedValue(search)`, and hand the debounced value to the query hook as its `q` argument (`useProducts(page, LIMIT, debouncedSearch)`). The API filters across the whole table, not just the loaded page. **Never re-add client-side `filteredItems`** — it silently hides matches on other pages.
+- **Reset paging when the query changes**: call `setPage(1)` inside the search input's `onChange`, not in a `useEffect` — the React Compiler lint rule rejects `setState` in an effect body.
 - **Pagination**: Use `<Pagination>` from `DataTable.tsx` in the `<DataTable footer={…}>` slot. Do not hand-roll prev/next markup per page.
 - **`disabled` never works on `<Button asChild>`**: Slot renders an `<a>`, and anchors do not match the `:disabled` pseudo-class, so `disabled:opacity-50` and `disabled:pointer-events-none` silently do nothing. Render a real `<button>` for the disabled case (see `PageArrow` in `shop-content.tsx`).
 - **Action Buttons**: Keep table action buttons (`Thao tác` column) always visible on mobile/tablet viewports. Avoid hover-only visibility modifiers (like `group-hover:opacity-100`) on touch devices since they don't support hover events. In mobile card view, render action buttons on the same row as the primary column (via `flex justify-between items-start gap-4` in `DataTable.tsx`).

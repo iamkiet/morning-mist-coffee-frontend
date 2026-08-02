@@ -8,20 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/lib/cart';
 import { useTemporaryFlag } from '@/hooks/use-temporary-flag';
-
-export interface Product {
-  id: string;
-  slug: string;
-  name: string;
-  origin: string;
-  price: number;
-  image: string;
-  notes: string[];
-  stockQuantity?: number;
-  badge?: string;
-  description?: string;
-  productTypeId?: string;
-}
+import type { Product } from '@/lib/types';
 
 interface ProductCardProps {
   product: Product;
@@ -66,7 +53,7 @@ export function ProductCard({ product }: ProductCardProps) {
             {product.name}
           </h3>
           <div className="flex justify-center gap-1 mb-2 flex-wrap">
-            {product.notes.map((n) => (
+            {product.tastingNotes.map((n) => (
               <Chip key={n}>{n}</Chip>
             ))}
           </div>

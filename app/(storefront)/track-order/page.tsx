@@ -14,7 +14,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { lookupOrders, type Order, type OrderStatus } from '@/lib/api/orders';
+import { useLookupOrders } from '@/hooks/use-orders';
+import type { Order, OrderStatus } from '@/lib/api/orders';
 
 const STATUS_CONFIG: Record<
   OrderStatus,
@@ -127,22 +128,12 @@ function OrderCard({ order }: { order: Order }) {
 export default function TrackOrderPage() {
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
-  const [orders, setOrders] = useState<Order[] | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+  const lookup = useLookupOrders();
+  const orders = lookup.data ?? null;
 
-  async function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError('');
-    setIsLoading(true);
-    try {
-      const result = await lookupOrders(email, code.trim());
-      setOrders(result);
-    } catch {
-      setError('Đã xảy ra lỗi. Vui lòng thử lại sau.');
-    } finally {
-      setIsLoading(false);
-    }
+    lookup.mutate({ email, code: code.trim() });
   }
 
   return (
@@ -182,15 +173,19 @@ export default function TrackOrderPage() {
         />
         <Button
           type="submit"
-          disabled={isLoading}
+          disabled={lookup.isPending}
           className="gap-2 uppercase tracking-widest text-xs"
         >
           <Search className="size-4" />
-          {isLoading ? 'Đang tìm...' : 'Tìm kiếm'}
+          {lookup.isPending ? 'Đang tìm...' : 'Tìm kiếm'}
         </Button>
       </form>
 
-      {error && <p className="text-sm text-destructive mb-6">{error}</p>}
+      {lookup.isError && (
+        <p className="text-sm text-destructive mb-6">
+          Đã xảy ra lỗi. Vui lòng thử lại sau.
+        </p>
+      )}
 
       {orders !== null &&
         (orders.length === 0 ? (

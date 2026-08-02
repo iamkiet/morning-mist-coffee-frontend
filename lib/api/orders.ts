@@ -1,5 +1,4 @@
-import { API_URL } from '@/lib/config';
-import { authFetch } from './client';
+import { authFetch, listQuery } from './client';
 
 export type OrderStatus =
   | 'pending'
@@ -36,8 +35,12 @@ export interface OrdersPage {
   offset: number;
 }
 
-export async function fetchOrders(limit = 20, offset = 0): Promise<OrdersPage> {
-  const res = await authFetch(`/api/v1/orders?limit=${limit}&offset=${offset}`);
+export async function fetchOrders(
+  limit = 20,
+  offset = 0,
+  q = '',
+): Promise<OrdersPage> {
+  const res = await authFetch(`/api/v1/orders?${listQuery(limit, offset, q)}`);
   if (!res.ok) throw new Error('Failed to fetch orders');
   return res.json();
 }
@@ -77,10 +80,8 @@ export async function createOrder(
   currency = 'VND',
   cashReceivedCents?: number,
 ): Promise<Order> {
-  const res = await fetch(`${API_URL}/api/v1/orders`, {
+  const res = await authFetch('/api/v1/orders', {
     method: 'POST',
-    credentials: 'include',
-    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, totalCents, currency, cashReceivedCents, items }),
   });
   if (!res.ok) {

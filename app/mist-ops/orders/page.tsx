@@ -23,6 +23,7 @@ import {
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { useOrders, useUpdateOrderStatus } from '@/hooks/use-orders';
+import { useDebouncedValue } from '@/hooks/use-debounced-value';
 import type { Order, OrderStatus } from '@/lib/api/orders';
 
 const ALL_STATUSES: OrderStatus[] = [
@@ -141,18 +142,11 @@ export default function AdminOrdersPage() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [editOrder, setEditOrder] = useState<Order | null>(null);
   const [search, setSearch] = useState('');
-  const { data, isLoading, error } = useOrders(page, LIMIT);
+  const debouncedSearch = useDebouncedValue(search);
+  const { data, isLoading, error } = useOrders(page, LIMIT, debouncedSearch);
   const updateStatus = useUpdateOrderStatus();
 
   const orders = data?.items ?? [];
-  const filteredOrders = orders.filter((o) => {
-    const s = search.toLowerCase();
-    return (
-      o.id.toLowerCase().includes(s) ||
-      o.email.toLowerCase().includes(s) ||
-      o.status.toLowerCase().includes(s)
-    );
-  });
   const total = data?.total ?? 0;
   const totalPages = Math.ceil(total / LIMIT);
   const offset = (page - 1) * LIMIT;
@@ -279,12 +273,12 @@ export default function AdminOrdersPage() {
       ) : (
         <DataTable
           columns={columns}
-          rows={filteredOrders}
+          rows={orders}
           footer={
             <Pagination
               showing={
-                search
-                  ? `Tìm thấy ${filteredOrders.length} trên trang ${page}`
+                total === 0
+                  ? 'Không tìm thấy đơn hàng nào'
                   : `Hiển thị ${offset + 1}–${Math.min(offset + orders.length, total)} trên ${total}`
               }
               page={page}

@@ -28,8 +28,12 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { login, logout, user, isLoading: authLoading } = useAuth();
+  const { login, logout, user, isLoading: authLoading, ensureSession } = useAuth();
   const router = useRouter();
+
+  useEffect(() => {
+    ensureSession();
+  }, [ensureSession]);
 
   // Already signed in as admin (session restored via refresh cookie) — skip the form
   useEffect(() => {

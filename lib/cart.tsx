@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useSyncExternalStore } from 'react';
-import type { Product } from '@/app/_components/ProductCard';
+import type { Product } from '@/lib/types';
 
 const STORAGE_KEY = 'morning-mist-cart';
 

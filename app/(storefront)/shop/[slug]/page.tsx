@@ -92,8 +92,8 @@ export default async function ProductPage(props: {
                 Nốt Hương Đặc Trưng
               </span>
               <div className="flex flex-wrap gap-2 justify-center">
-                {product.notes.length > 0 ? (
-                  product.notes.map((note) => (
+                {product.tastingNotes.length > 0 ? (
+                  product.tastingNotes.map((note) => (
                     <Badge
                       key={note}
                       variant="outline"

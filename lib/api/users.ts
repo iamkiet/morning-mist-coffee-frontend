@@ -1,4 +1,4 @@
-import { authFetch } from './client';
+import { authFetch, listQuery } from './client';
 
 export type UserRole = 'user' | 'admin';
 export type UserStatus = 'active' | 'inactive' | 'banned';
@@ -21,8 +21,12 @@ export interface UsersPage {
   offset: number;
 }
 
-export async function fetchUsers(limit = 20, offset = 0): Promise<UsersPage> {
-  const res = await authFetch(`/api/v1/users?limit=${limit}&offset=${offset}`);
+export async function fetchUsers(
+  limit = 20,
+  offset = 0,
+  q = '',
+): Promise<UsersPage> {
+  const res = await authFetch(`/api/v1/users?${listQuery(limit, offset, q)}`);
   if (!res.ok) throw new Error('Failed to fetch users');
   return res.json();
 }

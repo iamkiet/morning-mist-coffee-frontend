@@ -1,0 +1,60 @@
+import { API_URL } from '@/lib/config';
+
+export interface User {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  role: 'user' | 'admin';
+}
+
+export interface LoginResult {
+  accessToken: string;
+  user: User;
+}
+
+// These use plain `fetch` rather than `authFetch` on purpose: they either run
+// before a token exists or must not send an expired one. `authFetch` also
+// refreshes on 401, which would recurse through `postRefresh`.
+function post(path: string, body: unknown = {}): Promise<Response> {
+  return fetch(`${API_URL}${path}`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+}
+
+/** Exchanges the HttpOnly refresh cookie for a new access token. */
+export async function postRefresh(): Promise<string | null> {
+  const res = await post('/api/v1/auth/refresh');
+  if (!res.ok) return null;
+  const data = await res.json();
+  return data.accessToken ?? null;
+}
+
+export async function postLogin(
+  email: string,
+  password: string,
+): Promise<LoginResult> {
+  const res = await post('/api/v1/auth/login', { email, password });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(
+      (err as { message?: string }).message ?? 'Invalid email or password',
+    );
+  }
+  return res.json();
+}
+
+export async function postLogout(): Promise<void> {
+  await post('/api/v1/auth/logout').catch(() => {});
+}
+
+export async function fetchMe(accessToken: string): Promise<User | null> {
+  const res = await fetch(`${API_URL}/api/v1/auth/me`, {
+    credentials: 'include',
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+  return res.ok ? res.json() : null;
+}

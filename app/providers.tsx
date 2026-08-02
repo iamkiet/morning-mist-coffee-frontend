@@ -18,12 +18,13 @@ export function Providers({ children }: { children: React.ReactNode }) {
       }),
   );
 
+  // QueryClientProvider wraps AuthProvider so logout can clear the query cache
   return (
-    <AuthProvider>
-      <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
         <CartProvider>{children}</CartProvider>
         <Toaster position="top-center" richColors />
-      </QueryClientProvider>
-    </AuthProvider>
+      </AuthProvider>
+    </QueryClientProvider>
   );
 }

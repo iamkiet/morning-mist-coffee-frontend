@@ -26,6 +26,7 @@ import {
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { useUsers, useUpdateUser } from '@/hooks/use-users';
+import { useDebouncedValue } from '@/hooks/use-debounced-value';
 import type { ApiUser, UserRole, UserStatus } from '@/lib/api/users';
 
 const roleStyle: Record<UserRole, 'primary' | 'purple'> = {
@@ -152,21 +153,15 @@ function EditUserDialog({
   );
 }
 
+const LIMIT = 20;
+
 export default function AdminUsersPage() {
   const [search, setSearch] = useState('');
-  const { data, isLoading, isError } = useUsers();
+  const debouncedSearch = useDebouncedValue(search);
+  const { data, isLoading, isError } = useUsers(1, LIMIT, debouncedSearch);
   const [editUser, setEditUser] = useState<ApiUser | null>(null);
 
   const users = data?.items ?? [];
-  const filteredUsers = users.filter((u) => {
-    const s = search.toLowerCase();
-    return (
-      u.firstName.toLowerCase().includes(s) ||
-      u.lastName.toLowerCase().includes(s) ||
-      u.email.toLowerCase().includes(s) ||
-      u.role.toLowerCase().includes(s)
-    );
-  });
 
   const columns: Column<ApiUser>[] = [
     {
@@ -305,7 +300,7 @@ export default function AdminUsersPage() {
           Đang tải danh sách người dùng…
         </div>
       ) : (
-        <DataTable columns={columns} rows={filteredUsers} />
+        <DataTable columns={columns} rows={users} />
       )}
 
       {editUser && (

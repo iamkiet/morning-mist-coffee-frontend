@@ -21,7 +21,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Label } from '@/components/ui/label';
 import { useCart } from '@/lib/cart';
-import { createOrder } from '@/lib/api/orders';
+import { useCreateOrder } from '@/hooks/use-orders';
 import { toast } from 'sonner';
 
 const checkoutSchema = z.object({
@@ -51,52 +51,59 @@ export default function CheckoutPage() {
     },
   });
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState('');
   const [paymentMethod, setPaymentMethod] = useState<'cash' | 'card'>('cash');
   const [cashReceived, setCashReceived] = useState<string>('');
+  // Client-side validation of a field that lives outside the zod form
+  const [cashError, setCashError] = useState('');
 
+  const createOrder = useCreateOrder();
 
   const cashReceivedAmount = parseFloat(cashReceived) || 0;
   const changeAmount = paymentMethod === 'cash' && cashReceivedAmount >= total
     ? cashReceivedAmount - total
     : 0;
 
-  const onSubmit = async (data: CheckoutForm) => {
-    setIsSubmitting(true);
-    setSubmitError('');
+  const submitError =
+    cashError ||
+    (createOrder.isError
+      ? createOrder.error instanceof Error
+        ? createOrder.error.message
+        : 'Đặt hàng thất bại. Vui lòng thử lại sau.'
+      : '');
+
+  const onSubmit = (data: CheckoutForm) => {
+    setCashError('');
 
     if (paymentMethod === 'cash' && cashReceivedAmount < total) {
-      setSubmitError('Số tiền khách đưa không đủ để thanh toán đơn hàng');
-      setIsSubmitting(false);
+      setCashError('Số tiền khách đưa không đủ để thanh toán đơn hàng');
       return;
     }
 
-    try {
-      const totalCents = Math.round(total);
-      const orderItems = items.map((item) => ({
-        productId: item.id,
-        name: item.name,
-        priceCents: Math.round(item.price),
-        quantity: item.quantity,
-      }));
-      const cashReceivedCents = paymentMethod === 'cash' ? Math.round(cashReceivedAmount) : undefined;
-      await createOrder(data.email, totalCents, orderItems, 'VND', cashReceivedCents);
-      clearCart();
-      form.reset();
-      toast.success('Đặt hàng thành công!', {
-        description: 'Chúng tôi đã nhận được đơn hàng của bạn và đang tiến hành xử lý.',
-      });
-    } catch (err) {
-      setSubmitError(
-        err instanceof Error ? err.message : 'Đặt hàng thất bại. Vui lòng thử lại sau.',
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
+    createOrder.mutate(
+      {
+        email: data.email,
+        totalCents: Math.round(total),
+        items: items.map((item) => ({
+          productId: item.id,
+          name: item.name,
+          priceCents: Math.round(item.price),
+          quantity: item.quantity,
+        })),
+        cashReceivedCents:
+          paymentMethod === 'cash' ? Math.round(cashReceivedAmount) : undefined,
+      },
+      {
+        onSuccess: () => {
+          clearCart();
+          form.reset();
+          toast.success('Đặt hàng thành công!', {
+            description:
+              'Chúng tôi đã nhận được đơn hàng của bạn và đang tiến hành xử lý.',
+          });
+        },
+      },
+    );
   };
-
-
 
   return (
     <div className="w-full max-w-7xl mx-auto pt-36 pb-12 px-4 sm:px-6 md:px-gutter min-h-screen">
@@ -407,11 +414,13 @@ export default function CheckoutPage() {
                 )}
                 <Button
                   type="submit"
-                  disabled={isSubmitting || itemCount === 0}
+                  disabled={createOrder.isPending || itemCount === 0}
                   className="w-full uppercase tracking-wider h-12"
                   size="lg"
                 >
-                  {isSubmitting ? 'Đang xử lý đặt hàng...' : 'Hoàn Tất Đặt Hàng'}
+                  {createOrder.isPending
+                    ? 'Đang xử lý đặt hàng...'
+                    : 'Hoàn Tất Đặt Hàng'}
                 </Button>
                 <p className="text-center text-xs text-muted-foreground tracking-widest uppercase flex items-center justify-center gap-2">
                   <Lock className="size-3" />
