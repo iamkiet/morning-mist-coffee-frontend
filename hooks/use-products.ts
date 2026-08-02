@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { fetchProducts, updateProduct, createProduct, deleteProduct, type UpdateProductPayload, type CreateProductPayload } from '@/lib/api/products';
 
-export function useProducts(page = 1, limit = 8, q = '') {
+export function useProducts(page: number, limit: number, q = '') {
   const offset = (page - 1) * limit;
   return useQuery({
     queryKey: ['products', page, limit, q],

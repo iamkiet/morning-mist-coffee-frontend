@@ -1,3 +1,4 @@
+import { Container } from '@/app/_components/Container';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
@@ -37,7 +38,7 @@ export default function JournalPage() {
   return (
     <div className="w-full bg-background">
       {/* Hero */}
-      <section className="relative h-[600px] sm:h-[819px] w-full overflow-hidden flex items-center pt-28 sm:pt-32 md:pt-36 px-4 sm:px-6 md:px-gutter max-w-7xl mx-auto">
+      <Container as="section" navOffset className="relative h-[600px] sm:h-[819px] w-full overflow-hidden flex items-center">
         <div className="absolute inset-0 z-0">
           <Image
             src="/statics/journal_hero_bg.png"
@@ -49,7 +50,7 @@ export default function JournalPage() {
           />
           <div className="absolute inset-0 bg-foreground/10" />
         </div>
-        <div className="relative z-10 max-w-2xl bg-card/40 backdrop-blur-md p-6 sm:p-12 rounded-2xl shadow-[0_40px_100px_-20px_rgba(169,183,166,0.15)]">
+        <div className="relative z-10 max-w-2xl bg-card/40 backdrop-blur-md p-6 sm:p-12 rounded-xl shadow-[0_40px_100px_-20px_rgba(169,183,166,0.15)]">
           <span className="text-xs text-primary mb-4 block uppercase tracking-widest font-medium">
             Câu Chuyện Nổi Bật
           </span>
@@ -67,10 +68,10 @@ export default function JournalPage() {
             <ArrowRight className="size-4" />
           </Link>
         </div>
-      </section>
+      </Container>
 
       {/* Filter Bar */}
-      <section className="w-full px-4 sm:px-6 md:px-gutter py-12 sm:py-16 flex flex-col md:flex-row justify-between items-end gap-8 border-b border-border max-w-7xl mx-auto">
+      <Container as="section" className="w-full py-12 sm:py-16 flex flex-col md:flex-row justify-between items-end gap-8 border-b border-border">
         <div>
           <h2 className="text-2xl sm:text-3xl text-foreground font-light">
             Tạp Chí (Journal)
@@ -93,14 +94,14 @@ export default function JournalPage() {
             </button>
           ))}
         </div>
-      </section>
+      </Container>
 
       {/* Article Grid */}
-      <section className="px-4 sm:px-6 md:px-gutter py-16 sm:py-24 max-w-7xl mx-auto">
+      <Container as="section" className="py-16 sm:py-24">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 md:gap-x-12 gap-y-16 md:gap-y-24">
           {articles.map((a) => (
             <article key={a.title} className="group cursor-pointer">
-              <div className="relative aspect-[4/5] mb-6 sm:mb-8 overflow-hidden bg-muted rounded-2xl">
+              <div className="relative aspect-[4/5] mb-6 sm:mb-8 overflow-hidden bg-muted rounded-xl">
                 <Image
                   src={a.img}
                   alt={a.title}
@@ -130,7 +131,7 @@ export default function JournalPage() {
             </article>
           ))}
         </div>
-      </section>
+      </Container>
 
       {/* Newsletter */}
       <section className="w-full py-16 sm:py-24 md:py-32 px-4 sm:px-6 md:px-gutter bg-muted">

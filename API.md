@@ -20,9 +20,9 @@ Create a new user account. Requires the `x-user-registration-key` header.
 
 **Headers**
 
-| Header                    | Required | Description                     |
-| ------------------------- | -------- | ------------------------------- |
-| `x-user-registration-key` | Yes      | Server-side registration secret |
+| Header | Required | Description |
+|--------|----------|-------------|
+| `x-user-registration-key` | Yes | Server-side registration secret |
 
 **Body**
 
@@ -129,6 +129,37 @@ Returns the currently authenticated user. Requires Bearer token.
 
 ---
 
+## Chat
+
+### POST /api/v1/chat
+
+Chat with the storefront assistant (RAG over the product catalogue). No authentication required. Rate-limited (see `CHAT_RATE_MAX`/`CHAT_RATE_WINDOW`). Returns `503 AI_NOT_CONFIGURED` if the Gemini API key is not configured on the server.
+
+**Body**
+
+```json
+{
+  "messages": [
+    {
+      "role": "user | assistant",
+      "content": "string"
+    }
+  ]
+}
+```
+
+At least one message is required.
+
+**Response `200`**
+
+```json
+{
+  "message": "string"
+}
+```
+
+---
+
 ## Users
 
 All endpoints require Bearer token with `admin` role.
@@ -139,15 +170,15 @@ List all users with optional filtering, sorting, and pagination.
 
 **Query parameters**
 
-| Param     | Type                                                | Description                                 | Default     |
-| --------- | --------------------------------------------------- | ------------------------------------------- | ----------- |
-| `role`    | `user` \| `admin`                                   | Filter by role                              | —           |
-| `status`  | `active` \| `inactive` \| `banned`                  | Filter by status                            | —           |
-| `q`       | string                                              | Keyword search (firstName, lastName, email) | —           |
-| `sortBy`  | `createdAt` \| `firstName` \| `lastName` \| `email` | Sort field                                  | `createdAt` |
-| `sortDir` | `asc` \| `desc`                                     | Sort direction                              | `desc`      |
-| `limit`   | integer (1–100)                                     | Page size                                   | `20`        |
-| `offset`  | integer (≥ 0)                                       | Page offset                                 | `0`         |
+| Param | Type | Description | Default |
+|-------|------|-------------|---------|
+| `role` | `user` \| `admin` | Filter by role | — |
+| `status` | `active` \| `inactive` \| `banned` | Filter by status | — |
+| `q` | string | Keyword search (firstName, lastName, email) | — |
+| `sortBy` | `createdAt` \| `firstName` \| `lastName` \| `email` | Sort field | `createdAt` |
+| `sortDir` | `asc` \| `desc` | Sort direction | `desc` |
+| `limit` | integer (1–100) | Page size | `20` |
+| `offset` | integer (≥ 0) | Page offset | `0` |
 
 **Response `200`**
 
@@ -221,23 +252,23 @@ All endpoints require Bearer token.
 
 ## Products
 
-`GET /api/v1/products` and `GET /api/v1/products/:id` are public — no authentication required. All other product endpoints require Bearer token.
+`GET /api/v1/products`, `GET /api/v1/products/:id` and `GET /api/v1/products/slug/:slug` are public — no authentication required. All other product endpoints require Bearer token.
 
 ### GET /api/v1/products
 
 **Query parameters**
 
-| Param           | Type                                  | Description                  | Default     |
-| --------------- | ------------------------------------- | ---------------------------- | ----------- |
-| `q`             | string                                | Keyword search (1–200 chars) | —           |
-| `productTypeId` | uuid                                  | Filter by product type       | —           |
-| `currency`      | `VND`                                 | Filter by currency           | —           |
-| `priceMin`      | integer                               | Min price in cents           | —           |
-| `priceMax`      | integer                               | Max price in cents           | —           |
-| `sortBy`        | `createdAt` \| `name` \| `priceCents` | Sort field                   | `createdAt` |
-| `sortDir`       | `asc` \| `desc`                       | Sort direction               | `desc`      |
-| `limit`         | integer (1–100)                       | Page size                    | `20`        |
-| `offset`        | integer (≥ 0)                         | Page offset                  | `0`         |
+| Param | Type | Description | Default |
+|-------|------|-------------|---------|
+| `q` | string | Keyword search over `name`, `origin`, `description`, `tastingNotes` (1–200 chars, case-insensitive) | — |
+| `productTypeId` | uuid | Filter by product type | — |
+| `currency` | `VND` | Filter by currency | — |
+| `priceMin` | integer | Min price in cents | — |
+| `priceMax` | integer | Max price in cents | — |
+| `sortBy` | `createdAt` \| `name` \| `priceCents` | Sort field | `createdAt` |
+| `sortDir` | `asc` \| `desc` | Sort direction | `desc` |
+| `limit` | integer (1–100) | Page size | `20` |
+| `offset` | integer (≥ 0) | Page offset | `0` |
 
 **Response `200`**
 
@@ -246,12 +277,16 @@ All endpoints require Bearer token.
   "items": [
     {
       "id": "uuid",
+      "slug": "string",
       "name": "string",
+      "origin": "string | null",
+      "tastingNotes": ["string"],
       "description": "string | null",
       "priceCents": "integer",
       "currency": "VND",
       "image": "string | null",
       "productTypeId": "uuid",
+      "stockQuantity": "integer",
       "createdAt": "ISO datetime",
       "updatedAt": "ISO datetime"
     }
@@ -270,6 +305,17 @@ All endpoints require Bearer token.
 
 ---
 
+### GET /api/v1/products/slug/:slug
+
+Resolves the public URL slug used by the storefront product page.
+
+**Response `200`** — single product object (same shape as items above), with
+`stockQuantity` joined from `product_stock`.
+
+**Response `404`** — no product with that slug.
+
+---
+
 ### POST /api/v1/products
 
 **Body**
@@ -277,6 +323,8 @@ All endpoints require Bearer token.
 ```json
 {
   "name": "string (1–200)",
+  "origin": "string (max 200) | null",
+  "tastingNotes": ["string (max 100)"],
   "description": "string (max 5000) | null",
   "priceCents": "integer (≥ 0)",
   "currency": "VND",
@@ -284,6 +332,9 @@ All endpoints require Bearer token.
   "productTypeId": "uuid"
 }
 ```
+
+`slug` is derived from `name` automatically and deduplicated with a `-2`, `-3`, … suffix.
+It is not accepted in the create body.
 
 **Response `201`** — created product object.
 
@@ -298,15 +349,24 @@ All fields optional; at least one required.
 ```json
 {
   "name": "string (1–200)",
+  "origin": "string (max 200) | null",
+  "tastingNotes": ["string (max 100)"],
   "description": "string (max 5000) | null",
   "priceCents": "integer (≥ 0)",
   "currency": "VND",
   "image": "url (max 2048) | null",
-  "productTypeId": "uuid"
+  "productTypeId": "uuid",
+  "stockQuantity": "integer (≥ 0)",
+  "slug": "string (1–220)"
 }
 ```
 
+Renaming a product does **not** change its slug — existing links stay valid. Pass `slug`
+explicitly to change it.
+
 **Response `200`** — updated product object.
+**Response `400`** — `slug` is not slug-shaped (lowercase alphanumeric words joined by single hyphens).
+**Response `409`** — `slug` already belongs to another product.
 
 ---
 
@@ -367,7 +427,8 @@ All fields optional; at least one required.
 
 | Param | Type | Description | Default |
 |-------|------|-------------|---------|
-| `email` | string | Filter by customer email | — |
+| `q` | string | Keyword search over customer email (partial) and order-id prefix, e.g. the 8-char receipt code (1–200 chars, case-insensitive) | — |
+| `email` | string | Filter by customer email (exact match) | — |
 | `status` | string | Filter by status (see below) | — |
 | `currency` | `VND` | Filter by currency | — |
 | `totalMin` | integer | Min total in cents | — |
@@ -390,6 +451,13 @@ Order statuses: `pending`, `paid`, `shipped`, `delivered`, `cancelled`
       "status": "pending | paid | shipped | delivered | cancelled",
       "totalCents": "integer",
       "currency": "VND",
+      "cashReceivedCents": "integer | null",
+      "changeCents": "integer | null",
+      "shippingFirstName": "string | null",
+      "shippingLastName": "string | null",
+      "shippingAddress": "string | null",
+      "shippingCity": "string | null",
+      "shippingPostalCode": "string | null",
       "items": [
         {
           "id": "uuid",
@@ -413,13 +481,19 @@ Order statuses: `pending`, `paid`, `shipped`, `delivered`, `cancelled`
 
 ### GET /api/v1/orders/lookup
 
-Look up orders by customer email. Requires Bearer token. Users can only lookup their own email; admins can lookup any email.
+Look up a single order by customer email **and** order code. Public — no authentication required (guest checkout has no account).
+
+Access control on this route (A01 fix):
+
+- Both `email` and `code` are required. `code` is the first 8 characters of the order id, printed on the customer's receipt. Only the order matching both is returned — knowing an email alone is no longer enough to read someone's order history.
+- Rate-limited separately and much tighter than the app default (`ORDER_LOOKUP_RATE_MAX`/`ORDER_LOOKUP_RATE_WINDOW`, default 5 req/minute), keyed on **IP + email** so rotating IPs does not reset the counter for a given email.
 
 **Query parameters**
 
 | Param | Type | Description | Required |
 |-------|------|-------------|----------|
 | `email` | string | The customer email address to look up | Yes |
+| `code` | string | 8-character hex order code from the receipt (first 8 chars of the order id) | Yes |
 
 **Response `200`**
 
@@ -432,6 +506,13 @@ Look up orders by customer email. Requires Bearer token. Users can only lookup t
       "status": "pending | paid | shipped | delivered | cancelled",
       "totalCents": "integer",
       "currency": "VND",
+      "cashReceivedCents": "integer | null",
+      "changeCents": "integer | null",
+      "shippingFirstName": "string | null",
+      "shippingLastName": "string | null",
+      "shippingAddress": "string | null",
+      "shippingCity": "string | null",
+      "shippingPostalCode": "string | null",
       "items": [
         {
           "id": "uuid",
@@ -467,6 +548,12 @@ Submit a new order. The backend automatically re-evaluates all item prices using
   "email": "string",
   "totalCents": "integer (≥ 0)",
   "currency": "VND",
+  "cashReceivedCents": "integer (≥ 0, optional)",
+  "shippingFirstName": "string (1–100)",
+  "shippingLastName": "string (1–100)",
+  "shippingAddress": "string (5–500)",
+  "shippingCity": "string (1–100)",
+  "shippingPostalCode": "string (3–20)",
   "items": [
     {
       "productId": "uuid",
@@ -477,6 +564,8 @@ Submit a new order. The backend automatically re-evaluates all item prices using
   ]
 }
 ```
+
+`changeCents` is computed server-side from `cashReceivedCents - totalCents` and is not accepted in the request body. `shippingFirstName`/`shippingLastName`/`shippingAddress`/`shippingCity`/`shippingPostalCode` are required on every new order; they are nullable in responses only because orders placed before this field existed have no value.
 
 **Response `201`** — created order object.
 
@@ -493,6 +582,51 @@ Submit a new order. The backend automatically re-evaluates all item prices using
 ```
 
 **Response `200`** — updated order object.
+
+---
+
+## Search
+
+### POST /api/v1/search/voice
+
+Voice semantic search. Public — no authentication required, but rate-limited separately (see `SEARCH_VOICE_RATE_MAX`/`SEARCH_VOICE_RATE_WINDOW`, default 10 req/minute/IP).
+
+Audio-native: the recorded voice query is embedded directly with `gemini-embedding-2` and matched against product-text embeddings in the same vector space — no transcription step in the primary match path. Transcript is generated separately, only for display.
+
+**Request** — `multipart/form-data`, one file field containing the audio.
+
+- Max size: 10MB
+- Max duration: 60s
+- Accepted content types: `audio/webm`, `audio/wav`, `audio/wave`, `audio/x-wav`, `audio/mpeg`, `audio/mp3`, `audio/ogg`
+
+**Response `200`**
+
+```json
+{
+  "items": [
+    {
+      "id": "uuid",
+      "slug": "string",
+      "name": "string",
+      "origin": "string | null",
+      "tastingNotes": ["string"],
+      "description": "string | null",
+      "priceCents": "integer",
+      "currency": "VND",
+      "image": "string | null",
+      "productTypeId": "uuid",
+      "stockQuantity": "integer",
+      "createdAt": "ISO datetime",
+      "updatedAt": "ISO datetime",
+      "score": "number (0-1, cosine similarity)"
+    }
+  ],
+  "transcript": "string | null",
+  "usedFallback": "boolean"
+}
+```
+
+`usedFallback: true` means audio-native similarity was below `SEARCH_VOICE_SIMILARITY_THRESHOLD`, so results came from a keyword search over the transcript instead — `score` is `0` for those items (keyword search has no comparable similarity score).
 
 ---
 
@@ -543,12 +677,14 @@ All errors follow this shape:
 }
 ```
 
-| Status | Code                  | Cause                                              |
-| ------ | --------------------- | -------------------------------------------------- |
-| `400`  | `VALIDATION_ERROR`    | Invalid request body or query params               |
-| `401`  | `UNAUTHORIZED`        | Missing or invalid Bearer token                    |
-| `403`  | `FORBIDDEN`           | Insufficient permissions                           |
-| `404`  | `NOT_FOUND`           | Resource not found                                 |
-| `409`  | `CONFLICT`            | Duplicate resource (e.g. email already registered) |
-| `429`  | `RATE_LIMIT_EXCEEDED` | Too many requests                                  |
-| `500`  | `INTERNAL_ERROR`      | Unexpected server error                            |
+| Status | Code | Cause |
+|--------|------|-------|
+| `400` | `VALIDATION_ERROR` | Invalid request body or query params |
+| `401` | `UNAUTHORIZED` | Missing or invalid Bearer token |
+| `403` | `FORBIDDEN` | Insufficient permissions |
+| `404` | `NOT_FOUND` | Resource not found |
+| `409` | `CONFLICT` | Duplicate resource (e.g. email already registered) |
+| `429` | `RATE_LIMIT_EXCEEDED` | Too many requests |
+| `500` | `INTERNAL_ERROR` | Unexpected server error |
+| `502` | `EXTERNAL_SERVICE_ERROR` | An upstream service (e.g. Gemini) failed |
+| `503` | `AI_NOT_CONFIGURED` | AI-dependent endpoint called without a configured Gemini API key |

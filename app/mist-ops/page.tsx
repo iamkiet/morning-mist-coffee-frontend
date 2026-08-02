@@ -117,14 +117,14 @@ export default function AdminOverviewPage() {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="text-[10px] uppercase tracking-widest h-7"
+                  className="text-[10px] uppercase tracking-wider h-7"
                 >
                   Hàng ngày
                 </Button>
                 <Button
                   variant="default"
                   size="sm"
-                  className="text-[10px] uppercase tracking-widest h-7"
+                  className="text-[10px] uppercase tracking-wider h-7"
                 >
                   Hàng tuần
                 </Button>

@@ -23,7 +23,11 @@ const links = [
   { href: '/track-order', label: 'Theo dõi đơn hàng' },
 ];
 
-export function Nav({ className }: { className?: string } = {}) {
+interface NavProps {
+  className?: string;
+}
+
+export function Nav({ className }: NavProps = {}) {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const closeMenu = () => setIsOpen(false);

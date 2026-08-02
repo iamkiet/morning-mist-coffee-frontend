@@ -94,7 +94,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             size="sm"
             variant="outline"
             onClick={logout}
-            className="rounded-lg text-xs uppercase tracking-widest gap-2"
+            className="rounded-lg text-xs uppercase tracking-wider gap-2"
           >
             <LogOut className="size-3.5" />
             Đăng xuất

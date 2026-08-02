@@ -1,6 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import {
   Package,
   Search,
@@ -10,10 +12,19 @@ import {
   XCircle,
   CreditCard,
 } from 'lucide-react';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { Container } from '@/app/_components/Container';
+import { ErrorNotice } from '@/app/_components/ErrorNotice';
 import { useLookupOrders } from '@/hooks/use-orders';
 import type { Order, OrderStatus } from '@/lib/api/orders';
 
@@ -47,7 +58,11 @@ const UNKNOWN_STATUS = {
   className: 'text-muted-foreground',
 };
 
-function OrderCard({ order }: { order: Order }) {
+interface OrderCardProps {
+  order: Order;
+}
+
+function OrderCard({ order }: OrderCardProps) {
   const {
     label,
     icon: Icon,
@@ -120,24 +135,51 @@ function OrderCard({ order }: { order: Order }) {
             </div>
           </>
         )}
+        {order.shippingAddress && (
+          <>
+            <Separator />
+            <div className="space-y-1 text-xs text-muted-foreground pt-1">
+              <p className="uppercase tracking-widest text-[10px] mb-1">Giao đến</p>
+              <p className="text-foreground font-medium">
+                {order.shippingFirstName} {order.shippingLastName}
+              </p>
+              <p>
+                {order.shippingAddress}, {order.shippingCity}
+                {order.shippingPostalCode ? ` ${order.shippingPostalCode}` : ''}
+              </p>
+            </div>
+          </>
+        )}
       </CardContent>
     </Card>
   );
 }
 
+const trackOrderSchema = z.object({
+  email: z.string().min(1, 'Email là bắt buộc').email('Email không hợp lệ'),
+  code: z
+    .string()
+    .trim()
+    .regex(/^[0-9a-fA-F]{8}$/, 'Mã đơn hàng gồm 8 ký tự in trên biên nhận'),
+});
+
+type TrackOrderForm = z.infer<typeof trackOrderSchema>;
+
 export default function TrackOrderPage() {
-  const [email, setEmail] = useState('');
-  const [code, setCode] = useState('');
   const lookup = useLookupOrders();
   const orders = lookup.data ?? null;
 
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    lookup.mutate({ email, code: code.trim() });
+  const form = useForm<TrackOrderForm>({
+    resolver: zodResolver(trackOrderSchema),
+    defaultValues: { email: '', code: '' },
+  });
+
+  function onSubmit(values: TrackOrderForm) {
+    lookup.mutate({ email: values.email, code: values.code.trim() });
   }
 
   return (
-    <div className="w-full max-w-2xl mx-auto pt-36 pb-16 px-4 sm:px-6 md:px-gutter min-h-screen">
+    <Container size="narrow" navOffset className="pb-16 min-h-screen">
       <div className="mb-10">
         <div className="flex items-center gap-3 mb-3">
           <Package className="size-5 text-primary" />
@@ -150,41 +192,54 @@ export default function TrackOrderPage() {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 mb-8">
-        <Input
-          type="email"
-          placeholder="email_cua_ban@example.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          className="flex-1"
-        />
-        <Input
-          type="text"
-          placeholder="Mã đơn hàng"
-          value={code}
-          onChange={(e) => setCode(e.target.value)}
-          required
-          minLength={8}
-          maxLength={8}
-          pattern="[0-9a-fA-F]{8}"
-          title="Mã đơn hàng gồm 8 ký tự, in trên biên nhận"
-          className="font-mono uppercase sm:w-44"
-        />
-        <Button
-          type="submit"
-          disabled={lookup.isPending}
-          className="gap-2 uppercase tracking-widest text-xs"
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="flex flex-col sm:flex-row sm:items-start gap-3 mb-8"
         >
-          <Search className="size-4" />
-          {lookup.isPending ? 'Đang tìm...' : 'Tìm kiếm'}
-        </Button>
-      </form>
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem className="flex-1">
+                <FormControl>
+                  <Input type="email" placeholder="email_cua_ban@example.com" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="code"
+            render={({ field }) => (
+              <FormItem className="sm:w-44">
+                <FormControl>
+                  <Input
+                    type="text"
+                    placeholder="Mã đơn hàng"
+                    maxLength={8}
+                    className="font-mono uppercase"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button
+            type="submit"
+            disabled={lookup.isPending}
+            className="gap-2 uppercase tracking-wider text-xs"
+          >
+            <Search className="size-4" />
+            {lookup.isPending ? 'Đang tìm...' : 'Tìm kiếm'}
+          </Button>
+        </form>
+      </Form>
 
       {lookup.isError && (
-        <p className="text-sm text-destructive mb-6">
-          Đã xảy ra lỗi. Vui lòng thử lại sau.
-        </p>
+        <ErrorNotice className="mb-6">Đã xảy ra lỗi. Vui lòng thử lại sau.</ErrorNotice>
       )}
 
       {orders !== null &&
@@ -205,6 +260,6 @@ export default function TrackOrderPage() {
             ))}
           </div>
         ))}
-    </div>
+    </Container>
   );
 }

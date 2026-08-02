@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Lock, Leaf, ShoppingBag, Minus, Plus, Trash2, CreditCard, Coins } from 'lucide-react';
+import { Lock, Leaf, ShoppingBag, Minus, Plus, Trash2, Coins } from 'lucide-react';
 import {
   Form,
   FormControl,
@@ -20,6 +20,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Label } from '@/components/ui/label';
+import { Container } from '@/app/_components/Container';
+import { ErrorNotice } from '@/app/_components/ErrorNotice';
 import { useCart } from '@/lib/cart';
 import { useCreateOrder } from '@/hooks/use-orders';
 import { toast } from 'sonner';
@@ -51,7 +53,7 @@ export default function CheckoutPage() {
     },
   });
 
-  const [paymentMethod, setPaymentMethod] = useState<'cash' | 'card'>('cash');
+  // Only cash-on-pickup is supported today — no payment gateway is integrated
   const [cashReceived, setCashReceived] = useState<string>('');
   // Client-side validation of a field that lives outside the zod form
   const [cashError, setCashError] = useState('');
@@ -59,9 +61,8 @@ export default function CheckoutPage() {
   const createOrder = useCreateOrder();
 
   const cashReceivedAmount = parseFloat(cashReceived) || 0;
-  const changeAmount = paymentMethod === 'cash' && cashReceivedAmount >= total
-    ? cashReceivedAmount - total
-    : 0;
+  const changeAmount =
+    cashReceivedAmount >= total ? cashReceivedAmount - total : 0;
 
   const submitError =
     cashError ||
@@ -74,7 +75,7 @@ export default function CheckoutPage() {
   const onSubmit = (data: CheckoutForm) => {
     setCashError('');
 
-    if (paymentMethod === 'cash' && cashReceivedAmount < total) {
+    if (cashReceivedAmount < total) {
       setCashError('Số tiền khách đưa không đủ để thanh toán đơn hàng');
       return;
     }
@@ -89,8 +90,12 @@ export default function CheckoutPage() {
           priceCents: Math.round(item.price),
           quantity: item.quantity,
         })),
-        cashReceivedCents:
-          paymentMethod === 'cash' ? Math.round(cashReceivedAmount) : undefined,
+        cashReceivedCents: Math.round(cashReceivedAmount),
+        shippingFirstName: data.firstName,
+        shippingLastName: data.lastName,
+        shippingAddress: data.address,
+        shippingCity: data.city,
+        shippingPostalCode: data.postalCode,
       },
       {
         onSuccess: () => {
@@ -106,7 +111,7 @@ export default function CheckoutPage() {
   };
 
   return (
-    <div className="w-full max-w-7xl mx-auto pt-36 pb-12 px-4 sm:px-6 md:px-gutter min-h-screen">
+    <Container navOffset className="pb-12 min-h-screen">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Order Summary - left on desktop, top on mobile */}
         <div className="lg:col-span-5 order-first">
@@ -126,7 +131,7 @@ export default function CheckoutPage() {
                     asChild
                     variant="outline"
                     size="sm"
-                    className="uppercase tracking-widest text-xs rounded-lg"
+                    className="uppercase tracking-wider text-xs rounded-lg"
                   >
                     <Link href="/shop">Khám Phá Bộ Sưu Tập</Link>
                   </Button>
@@ -157,7 +162,7 @@ export default function CheckoutPage() {
                               onClick={() =>
                                 updateQuantity(item.slug, item.quantity - 1)
                               }
-                              className="size-5 flex items-center justify-center border border-border rounded-md text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                              className="size-5 flex items-center justify-center border border-border rounded-lg text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                               aria-label="Decrease quantity"
                             >
                               <Minus className="size-3" />
@@ -169,7 +174,7 @@ export default function CheckoutPage() {
                               onClick={() =>
                                 updateQuantity(item.slug, item.quantity + 1)
                               }
-                              className="size-5 flex items-center justify-center border border-border rounded-md text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                              className="size-5 flex items-center justify-center border border-border rounded-lg text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                               aria-label="Increase quantity"
                             >
                               <Plus className="size-3" />
@@ -354,63 +359,43 @@ export default function CheckoutPage() {
                   </h2>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div
-                    onClick={() => setPaymentMethod('cash')}
-                    className={`border-2 p-4 rounded-xl flex flex-col items-center justify-center gap-2 cursor-pointer transition-all ${
-                      paymentMethod === 'cash'
-                        ? 'border-primary bg-primary/5 text-primary'
-                        : 'border-border hover:border-border-hover bg-card text-muted-foreground'
-                    }`}
-                  >
-                    <Coins className="size-6 animate-pulse" />
-                    <span className="text-xs uppercase tracking-wider font-semibold">Tiền Mặt (Cash)</span>
-                  </div>
-                  <div
-                    onClick={() => setPaymentMethod('card')}
-                    className={`border-2 p-4 rounded-xl flex flex-col items-center justify-center gap-2 cursor-pointer transition-all ${
-                      paymentMethod === 'card'
-                        ? 'border-primary bg-primary/5 text-primary'
-                        : 'border-border hover:border-border-hover bg-card text-muted-foreground'
-                    }`}
-                  >
-                    <CreditCard className="size-6" />
-                    <span className="text-xs uppercase tracking-wider font-semibold">Thanh Toán Thẻ</span>
-                  </div>
+                <div className="border-2 border-primary bg-primary/5 text-primary p-4 rounded-xl flex flex-col items-center justify-center gap-2">
+                  <Coins className="size-6 animate-pulse" />
+                  <span className="text-xs uppercase tracking-wider font-semibold">
+                    Thanh Toán Tiền Mặt Khi Nhận Hàng
+                  </span>
                 </div>
 
-                {paymentMethod === 'cash' && (
-                  <div className="bg-muted/30 p-5 rounded-xl border border-border space-y-4 animate-in fade-in slide-in-from-top-4 duration-300">
-                    <div className="space-y-2">
-                      <Label htmlFor="cash-received" className="text-xs uppercase tracking-wider text-muted-foreground">
-                        Tiền nhận từ khách (VNĐ)
-                      </Label>
-                      <Input
-                        id="cash-received"
-                        type="number"
-                        placeholder="Nhập số tiền khách đưa..."
-                        value={cashReceived}
-                        onChange={(e) => setCashReceived(e.target.value)}
-                        className="bg-card font-medium"
-                      />
-                    </div>
-                    {cashReceivedAmount > 0 && (
-                      <div className="flex justify-between items-center text-sm pt-2 border-t border-border/40">
-                        <span className="text-muted-foreground">Tiền thối lại (Change):</span>
-                        <span className={`text-base font-semibold ${cashReceivedAmount >= total ? 'text-primary' : 'text-destructive'}`}>
-                          {cashReceivedAmount >= total
-                            ? `${changeAmount.toLocaleString('vi-VN')} ₫`
-                            : 'Chưa đủ tiền thanh toán'}
-                        </span>
-                      </div>
-                    )}
+                <div className="bg-muted/30 p-5 rounded-xl border border-border space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="cash-received" className="text-xs uppercase tracking-wider text-muted-foreground">
+                      Tiền nhận từ khách (VNĐ)
+                    </Label>
+                    <Input
+                      id="cash-received"
+                      type="number"
+                      placeholder="Nhập số tiền khách đưa..."
+                      value={cashReceived}
+                      onChange={(e) => setCashReceived(e.target.value)}
+                      className="bg-card font-medium"
+                    />
                   </div>
-                )}
+                  {cashReceivedAmount > 0 && (
+                    <div className="flex justify-between items-center text-sm pt-2 border-t border-border/40">
+                      <span className="text-muted-foreground">Tiền thối lại (Change):</span>
+                      <span className={`text-base font-semibold ${cashReceivedAmount >= total ? 'text-primary' : 'text-destructive'}`}>
+                        {cashReceivedAmount >= total
+                          ? `${changeAmount.toLocaleString('vi-VN')} ₫`
+                          : 'Chưa đủ tiền thanh toán'}
+                      </span>
+                    </div>
+                  )}
+                </div>
               </section>
 
               <div className="space-y-3">
                 {submitError && (
-                  <p className="text-sm text-destructive">{submitError}</p>
+                  <ErrorNotice className="mb-0">{submitError}</ErrorNotice>
                 )}
                 <Button
                   type="submit"
@@ -431,6 +416,6 @@ export default function CheckoutPage() {
           </Form>
         </div>
       </div>
-    </div>
+    </Container>
   );
 }

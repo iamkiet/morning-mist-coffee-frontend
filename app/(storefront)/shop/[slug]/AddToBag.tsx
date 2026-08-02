@@ -7,7 +7,11 @@ import { useCart } from '@/lib/cart';
 import { useTemporaryFlag } from '@/hooks/use-temporary-flag';
 import type { Product } from '@/lib/types';
 
-export function AddToBag({ product }: { product: Product }) {
+interface AddToBagProps {
+  product: Product;
+}
+
+export function AddToBag({ product }: AddToBagProps) {
   const { addItem } = useCart();
   const [quantity, setQuantity] = useState(1);
   const [added, flashAdded] = useTemporaryFlag();
@@ -26,7 +30,7 @@ export function AddToBag({ product }: { product: Product }) {
   }
 
   return (
-    <div className="space-y-md">
+    <div className="space-y-6">
       <div className="flex items-center justify-between">
         <span className="text-3xl text-foreground">
           {product.price.toLocaleString('vi-VN')} ₫
@@ -42,7 +46,7 @@ export function AddToBag({ product }: { product: Product }) {
           >
             <Minus className="size-4" />
           </Button>
-          <span className="px-md text-foreground min-w-[2rem] text-center">
+          <span className="px-6 text-foreground min-w-[2rem] text-center">
             {quantity}
           </span>
           <Button

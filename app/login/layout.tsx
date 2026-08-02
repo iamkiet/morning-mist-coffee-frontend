@@ -1,5 +1,9 @@
 import type { ReactNode } from 'react';
 
-export default function LoginLayout({ children }: { children: ReactNode }) {
+interface LoginLayoutProps {
+  children: ReactNode;
+}
+
+export default function LoginLayout({ children }: LoginLayoutProps) {
   return <div className="fixed inset-0 overflow-auto">{children}</div>;
 }

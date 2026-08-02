@@ -1,9 +1,11 @@
+import { Container } from '@/app/_components/Container';
 import { Suspense } from 'react';
 import { ShopContent } from './_components/shop-content';
+import { ProductGridSkeleton } from './_components/product-grid-skeleton';
 
 export default function ShopPage() {
   return (
-    <div className="w-full pt-36 pb-xl px-4 sm:px-6 md:px-gutter max-w-7xl mx-auto">
+    <Container navOffset className="pb-20">
       <header className="mb-10 sm:mb-16 text-center">
         <h1 className="text-3xl sm:text-4xl md:text-5xl text-foreground font-light mb-4">
           Toàn Bộ Bộ Sưu Tập
@@ -13,9 +15,9 @@ export default function ShopPage() {
         </p>
       </header>
 
-      <Suspense fallback={<div className="text-center py-8">Đang tải...</div>}>
+      <Suspense fallback={<ProductGridSkeleton />}>
         <ShopContent />
       </Suspense>
-    </div>
+    </Container>
   );
 }

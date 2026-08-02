@@ -5,10 +5,10 @@ import {
   createOrder,
   lookupOrders,
   type OrderStatus,
-  type CreateOrderItemInput,
+  type CreateOrderPayload,
 } from '@/lib/api/orders';
 
-export function useOrders(page = 1, limit = 20, q = '') {
+export function useOrders(page: number, limit: number, q = '') {
   const offset = (page - 1) * limit;
   return useQuery({
     queryKey: ['orders', page, limit, q],
@@ -27,18 +27,12 @@ export function useUpdateOrderStatus() {
   });
 }
 
-export interface CreateOrderInput {
-  email: string;
-  totalCents: number;
-  items: CreateOrderItemInput[];
-  cashReceivedCents?: number;
-}
+export type CreateOrderInput = CreateOrderPayload;
 
 export function useCreateOrder() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ email, totalCents, items, cashReceivedCents }: CreateOrderInput) =>
-      createOrder(email, totalCents, items, 'VND', cashReceivedCents),
+    mutationFn: (input: CreateOrderInput) => createOrder(input),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['orders'] });
     },

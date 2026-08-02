@@ -3,17 +3,20 @@
 import {
   KeyRound,
   UserX,
+  UserCheck,
   Pencil,
   Search,
-  UserPlus,
   Users as UsersIcon,
   Zap,
   Hourglass,
 } from 'lucide-react';
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { PageHeader } from '../_components/PageHeader';
 import { Badge } from '../_components/Badge';
-import { DataTable, type Column } from '../_components/DataTable';
+import { DataTable, Pagination, type Column } from '../_components/DataTable';
 import { StatCard } from '../_components/StatCard';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -24,10 +27,27 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
-import { useUsers, useUpdateUser } from '@/hooks/use-users';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { useUsers, useUpdateUser, useUpdateUserPassword } from '@/hooks/use-users';
+import { Skeleton } from '@/components/ui/skeleton';
+import { toast } from 'sonner';
+import { ErrorNotice } from '@/app/_components/ErrorNotice';
 import { useDebouncedValue } from '@/hooks/use-debounced-value';
-import type { ApiUser, UserRole, UserStatus } from '@/lib/api/users';
+import type { AdminUser, UserRole, UserStatus } from '@/lib/types';
 
 const roleStyle: Record<UserRole, 'primary' | 'purple'> = {
   admin: 'primary',
@@ -51,13 +71,12 @@ const ROLE_VIETNAMESE: Record<UserRole, string> = {
   user: 'Người dùng',
 };
 
-function UserAvatar({
-  firstName,
-  lastName,
-}: {
+interface UserAvatarProps {
   firstName: string;
   lastName: string;
-}) {
+}
+
+function UserAvatar({ firstName, lastName }: UserAvatarProps) {
   const initials = `${firstName[0] ?? ''}${lastName[0] ?? ''}`.toUpperCase();
   return (
     <div className="size-10 rounded-full bg-muted flex items-center justify-center text-xs font-semibold text-muted-foreground shrink-0">
@@ -66,21 +85,45 @@ function UserAvatar({
   );
 }
 
-function EditUserDialog({
-  user,
-  onClose,
-}: {
-  user: ApiUser;
+interface EditUserDialogProps {
+  user: AdminUser;
   onClose: () => void;
-}) {
-  const update = useUpdateUser();
-  const [role, setRole] = useState<UserRole>(user.role);
-  const [status, setStatus] = useState<UserStatus>(user.status);
+}
 
-  function handleSave() {
+const userSchema = z.object({
+  role: z.enum(['user', 'admin']),
+  status: z.enum(['active', 'inactive', 'banned']),
+});
+
+type UserForm = z.infer<typeof userSchema>;
+
+const ROLE_OPTIONS: { value: UserRole; label: string }[] = [
+  { value: 'user', label: 'Người dùng' },
+  { value: 'admin', label: 'Quản trị viên' },
+];
+
+const STATUS_OPTIONS: { value: UserStatus; label: string }[] = [
+  { value: 'active', label: 'Hoạt động' },
+  { value: 'inactive', label: 'Không hoạt động' },
+  { value: 'banned', label: 'Bị cấm' },
+];
+
+function EditUserDialog({ user, onClose }: EditUserDialogProps) {
+  const update = useUpdateUser();
+  const form = useForm<UserForm>({
+    resolver: zodResolver(userSchema),
+    defaultValues: { role: user.role, status: user.status },
+  });
+
+  function onSubmit(values: UserForm) {
     update.mutate(
-      { id: user.id, payload: { role, status } },
-      { onSuccess: onClose },
+      { id: user.id, payload: values },
+      {
+        onSuccess: () => {
+          toast.success('Đã cập nhật người dùng');
+          onClose();
+        },
+      },
     );
   }
 
@@ -92,62 +135,178 @@ function EditUserDialog({
             Chỉnh sửa Người dùng
           </DialogTitle>
         </DialogHeader>
-        <div className="space-y-4 py-2">
-          <div className="flex items-center gap-3">
-            <UserAvatar firstName={user.firstName} lastName={user.lastName} />
-            <div>
-              <p className="text-sm font-medium">
-                {user.firstName} {user.lastName}
-              </p>
-              <p className="text-xs text-muted-foreground">{user.email}</p>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-2">
+            <div className="flex items-center gap-3">
+              <UserAvatar firstName={user.firstName} lastName={user.lastName} />
+              <div>
+                <p className="text-sm font-medium">
+                  {user.firstName} {user.lastName}
+                </p>
+                <p className="text-xs text-muted-foreground">{user.email}</p>
+              </div>
             </div>
-          </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="eu-role" className="text-xs uppercase tracking-wider text-muted-foreground">
-              Vai trò
-            </Label>
-            <select
-              id="eu-role"
-              value={role}
-              onChange={(e) => setRole(e.target.value as UserRole)}
-              className="w-full rounded-lg border border-input bg-background px-2.5 py-2 text-sm outline-none cursor-pointer focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
-            >
-              <option value="user">Người dùng</option>
-              <option value="admin">Quản trị viên</option>
-            </select>
-          </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="eu-status" className="text-xs uppercase tracking-wider text-muted-foreground">
-              Trạng thái
-            </Label>
-            <select
-              id="eu-status"
-              value={status}
-              onChange={(e) => setStatus(e.target.value as UserStatus)}
-              className="w-full rounded-lg border border-input bg-background px-2.5 py-2 text-sm outline-none cursor-pointer focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
-            >
-              <option value="active">Hoạt động</option>
-              <option value="inactive">Không hoạt động</option>
-              <option value="banned">Bị cấm</option>
-            </select>
-          </div>
-          {update.isError && (
-            <p className="text-xs text-destructive">Không thể cập nhật người dùng. Vui lòng thử lại.</p>
-          )}
-        </div>
-        <DialogFooter>
-          <Button variant="outline" size="sm" onClick={onClose} className="uppercase tracking-wider text-xs">
-            Hủy
-          </Button>
-          <Button
-            size="sm"
-            className="uppercase tracking-wider text-xs"
-            disabled={update.isPending}
-            onClick={handleSave}
-          >
-            {update.isPending ? 'Đang lưu…' : 'Lưu'}
-          </Button>
-        </DialogFooter>
+            <FormField
+              control={form.control}
+              name="role"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Vai trò</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger className="w-full">
+                        <SelectValue />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {ROLE_OPTIONS.map((o) => (
+                        <SelectItem key={o.value} value={o.value}>
+                          {o.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="status"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Trạng thái</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger className="w-full">
+                        <SelectValue />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {STATUS_OPTIONS.map((o) => (
+                        <SelectItem key={o.value} value={o.value}>
+                          {o.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            {update.isError && (
+              <ErrorNotice className="mb-0">
+                Không thể cập nhật người dùng. Vui lòng thử lại.
+              </ErrorNotice>
+            )}
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={onClose}
+                className="uppercase tracking-wider text-xs"
+              >
+                Hủy
+              </Button>
+              <Button
+                type="submit"
+                size="sm"
+                className="uppercase tracking-wider text-xs"
+                disabled={update.isPending}
+              >
+                {update.isPending ? 'Đang lưu…' : 'Lưu'}
+              </Button>
+            </DialogFooter>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+interface ResetPasswordDialogProps {
+  user: AdminUser;
+  onClose: () => void;
+}
+
+const resetPasswordSchema = z.object({
+  password: z.string().min(8, 'Mật khẩu tối thiểu 8 ký tự').max(128),
+});
+
+type ResetPasswordForm = z.infer<typeof resetPasswordSchema>;
+
+function ResetPasswordDialog({ user, onClose }: ResetPasswordDialogProps) {
+  const resetPassword = useUpdateUserPassword();
+  const form = useForm<ResetPasswordForm>({
+    resolver: zodResolver(resetPasswordSchema),
+    defaultValues: { password: '' },
+  });
+
+  function onSubmit(values: ResetPasswordForm) {
+    resetPassword.mutate(
+      { id: user.id, password: values.password },
+      {
+        onSuccess: () => {
+          toast.success('Đã đặt lại mật khẩu');
+          onClose();
+        },
+      },
+    );
+  }
+
+  return (
+    <Dialog open onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="sm:max-w-[24rem]">
+        <DialogHeader>
+          <DialogTitle className="text-sm uppercase tracking-widest font-medium">
+            Đặt lại Mật khẩu
+          </DialogTitle>
+        </DialogHeader>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-2">
+            <p className="text-xs text-muted-foreground">
+              {user.firstName} {user.lastName} · {user.email}
+            </p>
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Mật khẩu mới</FormLabel>
+                  <FormControl>
+                    <Input type="password" placeholder="Tối thiểu 8 ký tự" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            {resetPassword.isError && (
+              <ErrorNotice className="mb-0">
+                Không thể đặt lại mật khẩu. Vui lòng thử lại.
+              </ErrorNotice>
+            )}
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={onClose}
+                className="uppercase tracking-wider text-xs"
+              >
+                Hủy
+              </Button>
+              <Button
+                type="submit"
+                size="sm"
+                className="uppercase tracking-wider text-xs"
+                disabled={resetPassword.isPending}
+              >
+                {resetPassword.isPending ? 'Đang lưu…' : 'Đặt lại'}
+              </Button>
+            </DialogFooter>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );
@@ -156,14 +315,20 @@ function EditUserDialog({
 const LIMIT = 20;
 
 export default function AdminUsersPage() {
+  const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const debouncedSearch = useDebouncedValue(search);
-  const { data, isLoading, isError } = useUsers(1, LIMIT, debouncedSearch);
-  const [editUser, setEditUser] = useState<ApiUser | null>(null);
+  const { data, isLoading, isError } = useUsers(page, LIMIT, debouncedSearch);
+  const [editUser, setEditUser] = useState<AdminUser | null>(null);
+  const [resetPasswordUser, setResetPasswordUser] = useState<AdminUser | null>(null);
+  const toggleStatus = useUpdateUser();
 
   const users = data?.items ?? [];
+  const total = data?.total ?? 0;
+  const totalPages = Math.ceil(total / LIMIT);
+  const offset = (page - 1) * LIMIT;
 
-  const columns: Column<ApiUser>[] = [
+  const columns: Column<AdminUser>[] = [
     {
       key: 'name',
       header: 'Chi tiết người dùng',
@@ -214,6 +379,7 @@ export default function AdminUsersPage() {
             size="icon"
             className="size-8"
             title="Đặt lại Mật khẩu"
+            onClick={() => setResetPasswordUser(r)}
           >
             <KeyRound className="size-4" />
           </Button>
@@ -221,9 +387,26 @@ export default function AdminUsersPage() {
             variant="ghost"
             size="icon"
             className="size-8 hover:text-destructive"
-            title="Vô hiệu hóa"
+            title={r.status === 'banned' ? 'Kích hoạt lại' : 'Vô hiệu hóa'}
+            disabled={toggleStatus.isPending}
+            onClick={() => {
+              const status = r.status === 'banned' ? 'active' : 'banned';
+              toggleStatus.mutate(
+                { id: r.id, payload: { status } },
+                {
+                  onSuccess: () =>
+                    toast.success(
+                      status === 'banned' ? 'Đã vô hiệu hóa tài khoản' : 'Đã kích hoạt lại tài khoản',
+                    ),
+                },
+              );
+            }}
           >
-            <UserX className="size-4" />
+            {r.status === 'banned' ? (
+              <UserCheck className="size-4" />
+            ) : (
+              <UserX className="size-4" />
+            )}
           </Button>
           <Button
             variant="ghost"
@@ -245,66 +428,83 @@ export default function AdminUsersPage() {
         eyebrow="Tổng quan về tất cả tài khoản đã đăng ký"
         title="Quản lý Người dùng"
         actions={
-          <>
-            <div className="relative w-full sm:w-64">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-              <Input
-                placeholder="Tìm kiếm tài khoản..."
-                className="pl-10 bg-card w-full"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-            </div>
-            <Button>
-              <UserPlus className="size-4" />
-              Mời người dùng
-            </Button>
-          </>
+          <div className="relative w-full sm:w-64">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+            <Input
+              placeholder="Tìm kiếm tài khoản..."
+              className="pl-10 bg-card w-full"
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                // A new query restarts paging — page 3 of the old result set is meaningless
+                setPage(1);
+              }}
+            />
+          </div>
         }
       />
 
       <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
         <StatCard
           label="Tổng thành viên"
-          value={isLoading ? '—' : String(data?.total ?? 0)}
-          delta="+8%"
+          value={isLoading ? '—' : String(total)}
           icon={UsersIcon}
           tone="primary"
-          progress={68}
         />
         <StatCard
-          label="Hoạt động hôm nay"
-          value="312"
-          delta="Trực tuyến"
+          label="Quản trị viên"
+          value={isLoading ? '—' : String(users.filter((u) => u.role === 'admin').length)}
+          delta="Trên trang này"
           icon={Zap}
           tone="secondary"
-          progress={42}
         />
         <StatCard
-          label="Đang chờ phê duyệt"
-          value="03"
-          delta="Yêu cầu xử lý"
+          label="Bị khóa"
+          value={isLoading ? '—' : String(users.filter((u) => u.status === 'banned').length)}
+          delta="Trên trang này"
           icon={Hourglass}
           tone="tertiary"
         />
       </section>
 
       {isError && (
-        <p className="text-sm text-destructive mb-4">
-          Không thể tải danh sách người dùng. Vui lòng thử lại.
-        </p>
+        <ErrorNotice>Không thể tải danh sách người dùng. Vui lòng thử lại.</ErrorNotice>
       )}
 
       {isLoading ? (
-        <div className="text-sm text-muted-foreground text-center py-12">
-          Đang tải danh sách người dùng…
+        <div className="space-y-3">
+          {Array.from({ length: LIMIT }).map((_, i) => (
+            <Skeleton key={i} className="h-16 w-full" />
+          ))}
         </div>
       ) : (
-        <DataTable columns={columns} rows={users} />
+        <DataTable
+          columns={columns}
+          rows={users}
+          footer={
+            <Pagination
+              showing={
+                total === 0
+                  ? 'Không tìm thấy người dùng nào'
+                  : `Hiển thị ${offset + 1}–${Math.min(offset + users.length, total)} trên ${total}`
+              }
+              page={page}
+              totalPages={totalPages}
+              onPageChange={setPage}
+            />
+          }
+        />
       )}
 
       {editUser && (
         <EditUserDialog user={editUser} onClose={() => setEditUser(null)} />
+      )}
+
+      {resetPasswordUser && (
+        <ResetPasswordDialog
+          user={resetPasswordUser}
+          onClose={() => setResetPasswordUser(null)}
+        />
       )}
     </div>
   );

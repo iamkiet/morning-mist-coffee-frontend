@@ -23,6 +23,11 @@ export interface Order {
   currency: string;
   cashReceivedCents?: number | null;
   changeCents?: number | null;
+  shippingFirstName: string | null;
+  shippingLastName: string | null;
+  shippingAddress: string | null;
+  shippingCity: string | null;
+  shippingPostalCode: string | null;
   items: OrderItem[];
   createdAt: string;
   updatedAt: string;
@@ -73,16 +78,23 @@ export interface CreateOrderItemInput {
   quantity: number;
 }
 
-export async function createOrder(
-  email: string,
-  totalCents: number,
-  items: CreateOrderItemInput[],
-  currency = 'VND',
-  cashReceivedCents?: number,
-): Promise<Order> {
+export interface CreateOrderPayload {
+  email: string;
+  totalCents: number;
+  items: CreateOrderItemInput[];
+  currency?: string;
+  cashReceivedCents?: number;
+  shippingFirstName: string;
+  shippingLastName: string;
+  shippingAddress: string;
+  shippingCity: string;
+  shippingPostalCode: string;
+}
+
+export async function createOrder(payload: CreateOrderPayload): Promise<Order> {
   const res = await authFetch('/api/v1/orders', {
     method: 'POST',
-    body: JSON.stringify({ email, totalCents, currency, cashReceivedCents, items }),
+    body: JSON.stringify({ currency: 'VND', ...payload }),
   });
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));

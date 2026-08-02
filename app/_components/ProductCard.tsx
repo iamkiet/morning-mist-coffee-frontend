@@ -68,7 +68,7 @@ export function ProductCard({ product }: ProductCardProps) {
           variant={added ? 'default' : 'outline'}
           onClick={handleAddToBag}
           aria-label={`Add ${product.name} to bag`}
-          className="w-full text-xs uppercase tracking-widest gap-2 transition-all duration-300"
+          className="w-full text-xs uppercase tracking-wider gap-2 transition-all duration-300"
         >
           {added ? (
             <>

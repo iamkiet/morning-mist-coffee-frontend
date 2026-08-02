@@ -2,11 +2,11 @@ import type { ReactNode } from 'react';
 import { Nav } from '../_components/Nav';
 import { Footer } from '../_components/Footer';
 
-export default function StorefrontLayout({
-  children,
-}: {
+interface StorefrontLayoutProps {
   children: ReactNode;
-}) {
+}
+
+export default function StorefrontLayout({ children }: StorefrontLayoutProps) {
   return (
     <>
       <header className="fixed top-0 left-0 right-0 z-50 flex flex-col">

@@ -30,7 +30,11 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
+interface AuthProviderProps {
+  children: React.ReactNode;
+}
+
+export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
   // 'idle' until a route asks for a session; 'ready' once an attempt settled
   const [status, setStatus] = useState<'idle' | 'loading' | 'ready'>('idle');

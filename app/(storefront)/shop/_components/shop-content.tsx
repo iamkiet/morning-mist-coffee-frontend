@@ -9,8 +9,9 @@ import {
   ArrowUpDown,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
+import { ErrorNotice } from '@/app/_components/ErrorNotice';
 import { ProductCard } from '@/app/_components/ProductCard';
+import { ProductGridSkeleton } from './product-grid-skeleton';
 import { useProducts } from '@/hooks/use-products';
 
 const LIMIT = 8;
@@ -18,15 +19,13 @@ const LIMIT = 8;
 // A disabled <Button asChild> renders an <a>, and anchors never match the
 // :disabled pseudo-class — the arrow would stay lit and clickable. Render a
 // real disabled <button> instead when there is no page to go to.
-function PageArrow({
-  page,
-  label,
-  children,
-}: {
+interface PageArrowProps {
   page: number | null;
   label: string;
   children: React.ReactNode;
-}) {
+}
+
+function PageArrow({ page, label, children }: PageArrowProps) {
   if (!page) {
     return (
       <Button
@@ -57,7 +56,7 @@ function PageArrow({
 export function ShopContent() {
   const searchParams = useSearchParams();
   const page = Math.max(1, parseInt(searchParams.get('page') ?? '1', 10));
-  const { data, isLoading, error } = useProducts(page, LIMIT);
+  const { data, isLoading, isError } = useProducts(page, LIMIT);
 
   const items = data?.items ?? [];
   const total = data?.total ?? 0;
@@ -106,32 +105,26 @@ export function ShopContent() {
         </div>
       </div>
 
-      {error && (
-        <div className="text-center py-8 text-destructive">
-          Không thể tải danh sách sản phẩm. Vui lòng thử lại sau.
-        </div>
+      {isError && (
+        <ErrorNotice>Không thể tải danh sách sản phẩm. Vui lòng thử lại sau.</ErrorNotice>
       )}
 
-      {!isLoading && !error && items.length === 0 ? (
+      {isLoading ? (
+        <ProductGridSkeleton count={LIMIT} />
+      ) : !isError && items.length === 0 ? (
         <p className="text-center py-16 text-muted-foreground">
           Hiện chưa có sản phẩm nào để hiển thị.
         </p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8 md:gap-10">
-          {isLoading
-            ? Array.from({ length: LIMIT }).map((_, i) => (
-                <div key={i} className="flex flex-col gap-4">
-                  <Skeleton className="aspect-[4/5] rounded-xl" />
-                  <Skeleton className="h-4 w-3/4" />
-                  <Skeleton className="h-4 w-1/2" />
-                </div>
-              ))
-            : items.map((p) => <ProductCard key={p.id} product={p} />)}
+          {items.map((p) => (
+            <ProductCard key={p.id} product={p} />
+          ))}
         </div>
       )}
 
       {totalPages > 1 && (
-        <div className="mt-16 sm:mt-xl flex justify-center items-center gap-6">
+        <div className="mt-16 sm:mt-20 flex justify-center items-center gap-6">
           <PageArrow page={prevPage} label="Trang trước">
             <ChevronLeft className="size-4" />
           </PageArrow>

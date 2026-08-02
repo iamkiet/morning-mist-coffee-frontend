@@ -1,12 +1,7 @@
 import { API_URL } from '@/lib/config';
+import type { User } from '@/lib/types';
 
-export interface User {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  role: 'user' | 'admin';
-}
+export type { User };
 
 export interface LoginResult {
   accessToken: string;

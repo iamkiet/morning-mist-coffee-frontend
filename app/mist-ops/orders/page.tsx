@@ -5,9 +5,16 @@ import {
   MoreHorizontal,
   Search,
   TrendingUp,
+  Receipt,
+  Clock,
+  CheckCircle2,
 } from 'lucide-react';
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { PageHeader } from '../_components/PageHeader';
+import { StatCard } from '../_components/StatCard';
 import { Badge } from '../_components/Badge';
 import { DataTable, Pagination, type Column } from '../_components/DataTable';
 import { Button } from '@/components/ui/button';
@@ -21,8 +28,24 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { useOrders, useUpdateOrderStatus } from '@/hooks/use-orders';
+import { toast } from 'sonner';
+import { ErrorNotice } from '@/app/_components/ErrorNotice';
 import { useDebouncedValue } from '@/hooks/use-debounced-value';
 import type { Order, OrderStatus } from '@/lib/api/orders';
 
@@ -42,22 +65,38 @@ const STATUS_VIETNAMESE: Record<OrderStatus, string> = {
   cancelled: 'Đã hủy',
 };
 
-function EditOrderDialog({
-  order,
-  onClose,
-}: {
+interface EditOrderDialogProps {
   order: Order;
   onClose: () => void;
-}) {
-  const update = useUpdateOrderStatus();
-  const [status, setStatus] = useState<OrderStatus>(order.status);
+}
 
-  function handleSave() {
-    if (status === order.status) {
+const orderSchema = z.object({
+  status: z.enum(['pending', 'paid', 'shipped', 'delivered', 'cancelled']),
+});
+
+type OrderForm = z.infer<typeof orderSchema>;
+
+function EditOrderDialog({ order, onClose }: EditOrderDialogProps) {
+  const update = useUpdateOrderStatus();
+  const form = useForm<OrderForm>({
+    resolver: zodResolver(orderSchema),
+    defaultValues: { status: order.status },
+  });
+
+  function onSubmit(values: OrderForm) {
+    if (values.status === order.status) {
       onClose();
       return;
     }
-    update.mutate({ id: order.id, status }, { onSuccess: onClose });
+    update.mutate(
+      { id: order.id, status: values.status },
+      {
+        onSuccess: () => {
+          toast.success('Đã cập nhật trạng thái đơn hàng');
+          onClose();
+        },
+      },
+    );
   }
 
   return (
@@ -68,54 +107,61 @@ function EditOrderDialog({
             Chỉnh sửa Đơn hàng
           </DialogTitle>
         </DialogHeader>
-        <div className="space-y-4 py-2">
-          <p className="text-xs text-muted-foreground">
-            #{order.id.slice(0, 8).toUpperCase()} · {order.email}
-          </p>
-          <div className="space-y-1.5">
-            <Label
-              htmlFor="eo-status"
-              className="text-xs uppercase tracking-wider text-muted-foreground"
-            >
-              Trạng thái
-            </Label>
-            <select
-              id="eo-status"
-              value={status}
-              onChange={(e) => setStatus(e.target.value as OrderStatus)}
-              className="w-full rounded-lg border border-input bg-background px-2.5 py-2 text-sm outline-none cursor-pointer focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
-            >
-              {ALL_STATUSES.map((s) => (
-                <option key={s} value={s}>
-                  {STATUS_VIETNAMESE[s]}
-                </option>
-              ))}
-            </select>
-          </div>
-          {update.isError && (
-            <p className="text-xs text-destructive">
-              Không thể cập nhật đơn hàng. Vui lòng thử lại.
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-2">
+            <p className="text-xs text-muted-foreground">
+              #{order.id.slice(0, 8).toUpperCase()} · {order.email}
             </p>
-          )}
-        </div>
-        <DialogFooter>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onClose}
-            className="uppercase tracking-wider text-xs"
-          >
-            Hủy
-          </Button>
-          <Button
-            size="sm"
-            className="uppercase tracking-wider text-xs"
-            disabled={update.isPending}
-            onClick={handleSave}
-          >
-            {update.isPending ? 'Đang lưu…' : 'Lưu'}
-          </Button>
-        </DialogFooter>
+            <FormField
+              control={form.control}
+              name="status"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Trạng thái</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger className="w-full">
+                        <SelectValue />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {ALL_STATUSES.map((s) => (
+                        <SelectItem key={s} value={s}>
+                          {STATUS_VIETNAMESE[s]}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            {update.isError && (
+              <ErrorNotice className="mb-0">
+                Không thể cập nhật đơn hàng. Vui lòng thử lại.
+              </ErrorNotice>
+            )}
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={onClose}
+                className="uppercase tracking-wider text-xs"
+              >
+                Hủy
+              </Button>
+              <Button
+                type="submit"
+                size="sm"
+                className="uppercase tracking-wider text-xs"
+                disabled={update.isPending}
+              >
+                {update.isPending ? 'Đang lưu…' : 'Lưu'}
+              </Button>
+            </DialogFooter>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );
@@ -143,7 +189,7 @@ export default function AdminOrdersPage() {
   const [editOrder, setEditOrder] = useState<Order | null>(null);
   const [search, setSearch] = useState('');
   const debouncedSearch = useDebouncedValue(search);
-  const { data, isLoading, error } = useOrders(page, LIMIT, debouncedSearch);
+  const { data, isLoading, isError } = useOrders(page, LIMIT, debouncedSearch);
   const updateStatus = useUpdateOrderStatus();
 
   const orders = data?.items ?? [];
@@ -252,16 +298,43 @@ export default function AdminOrdersPage() {
               placeholder="Tìm kiếm đơn hàng..."
               className="pl-10 bg-card w-full"
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                // A new query restarts paging — page 3 of the old result set is meaningless
+                setPage(1);
+              }}
             />
           </div>
         }
       />
 
-      {error && (
-        <div className="mb-4 p-3 border border-border text-destructive text-sm">
+      <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+        <StatCard
+          label="Tổng đơn hàng"
+          value={isLoading ? '—' : String(total)}
+          icon={Receipt}
+          tone="primary"
+        />
+        <StatCard
+          label="Chờ xử lý"
+          value={isLoading ? '—' : String(orders.filter((o) => o.status === 'pending').length)}
+          delta="Trên trang này"
+          icon={Clock}
+          tone="secondary"
+        />
+        <StatCard
+          label="Đã giao"
+          value={isLoading ? '—' : String(orders.filter((o) => o.status === 'delivered').length)}
+          delta="Trên trang này"
+          icon={CheckCircle2}
+          tone="tertiary"
+        />
+      </section>
+
+      {isError && (
+        <ErrorNotice>
           Không thể tải danh sách đơn hàng. Vui lòng thử lại.
-        </div>
+        </ErrorNotice>
       )}
 
       {isLoading ? (
@@ -349,6 +422,20 @@ export default function AdminOrdersPage() {
                         </div>
                       </div>
                     )}
+                    {order.shippingAddress && (
+                      <div className="space-y-1 text-xs text-muted-foreground pt-2 border-t border-dashed border-border mt-2">
+                        <p className="uppercase tracking-widest text-[10px] mb-1">
+                          Giao đến
+                        </p>
+                        <p className="text-foreground font-medium">
+                          {order.shippingFirstName} {order.shippingLastName}
+                        </p>
+                        <p>
+                          {order.shippingAddress}, {order.shippingCity}
+                          {order.shippingPostalCode ? ` ${order.shippingPostalCode}` : ''}
+                        </p>
+                      </div>
+                    )}
                   </div>
                 )}
               </CardContent>
@@ -406,7 +493,12 @@ export default function AdminOrdersPage() {
             <Button
               variant="outline"
               size="sm"
-              className="uppercase tracking-widest text-[10px]"
+              className="uppercase tracking-wider text-[10px]"
+              onClick={() => {
+                setSearch('');
+                setPage(1);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
             >
               Xem tất cả
             </Button>

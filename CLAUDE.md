@@ -85,7 +85,7 @@ All auth endpoints live in `lib/api/auth.ts` — never call them with a bare `fe
 
 **Do not recreate** any of these — grep before adding:
 
-- Shared: `app/_components/` — Nav, Footer, Container, ProductCard, Chip, CartCount, ChatWidget, VoiceSearchDialog
+- Shared: `app/_components/` — Nav, Footer, Container, ErrorNotice, ProductCard, Chip, CartCount, ChatWidget, VoiceSearchDialog
 - Admin: `app/mist-ops/_components/` — AdminSidebar, Badge, DataTable, Pagination, PageHeader, StatCard
 - shadcn: `@/components/ui/*` — add with `npx shadcn add <name>`
 
@@ -120,6 +120,20 @@ Use shadcn/ui CSS tokens only. MD3/Material tokens (`bg-surface-*`, `bg-secondar
 ## Navigation
 
 `Nav` is `position: fixed`. Storefront pages need `pt-28`–`pt-40` to clear it. Full-bleed hero pages intentionally have no top padding. Never make Nav sticky.
+
+## Consistency rules
+
+These exist because the codebase drifted; a review found each one. Do not reintroduce them.
+
+- **Page wrappers**: always `<Container>`. Never hand-write `max-w-7xl mx-auto px-4 sm:px-6 md:px-gutter`. `size` is `narrow | default | wide`; `as` keeps `<section>` semantics; `navOffset` applies the one true Nav clearance (`pt-28 sm:pt-32 md:pt-36`) — never hard-code a `pt-*` to clear the Nav.
+- **Spacing**: numeric Tailwind only (`py-12`, `gap-6`). The `--spacing-md/lg/xl` aliases are gone from components; `px-gutter` stays because the responsive padding rule below uses it.
+- **Rounding**: `rounded-lg` for controls (button, input, select), `rounded-xl` for surfaces (card, dialog, image, panel), `rounded-full` for pills and avatars. No `rounded-md`, no `rounded-2xl`.
+- **Letter spacing**: buttons use `uppercase tracking-wider`; headings, eyebrows and table labels use `uppercase tracking-widest`.
+- **Controls**: always the shadcn component — `Input`, `Textarea`, `Select`, `Button`. Raw `<input>`, `<select>`, `<textarea>` and `<button>` are only acceptable for a checkbox or a genuinely inline text affordance.
+- **Forms**: `react-hook-form` + `zod` + the shadcn `Form` primitives, always. Never hand-roll `useState` per field, and never `return` silently on invalid input — that is how the product dialog used to swallow a bad price.
+- **Async state**: `Skeleton` for loading, `<ErrorNotice>` for failures, `toast.success(...)` after a successful mutation. All three admin tables and the storefront follow this.
+- **Query hooks** destructure `{ data, isLoading, isError }` — not `error`.
+- **Stat cards must show real numbers.** If a figure is only true for the loaded page, label it `Trên trang này`. Never ship a placeholder number.
 
 ## Responsive
 

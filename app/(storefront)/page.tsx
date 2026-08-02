@@ -1,3 +1,4 @@
+import { Container } from '@/app/_components/Container';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, Leaf, Paintbrush, Settings2 } from 'lucide-react';
@@ -32,7 +33,7 @@ export default function HomePage() {
           <Button
             asChild
             size="lg"
-            className="px-6 sm:px-10 py-3 sm:py-4 text-xs sm:text-sm uppercase tracking-widest rounded-lg"
+            className="px-6 sm:px-10 py-3 sm:py-4 text-xs sm:text-sm uppercase tracking-wider rounded-lg"
           >
             <Link href="/shop">Mua Ngay Bộ Sưu Tập</Link>
           </Button>
@@ -40,8 +41,8 @@ export default function HomePage() {
       </section>
 
       {/* Featured Collections */}
-      <section className="py-12 sm:py-16 md:py-xl max-w-7xl mx-auto px-4 sm:px-6 md:px-gutter">
-        <div className="flex flex-col mb-8 sm:mb-12 md:mb-xl">
+      <Container as="section" className="py-12 sm:py-16 md:py-20">
+        <div className="flex flex-col mb-8 sm:mb-12 md:mb-20">
           <span className="text-primary tracking-[0.2em] mb-2 sm:mb-4 uppercase text-xs font-medium">
             Tác Phẩm Tuyển Chọn
           </span>
@@ -111,11 +112,11 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-      </section>
+      </Container>
 
       {/* Our Story / Philosophy */}
-      <section className="bg-muted py-12 sm:py-16 md:py-xl overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-gutter grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-xl items-center">
+      <section className="bg-muted py-12 sm:py-16 md:py-20 overflow-hidden">
+        <Container className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-20 items-center">
           <div className="relative order-2 md:order-1">
             <div className="relative aspect-[3/4] overflow-hidden border-[8px] sm:border-[12px] md:border-[16px] border-white/50 shadow-sm">
               <Image
@@ -149,13 +150,13 @@ export default function HomePage() {
               <ArrowRight className="size-4 ml-2 sm:ml-4 group-hover:translate-x-2 transition-transform duration-300" />
             </Link>
           </div>
-        </div>
+        </Container>
       </section>
 
       {/* Philosophy Feature Cards */}
       <section className="py-12 sm:py-16 md:py-32 bg-muted/50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-gutter">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-md">
+        <Container>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-6">
             {[
               {
                 Icon: Leaf,
@@ -175,7 +176,7 @@ export default function HomePage() {
             ].map(({ Icon, title, body }) => (
               <div
                 key={title}
-                className="p-6 sm:p-8 md:p-12 bg-card border border-border/40 flex flex-col items-start text-left transition-all duration-500 hover:shadow-sm rounded-2xl"
+                className="p-6 sm:p-8 md:p-12 bg-card border border-border/40 flex flex-col items-start text-left transition-all duration-500 hover:shadow-sm rounded-xl"
               >
                 <div className="w-12 h-12 bg-accent flex items-center justify-center mb-8 sm:mb-10 shrink-0 rounded-lg">
                   <Icon className="size-6 text-white" />
@@ -190,7 +191,7 @@ export default function HomePage() {
               </div>
             ))}
           </div>
-        </div>
+        </Container>
       </section>
     </>
   );

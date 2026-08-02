@@ -18,9 +18,9 @@ export default async function ProductPage(props: {
     getProductAttributes(product.name);
 
   return (
-    <Container className="pt-32 pb-xl">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-xl">
-        <div className="lg:col-span-7 space-y-md">
+    <Container navOffset className="pb-20">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-20">
+        <div className="lg:col-span-7 space-y-6">
           <div className="relative aspect-[4/5] bg-muted rounded-xl overflow-hidden shadow-[0_30px_60px_-15px_rgba(85,98,84,0.1)] group">
             <Image
               src={product.image}
@@ -32,7 +32,7 @@ export default async function ProductPage(props: {
             />
             <div className="absolute inset-0 bg-primary/5 mix-blend-multiply pointer-events-none" />
           </div>
-          <div className="grid grid-cols-2 gap-md">
+          <div className="grid grid-cols-2 gap-6">
             <div className="relative aspect-square bg-muted rounded-lg overflow-hidden">
               <Image
                 src="/statics/detail_brewing.png"
@@ -55,7 +55,7 @@ export default async function ProductPage(props: {
         </div>
 
         <div className="lg:col-span-5 flex flex-col justify-center">
-          <header className="mb-md">
+          <header className="mb-6">
             <span className="text-primary tracking-[0.2em] mb-2 block uppercase text-xs">
               Bộ Sưu Tập Đặc Sản (Reserve)
             </span>
@@ -67,27 +67,27 @@ export default async function ProductPage(props: {
             </p>
           </header>
 
-          <div className="mb-lg">
+          <div className="mb-12">
             <p className="text-muted-foreground leading-relaxed">
               {product.description ||
                 'Một sự thể hiện tinh tế của bình minh nơi cao nguyên. Dòng sản phẩm giới hạn này được thu hoạch ở độ chín tối đa, mang lại sự trong trẻo, nhẹ nhàng đan xen giữa sương mai thanh khiết và hương hoa cỏ tao nhã.'}
             </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-2 mb-lg">
-            <div className="p-md bg-card rounded-lg border border-border text-center">
+          <div className="grid grid-cols-2 gap-2 mb-12">
+            <div className="p-6 bg-card rounded-lg border border-border text-center">
               <span className="text-muted-foreground block mb-1 uppercase text-xs tracking-wider">
                 Mức Độ Rang
               </span>
               <span className="text-primary font-medium">{roastLevel}</span>
             </div>
-            <div className="p-md bg-card rounded-lg border border-border text-center">
+            <div className="p-6 bg-card rounded-lg border border-border text-center">
               <span className="text-muted-foreground block mb-1 uppercase text-xs tracking-wider">
                 Phương Pháp Chế Biến
               </span>
               <span className="text-primary font-medium">{processMethod}</span>
             </div>
-            <div className="col-span-2 p-md bg-card rounded-lg border border-border flex flex-col items-center">
+            <div className="col-span-2 p-6 bg-card rounded-lg border border-border flex flex-col items-center">
               <span className="text-muted-foreground block mb-2 uppercase text-xs tracking-wider">
                 Nốt Hương Đặc Trưng
               </span>
@@ -114,21 +114,21 @@ export default async function ProductPage(props: {
             </div>
           </div>
 
-          <div className="mb-lg space-y-2">
+          <div className="mb-12 space-y-2">
             <h3 className="text-foreground border-b border-border pb-1 uppercase text-xs tracking-wider">
               Nghi Thức Pha Chế
             </h3>
-            <div className="flex items-start gap-md py-2">
+            <div className="flex items-start gap-6 py-2">
               <Coffee className="size-5 text-primary shrink-0" />
               <p className="text-muted-foreground text-sm">{brewingNote}</p>
             </div>
-            <div className="flex items-start gap-md py-2">
+            <div className="flex items-start gap-6 py-2">
               <Thermometer className="size-5 text-primary shrink-0" />
               <p className="text-muted-foreground text-sm">{temperatureNote}</p>
             </div>
           </div>
 
-          <div className="space-y-md">
+          <div className="space-y-6">
             <AddToBag product={product} />
             <p className="text-center text-xs text-muted-foreground flex items-center justify-center gap-2">
               <Leaf className="size-3.5" />

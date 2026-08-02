@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { Container } from '@/app/_components/Container';
 
 export default function StoryPage() {
   return (
@@ -32,9 +33,9 @@ export default function StoryPage() {
       </section>
 
       {/* Philosophy Section */}
-      <section className="py-xl px-4 sm:px-6 md:px-gutter bg-background">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-lg items-center">
-          <div className="md:col-span-6 space-y-md">
+      <section className="py-20 bg-background">
+        <Container className="grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
+          <div className="md:col-span-6 space-y-6">
             <span className="text-xs uppercase tracking-widest text-primary">
               Triết Lý
             </span>
@@ -53,7 +54,7 @@ export default function StoryPage() {
               diễn ra trong sự tĩnh lặng của làn sương sớm vùng cao.
             </p>
           </div>
-          <div className="md:col-span-6 relative aspect-[4/5] bg-muted overflow-hidden rounded-2xl">
+          <div className="md:col-span-6 relative aspect-[4/5] bg-muted overflow-hidden rounded-xl">
             <Image
               src="/statics/story_philosophy.png"
               alt="Khoảnh khắc cà phê tĩnh lặng"
@@ -62,20 +63,20 @@ export default function StoryPage() {
               className="object-cover grayscale-[20%]"
             />
           </div>
-        </div>
+        </Container>
       </section>
 
       {/* Process Section */}
-      <section className="py-xl px-4 sm:px-6 md:px-gutter bg-card">
-        <div className="max-w-7xl mx-auto text-center mb-xl">
+      <section className="py-20 bg-card">
+        <Container className="text-center mb-20">
           <span className="text-xs uppercase tracking-widest text-primary block mb-4">
             Nghệ Thuật Thủ Công
           </span>
           <h2 className="text-2xl font-light text-foreground">
             Sự Tỉ Mỉ Và Chính Xác Thủ Công
           </h2>
-        </div>
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-md">
+        </Container>
+        <Container className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {[
             {
               alt: 'Nguồn cung cấp bền vững và đạo đức',
@@ -97,7 +98,7 @@ export default function StoryPage() {
             },
           ].map(({ alt, src, title, body }) => (
             <div key={title} className="group">
-              <div className="relative aspect-square bg-muted overflow-hidden rounded-2xl mb-6">
+              <div className="relative aspect-square bg-muted overflow-hidden rounded-xl mb-6">
                 <Image
                   src={src}
                   alt={alt}
@@ -112,12 +113,12 @@ export default function StoryPage() {
               <p className="text-sm text-muted-foreground">{body}</p>
             </div>
           ))}
-        </div>
+        </Container>
       </section>
 
       {/* Commitment Section */}
-      <section className="py-xl px-4 sm:px-6 md:px-gutter bg-background">
-        <div className="max-w-4xl mx-auto border border-accent/20 p-6 sm:p-lg text-center">
+      <section className="py-20 px-4 sm:px-6 md:px-gutter bg-background">
+        <div className="max-w-4xl mx-auto border border-accent/20 p-6 sm:p-12 text-center">
           <span className="text-xs uppercase tracking-widest text-primary block mb-6">
             Cam Kết Của Chúng Tôi
           </span>
@@ -125,7 +126,7 @@ export default function StoryPage() {
             Sự thuần khiết thay vì tốc độ. <br className="hidden md:block" /> Giá trị thủ công
             vượt trên thương mại.
           </h2>
-          <p className="text-base text-muted-foreground mb-lg italic">
+          <p className="text-base text-muted-foreground mb-12 italic">
             &ldquo;Chúng tôi không mong muốn trở thành nhà rang xay lớn nhất, mà muốn là thương hiệu tận tâm nhất.
             Lời hứa của Morning Mist là luôn giữ trọn sự minh bạch trong chuỗi cung ứng và mang lại cảm giác bình yên trong từng trải nghiệm của bạn.&rdquo;
           </p>

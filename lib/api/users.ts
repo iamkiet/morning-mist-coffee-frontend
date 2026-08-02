@@ -1,21 +1,10 @@
+import type { AdminUser, UserRole, UserStatus } from '@/lib/types';
 import { authFetch, listQuery } from './client';
 
-export type UserRole = 'user' | 'admin';
-export type UserStatus = 'active' | 'inactive' | 'banned';
-
-export interface ApiUser {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  role: UserRole;
-  status: UserStatus;
-  createdAt: string;
-  updatedAt: string;
-}
+export type { AdminUser, UserRole, UserStatus };
 
 export interface UsersPage {
-  items: ApiUser[];
+  items: AdminUser[];
   total: number;
   limit: number;
   offset: number;
@@ -39,11 +28,19 @@ export interface UpdateUserPayload {
 export async function updateUser(
   id: string,
   payload: UpdateUserPayload,
-): Promise<ApiUser> {
+): Promise<AdminUser> {
   const res = await authFetch(`/api/v1/users/${id}`, {
     method: 'PATCH',
     body: JSON.stringify(payload),
   });
   if (!res.ok) throw new Error('Failed to update user');
   return res.json();
+}
+
+export async function updateUserPassword(id: string, password: string): Promise<void> {
+  const res = await authFetch(`/api/v1/users/${id}/password`, {
+    method: 'PATCH',
+    body: JSON.stringify({ password }),
+  });
+  if (!res.ok) throw new Error('Failed to reset password');
 }

@@ -4,12 +4,18 @@ import Image from 'next/image';
 import {
   Pencil,
   Trash2,
-  Download,
   Plus,
   Search,
+  Package,
+  AlertTriangle,
+  XCircle,
 } from 'lucide-react';
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { PageHeader } from '../_components/PageHeader';
+import { StatCard } from '../_components/StatCard';
 import { DataTable, Pagination, type Column } from '../_components/DataTable';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -21,284 +27,119 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { useProducts, useUpdateProduct, useCreateProduct, useDeleteProduct } from '@/hooks/use-products';
 import { useProductTypes } from '@/hooks/use-product-types';
 import { useDebouncedValue } from '@/hooks/use-debounced-value';
+import { toast } from 'sonner';
+import { ErrorNotice } from '@/app/_components/ErrorNotice';
 import type { Product } from '@/lib/types';
 
 const LIMIT = 10;
 
-interface EditState {
-  id: string;
-  name: string;
-  price: string;
-  origin: string;
-  tastingNotes: string;
-  description: string;
-  image: string;
-  stock: string;
-  productTypeId: string;
-}
+const productSchema = z.object({
+  name: z.string().min(1, 'Tên sản phẩm là bắt buộc').max(200),
+  productTypeId: z.string().min(1, 'Vui lòng chọn danh mục'),
+  price: z
+    .string()
+    .min(1, 'Giá bán là bắt buộc')
+    .regex(/^\d+$/, 'Giá phải là số nguyên không âm'),
+  stock: z
+    .string()
+    .min(1, 'Tồn kho là bắt buộc')
+    .regex(/^\d+$/, 'Tồn kho phải là số nguyên không âm'),
+  origin: z.string().max(200).optional(),
+  tastingNotes: z.string().optional(),
+  description: z.string().max(5000).optional(),
+  image: z.union([z.literal(''), z.string().url('Đường dẫn hình ảnh không hợp lệ')]),
+});
+
+type ProductForm = z.infer<typeof productSchema>;
 
 // The API stores tasting notes as an array; the form edits them one per line
-function parseNotes(raw: string): string[] {
-  return raw
+function parseNotes(raw: string | undefined): string[] {
+  return (raw ?? '')
     .split('\n')
     .map((l) => l.trim())
     .filter(Boolean);
 }
 
-function EditProductDialog({
-  product,
-  onClose,
-}: {
-  product: Product;
+interface ProductDialogProps {
+  product?: Product;
   onClose: () => void;
-}) {
+}
+
+function ProductDialog({ product, onClose }: ProductDialogProps) {
+  const isEdit = product !== undefined;
   const update = useUpdateProduct();
-  const { data: catData } = useProductTypes();
-  const categories = catData?.items ?? [];
-
-  const [form, setForm] = useState<EditState>({
-    id: product.id,
-    name: product.name,
-    price: String(Math.round(product.price)),
-    origin: product.origin,
-    tastingNotes: product.tastingNotes.join('\n'),
-    description: product.description,
-    image: product.image,
-    stock: String(product.stockQuantity ?? 0),
-    productTypeId: product.productTypeId || '',
-  });
-
-  const field = (key: keyof EditState) => ({
-    value: form[key],
-    onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
-      setForm((prev) => ({ ...prev, [key]: e.target.value })),
-  });
-
-  function handleSave() {
-    const priceNum = parseFloat(form.price);
-    if (isNaN(priceNum) || priceNum < 0) return;
-    const stockNum = parseInt(form.stock, 10);
-    if (isNaN(stockNum) || stockNum < 0) return;
-    update.mutate(
-      {
-        id: form.id,
-        payload: {
-          name: form.name.trim() || undefined,
-          origin: form.origin.trim() || null,
-          tastingNotes: parseNotes(form.tastingNotes),
-          description: form.description.trim() || null,
-          priceCents: Math.round(priceNum),
-          image: form.image.trim() || null,
-          stockQuantity: stockNum,
-          productTypeId: form.productTypeId || undefined,
-        },
-      },
-      { onSuccess: onClose },
-    );
-  }
-
-  return (
-    <Dialog open onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-[28rem]">
-        <DialogHeader>
-          <DialogTitle className="text-sm uppercase tracking-widest font-medium">
-            Chỉnh sửa Sản phẩm
-          </DialogTitle>
-        </DialogHeader>
-        <div className="space-y-4 py-2">
-          <div className="space-y-1.5">
-            <Label
-              htmlFor="ep-category"
-              className="text-xs uppercase tracking-wider text-muted-foreground"
-            >
-              Danh mục sản phẩm
-            </Label>
-            <select
-              id="ep-category"
-              className="w-full h-9 rounded-lg border border-input bg-background px-3 py-1 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
-              value={form.productTypeId}
-              onChange={(e) => setForm((prev) => ({ ...prev, productTypeId: e.target.value }))}
-            >
-              <option value="" disabled>Chọn danh mục...</option>
-              {categories.map((c) => (
-                <option key={c.id} value={c.id}>{c.name}</option>
-              ))}
-            </select>
-          </div>
-          <div className="space-y-1.5">
-            <Label
-              htmlFor="ep-name"
-              className="text-xs uppercase tracking-wider text-muted-foreground"
-            >
-              Tên sản phẩm
-            </Label>
-            <Input id="ep-name" {...field('name')} />
-          </div>
-          <div className="space-y-1.5">
-            <Label
-              htmlFor="ep-price"
-              className="text-xs uppercase tracking-wider text-muted-foreground"
-            >
-              Giá bán (VNĐ)
-            </Label>
-            <Input
-              id="ep-price"
-              type="number"
-              step="0.01"
-              min="0"
-              {...field('price')}
-            />
-          </div>
-          <div className="space-y-1.5">
-            <Label
-              htmlFor="ep-stock"
-              className="text-xs uppercase tracking-wider text-muted-foreground"
-            >
-              Số lượng tồn kho
-            </Label>
-            <Input
-              id="ep-stock"
-              type="number"
-              step="1"
-              min="0"
-              {...field('stock')}
-            />
-          </div>
-          <div className="space-y-1.5">
-            <Label
-              htmlFor="ep-origin"
-              className="text-xs uppercase tracking-wider text-muted-foreground"
-            >
-              Nguồn gốc
-            </Label>
-            <Input id="ep-origin" {...field('origin')} />
-          </div>
-          <div className="space-y-1.5">
-            <Label
-              htmlFor="ep-notes"
-              className="text-xs uppercase tracking-wider text-muted-foreground"
-            >
-              Nốt hương (mỗi dòng một nốt)
-            </Label>
-            <textarea
-              id="ep-notes"
-              rows={3}
-              className="w-full rounded-lg border border-input bg-background px-2.5 py-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 resize-none"
-              {...field('tastingNotes')}
-            />
-          </div>
-          <div className="space-y-1.5">
-            <Label
-              htmlFor="ep-desc"
-              className="text-xs uppercase tracking-wider text-muted-foreground"
-            >
-              Mô tả
-            </Label>
-            <textarea
-              id="ep-desc"
-              rows={3}
-              className="w-full rounded-lg border border-input bg-background px-2.5 py-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 resize-none"
-              {...field('description')}
-            />
-          </div>
-          <div className="space-y-1.5">
-            <Label
-              htmlFor="ep-img"
-              className="text-xs uppercase tracking-wider text-muted-foreground"
-            >
-              Đường dẫn hình ảnh
-            </Label>
-            <Input id="ep-img" type="url" {...field('image')} />
-          </div>
-          {update.isError && (
-            <p className="text-xs text-destructive">
-              Không thể cập nhật sản phẩm. Vui lòng thử lại.
-            </p>
-          )}
-        </div>
-        <DialogFooter>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onClose}
-            className="uppercase tracking-wider text-xs"
-          >
-            Hủy
-          </Button>
-          <Button
-            size="sm"
-            className="uppercase tracking-wider text-xs"
-            disabled={update.isPending}
-            onClick={handleSave}
-          >
-            {update.isPending ? 'Đang lưu…' : 'Lưu'}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  );
-}
-
-interface CreateState {
-  name: string;
-  price: string;
-  origin: string;
-  tastingNotes: string;
-  description: string;
-  image: string;
-  stock: string;
-  productTypeId: string;
-}
-
-function CreateProductDialog({
-  onClose,
-}: {
-  onClose: () => void;
-}) {
   const create = useCreateProduct();
+  const mutation = isEdit ? update : create;
   const { data: catData } = useProductTypes();
   const categories = catData?.items ?? [];
-  
-  const [form, setForm] = useState<CreateState>({
-    name: '',
-    price: '',
-    origin: '',
-    tastingNotes: '',
-    description: '',
-    image: '',
-    stock: '0',
-    productTypeId: '',
+
+  const form = useForm<ProductForm>({
+    resolver: zodResolver(productSchema),
+    defaultValues: {
+      name: product?.name ?? '',
+      productTypeId: product?.productTypeId ?? '',
+      price: product ? String(Math.round(product.price)) : '',
+      stock: String(product?.stockQuantity ?? 0),
+      origin: product?.origin ?? '',
+      tastingNotes: product?.tastingNotes.join('\n') ?? '',
+      description: product?.description ?? '',
+      image: product?.image ?? '',
+    },
   });
 
-  const field = (key: keyof CreateState) => ({
-    value: form[key],
-    onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
-      setForm((prev) => ({ ...prev, [key]: e.target.value })),
-  });
+  function onSubmit(values: ProductForm) {
+    const shared = {
+      origin: values.origin?.trim() || null,
+      tastingNotes: parseNotes(values.tastingNotes),
+      description: values.description?.trim() || null,
+      priceCents: Number(values.price),
+      image: values.image.trim() || null,
+      stockQuantity: Number(values.stock),
+    };
 
-  function handleSave() {
-    const priceNum = parseFloat(form.price);
-    if (isNaN(priceNum) || priceNum < 0) return;
-    const stockNum = parseInt(form.stock, 10);
-    if (isNaN(stockNum) || stockNum < 0) return;
-    if (!form.productTypeId) return;
+    if (isEdit) {
+      update.mutate(
+        {
+          id: product.id,
+          payload: { ...shared, name: values.name.trim(), productTypeId: values.productTypeId },
+        },
+        {
+          onSuccess: () => {
+            toast.success('Đã cập nhật sản phẩm');
+            onClose();
+          },
+        },
+      );
+      return;
+    }
 
     create.mutate(
+      { ...shared, name: values.name.trim(), productTypeId: values.productTypeId },
       {
-        name: form.name.trim(),
-        origin: form.origin.trim() || null,
-        tastingNotes: parseNotes(form.tastingNotes),
-        description: form.description.trim() || null,
-        priceCents: Math.round(priceNum),
-        image: form.image.trim() || null,
-        productTypeId: form.productTypeId,
-        stockQuantity: stockNum,
+        onSuccess: () => {
+          toast.success('Đã thêm sản phẩm mới');
+          onClose();
+        },
       },
-      { onSuccess: onClose },
     );
   }
 
@@ -307,141 +148,156 @@ function CreateProductDialog({
       <DialogContent className="sm:max-w-[28rem]">
         <DialogHeader>
           <DialogTitle className="text-sm uppercase tracking-widest font-medium">
-            Thêm sản phẩm mới
+            {isEdit ? 'Chỉnh sửa Sản phẩm' : 'Thêm sản phẩm mới'}
           </DialogTitle>
         </DialogHeader>
-        <div className="space-y-4 py-2">
-          <div className="space-y-1.5">
-            <Label
-              htmlFor="cp-name"
-              className="text-xs uppercase tracking-wider text-muted-foreground"
-            >
-              Tên sản phẩm
-            </Label>
-            <Input id="cp-name" {...field('name')} placeholder="Tên sản phẩm..." />
-          </div>
-          <div className="space-y-1.5">
-            <Label
-              htmlFor="cp-category"
-              className="text-xs uppercase tracking-wider text-muted-foreground"
-            >
-              Danh mục sản phẩm
-            </Label>
-            <select
-              id="cp-category"
-              className="w-full h-9 rounded-lg border border-input bg-background px-3 py-1 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
-              value={form.productTypeId}
-              onChange={(e) => setForm((prev) => ({ ...prev, productTypeId: e.target.value }))}
-            >
-              <option value="" disabled>Chọn danh mục...</option>
-              {categories.map((c) => (
-                <option key={c.id} value={c.id}>{c.name}</option>
-              ))}
-            </select>
-          </div>
-          <div className="space-y-1.5">
-            <Label
-              htmlFor="cp-price"
-              className="text-xs uppercase tracking-wider text-muted-foreground"
-            >
-              Giá bán (VNĐ)
-            </Label>
-            <Input
-              id="cp-price"
-              type="number"
-              step="0.01"
-              min="0"
-              placeholder="0.00"
-              {...field('price')}
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-2">
+            <FormField
+              control={form.control}
+              name="productTypeId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Danh mục sản phẩm</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Chọn danh mục..." />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {categories.map((c) => (
+                        <SelectItem key={c.id} value={c.id}>
+                          {c.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-          <div className="space-y-1.5">
-            <Label
-              htmlFor="cp-stock"
-              className="text-xs uppercase tracking-wider text-muted-foreground"
-            >
-              Số lượng tồn kho
-            </Label>
-            <Input
-              id="cp-stock"
-              type="number"
-              step="1"
-              min="0"
-              {...field('stock')}
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Tên sản phẩm</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Tên sản phẩm..." {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-          <div className="space-y-1.5">
-            <Label
-              htmlFor="cp-origin"
-              className="text-xs uppercase tracking-wider text-muted-foreground"
-            >
-              Nguồn gốc
-            </Label>
-            <Input id="cp-origin" placeholder="Cầu Đất • Đà Lạt" {...field('origin')} />
-          </div>
-          <div className="space-y-1.5">
-            <Label
-              htmlFor="cp-notes"
-              className="text-xs uppercase tracking-wider text-muted-foreground"
-            >
-              Nốt hương (mỗi dòng một nốt)
-            </Label>
-            <textarea
-              id="cp-notes"
-              rows={3}
-              className="w-full rounded-lg border border-input bg-background px-2.5 py-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 resize-none"
-              placeholder={'Hoa nhài\nChua thanh\nHậu vị sạch'}
-              {...field('tastingNotes')}
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="price"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Giá bán (VNĐ)</FormLabel>
+                    <FormControl>
+                      <Input type="number" min="0" step="1" placeholder="0" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="stock"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Số lượng tồn kho</FormLabel>
+                    <FormControl>
+                      <Input type="number" min="0" step="1" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <FormField
+              control={form.control}
+              name="origin"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Nguồn gốc</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Cầu Đất • Đà Lạt" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-          <div className="space-y-1.5">
-            <Label
-              htmlFor="cp-desc"
-              className="text-xs uppercase tracking-wider text-muted-foreground"
-            >
-              Mô tả
-            </Label>
-            <textarea
-              id="cp-desc"
-              rows={3}
-              className="w-full rounded-lg border border-input bg-background px-2.5 py-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 resize-none"
-              placeholder="Mô tả ngắn về hương vị..."
-              {...field('description')}
+            <FormField
+              control={form.control}
+              name="tastingNotes"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Nốt hương (mỗi dòng một nốt)</FormLabel>
+                  <FormControl>
+                    <Textarea rows={3} placeholder={'Hoa nhài\nChua thanh'} {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-          <div className="space-y-1.5">
-            <Label
-              htmlFor="cp-img"
-              className="text-xs uppercase tracking-wider text-muted-foreground"
-            >
-              Đường dẫn hình ảnh
-            </Label>
-            <Input id="cp-img" type="url" placeholder="https://..." {...field('image')} />
-          </div>
-          {create.isError && (
-            <p className="text-xs text-destructive">
-              Không thể thêm sản phẩm mới. Vui lòng thử lại.
-            </p>
-          )}
-        </div>
-        <DialogFooter>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onClose}
-            className="uppercase tracking-wider text-xs"
-          >
-            Hủy
-          </Button>
-          <Button
-            size="sm"
-            className="uppercase tracking-wider text-xs"
-            disabled={create.isPending || !form.productTypeId || !form.name}
-            onClick={handleSave}
-          >
-            {create.isPending ? 'Đang thêm…' : 'Thêm mới'}
-          </Button>
-        </DialogFooter>
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Mô tả</FormLabel>
+                  <FormControl>
+                    <Textarea rows={3} placeholder="Mô tả ngắn về hương vị..." {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="image"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Đường dẫn hình ảnh</FormLabel>
+                  <FormControl>
+                    <Input type="url" placeholder="https://..." {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            {mutation.isError && (
+              <ErrorNotice className="mb-0">
+                {isEdit
+                  ? 'Không thể cập nhật sản phẩm. Vui lòng thử lại.'
+                  : 'Không thể thêm sản phẩm mới. Vui lòng thử lại.'}
+              </ErrorNotice>
+            )}
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={onClose}
+                className="uppercase tracking-wider text-xs"
+              >
+                Hủy
+              </Button>
+              <Button
+                type="submit"
+                size="sm"
+                className="uppercase tracking-wider text-xs"
+                disabled={mutation.isPending}
+              >
+                {mutation.isPending ? 'Đang lưu…' : isEdit ? 'Lưu' : 'Thêm mới'}
+              </Button>
+            </DialogFooter>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );
@@ -455,7 +311,7 @@ export default function AdminProductsPage() {
   const [search, setSearch] = useState('');
   const debouncedSearch = useDebouncedValue(search);
 
-  const { data, isLoading, error } = useProducts(page, LIMIT, debouncedSearch);
+  const { data, isLoading, isError } = useProducts(page, LIMIT, debouncedSearch);
   const deleteMut = useDeleteProduct();
 
   const items = data?.items ?? [];
@@ -569,14 +425,6 @@ export default function AdminProductsPage() {
                 }}
               />
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              className="uppercase tracking-wider"
-            >
-              <Download className="size-4" />
-              Xuất tệp CSV
-            </Button>
             <Button size="sm" className="uppercase tracking-wider" onClick={() => setCreateDialogOpen(true)}>
               <Plus className="size-4" />
               Thêm sản phẩm
@@ -584,10 +432,35 @@ export default function AdminProductsPage() {
           </>
         }
       />
-      {error && (
-        <div className="mb-4 p-3 border border-border text-destructive text-sm">
-          Không thể tải danh sách sản phẩm. Vui lòng thử lại.
-        </div>
+      <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+        <StatCard
+          label="Tổng sản phẩm"
+          value={isLoading ? '—' : String(total)}
+          icon={Package}
+          tone="primary"
+        />
+        <StatCard
+          label="Sắp hết hàng"
+          value={
+            isLoading
+              ? '—'
+              : String(items.filter((p) => (p.stockQuantity ?? 0) > 0 && (p.stockQuantity ?? 0) <= 5).length)
+          }
+          delta="Trên trang này"
+          icon={AlertTriangle}
+          tone="secondary"
+        />
+        <StatCard
+          label="Hết hàng"
+          value={isLoading ? '—' : String(items.filter((p) => (p.stockQuantity ?? 0) === 0).length)}
+          delta="Trên trang này"
+          icon={XCircle}
+          tone="tertiary"
+        />
+      </section>
+
+      {isError && (
+        <ErrorNotice>Không thể tải danh sách sản phẩm. Vui lòng thử lại.</ErrorNotice>
       )}
 
       {isLoading ? (
@@ -617,16 +490,11 @@ export default function AdminProductsPage() {
       }
 
       {editProduct && (
-        <EditProductDialog
-          product={editProduct}
-          onClose={() => setEditProduct(null)}
-        />
+        <ProductDialog product={editProduct} onClose={() => setEditProduct(null)} />
       )}
 
       {createDialogOpen && (
-        <CreateProductDialog
-          onClose={() => setCreateDialogOpen(false)}
-        />
+        <ProductDialog onClose={() => setCreateDialogOpen(false)} />
       )}
 
       {deleteProductConfirm && (
@@ -656,7 +524,10 @@ export default function AdminProductsPage() {
                 disabled={deleteMut.isPending}
                 onClick={() => {
                   deleteMut.mutate(deleteProductConfirm.id, {
-                    onSuccess: () => setDeleteProductConfirm(null),
+                    onSuccess: () => {
+                      toast.success('Đã xóa sản phẩm');
+                      setDeleteProductConfirm(null);
+                    },
                   });
                 }}
               >

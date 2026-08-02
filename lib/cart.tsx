@@ -71,7 +71,11 @@ function writeCart(items: CartItem[]) {
   listeners.forEach((notify) => notify());
 }
 
-export function CartProvider({ children }: { children: React.ReactNode }) {
+interface CartProviderProps {
+  children: React.ReactNode;
+}
+
+export function CartProvider({ children }: CartProviderProps) {
   const items = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
   function addItem(product: Product, quantity = 1) {

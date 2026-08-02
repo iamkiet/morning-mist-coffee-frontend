@@ -14,3 +14,22 @@ export interface Product {
   badge?: string;
   productTypeId?: string;
 }
+
+export type UserRole = 'user' | 'admin';
+export type UserStatus = 'active' | 'inactive' | 'banned';
+
+/** The signed-in account, as returned by /auth/me and /auth/login. */
+export interface User {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  role: UserRole;
+}
+
+/** A user row in the admin table — the same account plus admin-only fields. */
+export interface AdminUser extends User {
+  status: UserStatus;
+  createdAt: string;
+  updatedAt: string;
+}
