@@ -127,7 +127,6 @@ export function useVoiceSearch() {
     status: deriveStatus(),
     items: search.data?.items ?? [],
     transcript: search.data?.transcript ?? null,
-    message: search.data?.message ?? null,
     errorMessage:
       recorderError ??
       (search.isError ? 'Đã có lỗi xảy ra khi tìm kiếm. Vui lòng thử lại.' : null),
