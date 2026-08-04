@@ -20,6 +20,7 @@ export function VoiceSearchDialog() {
     status,
     items,
     transcript,
+    message,
     errorMessage,
     secondsRemaining,
     startRecording,
@@ -97,9 +98,14 @@ export function VoiceSearchDialog() {
           {status === 'success' && (
             <div className="w-full">
               {transcript && (
-                <p className="text-sm text-muted-foreground text-center mb-4">
+                <p className="text-sm text-muted-foreground text-center mb-2">
                   Bạn vừa nói:{' '}
                   <span className="text-foreground italic">&quot;{transcript}&quot;</span>
+                </p>
+              )}
+              {message && (
+                <p className="text-sm text-foreground text-center mb-4 rounded-lg bg-muted px-4 py-3">
+                  {message}
                 </p>
               )}
               {items.length > 0 ? (

@@ -124,9 +124,9 @@ export async function deleteProduct(id: string): Promise<void> {
 }
 
 export interface VoiceSearchResult {
+  message: string;
   items: Product[];
   transcript: string | null;
-  usedFallback: boolean;
 }
 
 export async function searchProductsByVoice(
@@ -145,8 +145,8 @@ export async function searchProductsByVoice(
   }
   const data = await res.json();
   return {
+    message: data.message,
     items: data.items.map(transform),
     transcript: data.transcript,
-    usedFallback: data.usedFallback,
   };
 }
