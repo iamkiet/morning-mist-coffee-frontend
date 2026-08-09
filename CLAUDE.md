@@ -15,6 +15,10 @@ npx tsc --noEmit     # type-check
 
 Next.js 16.2.4 · React 19 · TypeScript 5 (strict) · Tailwind CSS 4 · shadcn/ui (radix-nova) · TanStack Query v5 · react-hook-form + zod · framer-motion · lucide-react · npm
 
+## API reference
+
+Backend endpoint/schema reference lives in Swagger UI at [`https://morning-mist-coffee-backend.onrender.com/documents`](https://morning-mist-coffee-backend.onrender.com/documents) — auto-generated from the backend's Zod schemas, always in sync. There is no `API.md` anymore; don't recreate one.
+
 ## Project Structure
 
 ```

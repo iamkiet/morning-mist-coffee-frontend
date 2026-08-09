@@ -2,7 +2,7 @@
 
 Specialty coffee, slowly served. An editorial storefront and admin panel built with Next.js.
 
-Full endpoint reference for the API this app talks to: [API.md](./API.md)
+Full endpoint reference for the API this app talks to: Swagger UI at [`/documents`](https://morning-mist-coffee-backend.onrender.com/documents) on the backend (auto-generated from its Zod schemas, always in sync).
 
 ## Tech Stack
 
