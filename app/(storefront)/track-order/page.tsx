@@ -76,9 +76,6 @@ function OrderCard({ order }: OrderCardProps) {
   const orderId = order.id ? order.id.slice(0, 8).toUpperCase() : '';
   const orderItemsList = order.items || [];
   const totalCentsFormatted = (order.totalCents ?? 0).toLocaleString('vi-VN');
-  const hasCashDetails = order.cashReceivedCents !== null && order.cashReceivedCents !== undefined;
-  const cashReceivedFormatted = hasCashDetails ? (order.cashReceivedCents ?? 0).toLocaleString('vi-VN') : '';
-  const changeFormatted = hasCashDetails ? (order.changeCents ?? 0).toLocaleString('vi-VN') : '';
 
   return (
     <Card>
@@ -120,21 +117,6 @@ function OrderCard({ order }: OrderCardProps) {
           <span className="text-muted-foreground">{date}</span>
           <span className="font-medium text-foreground">{totalCentsFormatted} ₫</span>
         </div>
-        {hasCashDetails && (
-          <>
-            <Separator />
-            <div className="space-y-1 text-xs text-muted-foreground pt-1">
-              <div className="flex justify-between">
-                <span>Tiền khách đưa:</span>
-                <span className="font-medium text-foreground">{cashReceivedFormatted} ₫</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Tiền thối lại:</span>
-                <span className="font-medium text-foreground">{changeFormatted} ₫</span>
-              </div>
-            </div>
-          </>
-        )}
         {order.shippingAddress && (
           <>
             <Separator />

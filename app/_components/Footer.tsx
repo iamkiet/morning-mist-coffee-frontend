@@ -32,7 +32,8 @@ export function Footer() {
               Morning Mist Coffee
             </span>
             <p className="text-sm text-muted-foreground font-light leading-normal">
-              Sự khám phá của sự chính xác giác quan. Kiến tạo sự tĩnh lặng thông qua cà phê thủ công và gốm sứ.
+              Sự khám phá của sự chính xác giác quan. Kiến tạo sự tĩnh lặng
+              thông qua cà phê thủ công và gốm sứ.
             </p>
             <div className="flex space-x-4 pt-0.5">
               {socialLinks.map(({ Icon, label, href }) => (
@@ -115,7 +116,7 @@ export function Footer() {
         {/* Bottom bar */}
         <div className="pt-4 md:pt-5 border-t border-border/30 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
           <p className="text-[11px] uppercase tracking-widest text-muted-foreground/60">
-            © 2026 Morning Mist Coffee.
+            © 2026 Morning Mist Coffee
           </p>
           <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 sm:gap-x-8">
             {legalLinks.map(({ label, href }) => (

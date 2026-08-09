@@ -21,8 +21,6 @@ export interface Order {
   status: OrderStatus;
   totalCents: number;
   currency: string;
-  cashReceivedCents?: number | null;
-  changeCents?: number | null;
   shippingFirstName: string | null;
   shippingLastName: string | null;
   shippingAddress: string | null;
@@ -83,7 +81,6 @@ export interface CreateOrderPayload {
   totalCents: number;
   items: CreateOrderItemInput[];
   currency?: string;
-  cashReceivedCents?: number;
   shippingFirstName: string;
   shippingLastName: string;
   shippingAddress: string;

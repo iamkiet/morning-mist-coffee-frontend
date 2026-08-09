@@ -1,12 +1,11 @@
 'use client';
 
-import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Lock, Leaf, ShoppingBag, Minus, Plus, Trash2, Coins } from 'lucide-react';
+import { Leaf, ShoppingBag, Minus, Plus, Trash2, Coins } from 'lucide-react';
 import {
   Form,
   FormControl,
@@ -19,7 +18,6 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Label } from '@/components/ui/label';
 import { Container } from '@/app/_components/Container';
 import { ErrorNotice } from '@/app/_components/ErrorNotice';
 import { useCart } from '@/lib/cart';
@@ -28,8 +26,7 @@ import { toast } from 'sonner';
 
 const checkoutSchema = z.object({
   email: z.string().email('Vui lòng nhập email hợp lệ'),
-  firstName: z.string().min(1, 'Họ và tên đệm là bắt buộc'),
-  lastName: z.string().min(1, 'Tên là bắt buộc'),
+  fullName: z.string().min(1, 'Họ và tên là bắt buộc'),
   address: z.string().min(5, 'Vui lòng nhập địa chỉ nhận hàng chi tiết'),
   city: z.string().min(1, 'Tỉnh / Thành phố là bắt buộc'),
   postalCode: z.string().min(3, 'Mã bưu chính là bắt buộc'),
@@ -45,8 +42,7 @@ export default function CheckoutPage() {
     resolver: zodResolver(checkoutSchema),
     defaultValues: {
       email: '',
-      firstName: '',
-      lastName: '',
+      fullName: '',
       address: '',
       city: '',
       postalCode: '',
@@ -54,31 +50,18 @@ export default function CheckoutPage() {
   });
 
   // Only cash-on-pickup is supported today — no payment gateway is integrated
-  const [cashReceived, setCashReceived] = useState<string>('');
-  // Client-side validation of a field that lives outside the zod form
-  const [cashError, setCashError] = useState('');
-
   const createOrder = useCreateOrder();
 
-  const cashReceivedAmount = parseFloat(cashReceived) || 0;
-  const changeAmount =
-    cashReceivedAmount >= total ? cashReceivedAmount - total : 0;
-
-  const submitError =
-    cashError ||
-    (createOrder.isError
-      ? createOrder.error instanceof Error
-        ? createOrder.error.message
-        : 'Đặt hàng thất bại. Vui lòng thử lại sau.'
-      : '');
+  const submitError = createOrder.isError
+    ? createOrder.error instanceof Error
+      ? createOrder.error.message
+      : 'Đặt hàng thất bại. Vui lòng thử lại sau.'
+    : '';
 
   const onSubmit = (data: CheckoutForm) => {
-    setCashError('');
-
-    if (cashReceivedAmount < total) {
-      setCashError('Số tiền khách đưa không đủ để thanh toán đơn hàng');
-      return;
-    }
+    const nameParts = data.fullName.trim().split(/\s+/);
+    const shippingLastName = nameParts.pop() ?? data.fullName;
+    const shippingFirstName = nameParts.join(' ') || shippingLastName;
 
     createOrder.mutate(
       {
@@ -90,9 +73,8 @@ export default function CheckoutPage() {
           priceCents: Math.round(item.price),
           quantity: item.quantity,
         })),
-        cashReceivedCents: Math.round(cashReceivedAmount),
-        shippingFirstName: data.firstName,
-        shippingLastName: data.lastName,
+        shippingFirstName,
+        shippingLastName,
         shippingAddress: data.address,
         shippingCity: data.city,
         shippingPostalCode: data.postalCode,
@@ -229,9 +211,6 @@ export default function CheckoutPage() {
             <h1 className="text-3xl sm:text-4xl text-primary mb-2 font-light">
               Thanh Toán
             </h1>
-            <p className="text-muted-foreground italic">
-              Chăm chút tỉ mỉ cho nghi thức sáng lành của bạn.
-            </p>
           </div>
 
           <Form {...form}>
@@ -269,30 +248,14 @@ export default function CheckoutPage() {
 
                   <FormField
                     control={form.control}
-                    name="firstName"
+                    name="fullName"
                     render={({ field }) => (
-                      <FormItem>
+                      <FormItem className="sm:col-span-2">
                         <FormLabel className="text-xs uppercase tracking-wider text-muted-foreground">
-                          Họ và tên đệm
+                          Họ và Tên
                         </FormLabel>
                         <FormControl>
-                          <Input placeholder="Tên họ đệm của bạn" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="lastName"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-xs uppercase tracking-wider text-muted-foreground">
-                          Tên
-                        </FormLabel>
-                        <FormControl>
-                          <Input placeholder="Tên của bạn" {...field} />
+                          <Input placeholder="Họ và tên của bạn" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -365,32 +328,6 @@ export default function CheckoutPage() {
                     Thanh Toán Tiền Mặt Khi Nhận Hàng
                   </span>
                 </div>
-
-                <div className="bg-muted/30 p-5 rounded-xl border border-border space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="cash-received" className="text-xs uppercase tracking-wider text-muted-foreground">
-                      Tiền nhận từ khách (VNĐ)
-                    </Label>
-                    <Input
-                      id="cash-received"
-                      type="number"
-                      placeholder="Nhập số tiền khách đưa..."
-                      value={cashReceived}
-                      onChange={(e) => setCashReceived(e.target.value)}
-                      className="bg-card font-medium"
-                    />
-                  </div>
-                  {cashReceivedAmount > 0 && (
-                    <div className="flex justify-between items-center text-sm pt-2 border-t border-border/40">
-                      <span className="text-muted-foreground">Tiền thối lại (Change):</span>
-                      <span className={`text-base font-semibold ${cashReceivedAmount >= total ? 'text-primary' : 'text-destructive'}`}>
-                        {cashReceivedAmount >= total
-                          ? `${changeAmount.toLocaleString('vi-VN')} ₫`
-                          : 'Chưa đủ tiền thanh toán'}
-                      </span>
-                    </div>
-                  )}
-                </div>
               </section>
 
               <div className="space-y-3">
@@ -407,10 +344,6 @@ export default function CheckoutPage() {
                     ? 'Đang xử lý đặt hàng...'
                     : 'Hoàn Tất Đặt Hàng'}
                 </Button>
-                <p className="text-center text-xs text-muted-foreground tracking-widest uppercase flex items-center justify-center gap-2">
-                  <Lock className="size-3" />
-                  Giao dịch an toàn mã hóa SSL
-                </p>
               </div>
             </form>
           </Form>
