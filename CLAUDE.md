@@ -166,6 +166,8 @@ These exist because the codebase drifted; a review found each one. Do not reintr
 
 Mobile-first. Base → `sm:` (640px) → `md:` (768px) → `lg:` (1024px). Grids: `grid-cols-1 md:grid-cols-12` (skip sm grid). Padding: `px-4 sm:px-6 md:px-gutter`. Never use `px-margin-safe`.
 
+**One-sided offsets need a matching mobile gutter.** A content block intentionally pinned to one side of a full-bleed section (e.g. `ml-4 sm:ml-6 md:ml-gutter` to hug the left edge on desktop) must carry the same value as `mx-*`, not `ml-*`, below the breakpoint where the offset kicks in — otherwise it has a gutter on one side and touches the viewport edge on the other. Drop the opposite side back out (`md:mr-0`) only once desktop layout has room to spare. This is how the journal hero card looked lopsided on mobile.
+
 ## Code Quality
 
 - No dead code, no unused imports — delete them.

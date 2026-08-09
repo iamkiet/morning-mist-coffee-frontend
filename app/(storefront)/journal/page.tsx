@@ -44,7 +44,7 @@ export default function JournalPage() {
         imageClassName="object-cover brightness-95 grayscale-[20%]"
         overlayClassName="bg-foreground/10"
         justifyClassName="justify-start"
-        contentClassName="max-w-2xl bg-card/40 backdrop-blur-md p-6 sm:p-12 rounded-xl shadow-[0_40px_100px_-20px_rgba(169,183,166,0.15)] ml-4 sm:ml-6 md:ml-gutter"
+        contentClassName="max-w-2xl bg-card/40 backdrop-blur-md p-6 sm:p-12 rounded-xl shadow-[0_40px_100px_-20px_rgba(169,183,166,0.15)] mx-4 sm:mx-6 md:ml-gutter md:mr-0"
       >
         <span className="text-xs text-primary mb-4 block uppercase tracking-widest font-medium">
           Câu Chuyện Nổi Bật
