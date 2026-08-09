@@ -231,7 +231,14 @@ interface ResetPasswordDialogProps {
 }
 
 const resetPasswordSchema = z.object({
-  password: z.string().min(8, 'Mật khẩu tối thiểu 8 ký tự').max(128),
+  password: z
+    .string()
+    .min(8, 'Mật khẩu tối thiểu 8 ký tự')
+    .max(128)
+    .regex(/[a-z]/, 'Mật khẩu cần có chữ thường')
+    .regex(/[A-Z]/, 'Mật khẩu cần có chữ hoa')
+    .regex(/[0-9]/, 'Mật khẩu cần có chữ số')
+    .regex(/[^a-zA-Z0-9]/, 'Mật khẩu cần có ký tự đặc biệt'),
 });
 
 type ResetPasswordForm = z.infer<typeof resetPasswordSchema>;
@@ -275,7 +282,7 @@ function ResetPasswordDialog({ user, onClose }: ResetPasswordDialogProps) {
                 <FormItem>
                   <FormLabel>Mật khẩu mới</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="Tối thiểu 8 ký tự" {...field} />
+                    <Input type="password" placeholder="Hoa, thường, số, ký tự đặc biệt" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

@@ -18,6 +18,14 @@ export function listQuery(limit: number, offset: number, q: string): string {
   return params.toString();
 }
 
+const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
+
+function readCookie(name: string): string | null {
+  if (typeof document === 'undefined') return null;
+  const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
+  return match ? decodeURIComponent(match[1]) : null;
+}
+
 function request(path: string, options: RequestInit = {}): Promise<Response> {
   // Let the browser set its own multipart Content-Type (with boundary) for FormData bodies
   const isFormData = typeof FormData !== 'undefined' && options.body instanceof FormData;
@@ -26,6 +34,13 @@ function request(path: string, options: RequestInit = {}): Promise<Response> {
     ...(options.headers as Record<string, string>),
   };
   if (accessToken) headers['Authorization'] = `Bearer ${accessToken}`;
+
+  const method = (options.method ?? 'GET').toUpperCase();
+  if (!SAFE_METHODS.has(method)) {
+    const csrfToken = readCookie('csrf_token');
+    if (csrfToken) headers['X-CSRF-Token'] = csrfToken;
+  }
+
   return fetch(`${API_URL}${path}`, {
     ...options,
     credentials: 'include',

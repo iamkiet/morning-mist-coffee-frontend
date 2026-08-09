@@ -8,14 +8,24 @@ export interface LoginResult {
   user: User;
 }
 
+function readCookie(name: string): string | null {
+  if (typeof document === 'undefined') return null;
+  const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
+  return match ? decodeURIComponent(match[1]) : null;
+}
+
 // These use plain `fetch` rather than `authFetch` on purpose: they either run
 // before a token exists or must not send an expired one. `authFetch` also
 // refreshes on 401, which would recurse through `postRefresh`.
 function post(path: string, body: unknown = {}): Promise<Response> {
+  const csrfToken = readCookie('csrf_token');
   return fetch(`${API_URL}${path}`, {
     method: 'POST',
     credentials: 'include',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      ...(csrfToken ? { 'X-CSRF-Token': csrfToken } : {}),
+    },
     body: JSON.stringify(body),
   });
 }
