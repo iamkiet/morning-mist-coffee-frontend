@@ -40,7 +40,7 @@ export function useCreateOrder() {
 }
 
 // A mutation, not a query: the lookup is submitted from a form and its result
-// is per-(email, code), so there is nothing to cache or refetch in the background
+// is per-code, so there is nothing to cache or refetch in the background
 export function useLookupOrders() {
   return useMutation({
     mutationFn: (code: string) => lookupOrders(code),

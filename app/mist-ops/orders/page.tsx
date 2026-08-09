@@ -1,10 +1,8 @@
 'use client';
 
-import Image from 'next/image';
 import {
   MoreHorizontal,
   Search,
-  TrendingUp,
   Receipt,
   Clock,
   CheckCircle2,
@@ -430,69 +428,6 @@ export default function AdminOrdersPage() {
             </Card>
           );
         })()}
-
-      <section className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="md:col-span-2 group overflow-hidden">
-          <CardContent className="p-6 flex items-center justify-between">
-            <div>
-              <p className="text-[10px] text-muted-foreground uppercase tracking-widest">
-                Quản trị Morning Mist Coffee
-              </p>
-              <h3 className="text-base mb-4 font-medium">
-                Hiệu suất xưởng rang
-              </h3>
-              <div className="flex items-end gap-4">
-                <div className="text-3xl font-light">
-                  {total}{' '}
-                  <span className="text-xs text-muted-foreground font-medium tracking-widest">
-                    TỔNG ĐƠN HÀNG
-                  </span>
-                </div>
-                <div className="pb-2 text-primary">
-                  <TrendingUp className="size-5" />
-                </div>
-              </div>
-            </div>
-            <div className="hidden sm:block relative w-48 h-32 rounded-lg overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-700">
-              <Image
-                src="/statics/ops_roasting.png"
-                alt="Roasting"
-                fill
-                sizes="192px"
-                className="object-cover"
-              />
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="bg-accent/30">
-          <CardContent className="p-6 flex flex-col justify-between gap-4 h-full">
-            <p className="text-xs text-accent-foreground uppercase tracking-widest">
-              Thống kê đơn hàng
-            </p>
-            <div>
-              <h3 className="text-base font-medium mb-1">
-                {orders.filter((o) => o.status === 'pending').length} Chờ xử lý
-              </h3>
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                Có {orders.filter((o) => o.status === 'delivered').length}{' '}
-                đơn đã giao trên trang này.
-              </p>
-            </div>
-            <Button
-              variant="outline"
-              size="sm"
-              className="uppercase tracking-wider text-[10px]"
-              onClick={() => {
-                setSearch('');
-                setPage(1);
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-            >
-              Xem tất cả
-            </Button>
-          </CardContent>
-        </Card>
-      </section>
 
       {editOrder && (
         <EditOrderDialog order={editOrder} onClose={() => setEditOrder(null)} />
