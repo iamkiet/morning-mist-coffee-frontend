@@ -25,6 +25,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Container } from '@/app/_components/Container';
 import { ErrorNotice } from '@/app/_components/ErrorNotice';
+import { TrackOrderIntro } from './_components/track-order-intro';
 import { useLookupOrders } from '@/hooks/use-orders';
 import type { Order, OrderStatus } from '@/lib/api/orders';
 
@@ -85,9 +86,7 @@ function OrderCard({ order }: OrderCardProps) {
             <p className="text-xs text-muted-foreground uppercase tracking-widest mb-1">
               Đơn hàng
             </p>
-            <p className="text-xs font-mono text-foreground">
-              #{orderId}
-            </p>
+            <p className="text-xs font-mono text-foreground">#{orderId}</p>
           </div>
           <div className={`flex items-center gap-1.5 ${className}`}>
             <Icon className="size-4" />
@@ -100,13 +99,21 @@ function OrderCard({ order }: OrderCardProps) {
         {orderItemsList.length > 0 && (
           <div className="space-y-2">
             {orderItemsList.map((item) => (
-              <div key={item.id} className="flex justify-between items-center text-sm">
+              <div
+                key={item.id}
+                className="flex justify-between items-center text-sm"
+              >
                 <span className="text-foreground">
                   {item.name}
-                  <span className="text-muted-foreground ml-1">×{item.quantity}</span>
+                  <span className="text-muted-foreground ml-1">
+                    ×{item.quantity}
+                  </span>
                 </span>
                 <span className="text-muted-foreground">
-                  {((item.priceCents ?? 0) * (item.quantity ?? 1)).toLocaleString('vi-VN')} ₫
+                  {(
+                    (item.priceCents ?? 0) * (item.quantity ?? 1)
+                  ).toLocaleString('vi-VN')}{' '}
+                  ₫
                 </span>
               </div>
             ))}
@@ -115,13 +122,17 @@ function OrderCard({ order }: OrderCardProps) {
         )}
         <div className="flex justify-between text-sm">
           <span className="text-muted-foreground">{date}</span>
-          <span className="font-medium text-foreground">{totalCentsFormatted} ₫</span>
+          <span className="font-medium text-foreground">
+            {totalCentsFormatted} ₫
+          </span>
         </div>
         {order.shippingAddress && (
           <>
             <Separator />
             <div className="space-y-1 text-xs text-muted-foreground pt-1">
-              <p className="uppercase tracking-widest text-[10px] mb-1">Giao đến</p>
+              <p className="uppercase tracking-widest text-[10px] mb-1">
+                Giao đến
+              </p>
               <p className="text-foreground font-medium">
                 {order.shippingFirstName} {order.shippingLastName}
               </p>
@@ -138,11 +149,7 @@ function OrderCard({ order }: OrderCardProps) {
 }
 
 const trackOrderSchema = z.object({
-  email: z.string().min(1, 'Email là bắt buộc').email('Email không hợp lệ'),
-  code: z
-    .string()
-    .trim()
-    .regex(/^[0-9a-fA-F]{8}$/, 'Mã đơn hàng gồm 8 ký tự in trên biên nhận'),
+  code: z.string().trim().uuid('Mã đơn hàng không hợp lệ'),
 });
 
 type TrackOrderForm = z.infer<typeof trackOrderSchema>;
@@ -153,26 +160,16 @@ export default function TrackOrderPage() {
 
   const form = useForm<TrackOrderForm>({
     resolver: zodResolver(trackOrderSchema),
-    defaultValues: { email: '', code: '' },
+    defaultValues: { code: '' },
   });
 
   function onSubmit(values: TrackOrderForm) {
-    lookup.mutate({ email: values.email, code: values.code.trim() });
+    lookup.mutate(values.code);
   }
 
   return (
     <Container size="narrow" navOffset className="pb-16 min-h-screen">
-      <div className="mb-10">
-        <div className="flex items-center gap-3 mb-3">
-          <Package className="size-5 text-primary" />
-          <h1 className="text-3xl font-light text-foreground">
-            Theo Dõi Đơn Hàng
-          </h1>
-        </div>
-        <p className="text-sm text-muted-foreground">
-          Nhập email và mã đơn hàng (8 ký tự in trên biên nhận) để tra cứu thông tin đơn hàng.
-        </p>
-      </div>
+      <TrackOrderIntro />
 
       <Form {...form}>
         <form
@@ -181,27 +178,14 @@ export default function TrackOrderPage() {
         >
           <FormField
             control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem className="flex-1">
-                <FormControl>
-                  <Input type="email" placeholder="email_cua_ban@example.com" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
             name="code"
             render={({ field }) => (
-              <FormItem className="sm:w-44">
+              <FormItem className="flex-1">
                 <FormControl>
                   <Input
                     type="text"
                     placeholder="Mã đơn hàng"
-                    maxLength={8}
-                    className="font-mono uppercase"
+                    className="font-mono"
                     {...field}
                   />
                 </FormControl>
@@ -221,7 +205,9 @@ export default function TrackOrderPage() {
       </Form>
 
       {lookup.isError && (
-        <ErrorNotice className="mb-6">Đã xảy ra lỗi. Vui lòng thử lại sau.</ErrorNotice>
+        <ErrorNotice className="mb-6">
+          Đã xảy ra lỗi. Vui lòng thử lại sau.
+        </ErrorNotice>
       )}
 
       {orders !== null &&

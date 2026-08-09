@@ -23,10 +23,14 @@ app/
   providers.tsx           — QueryClient > AuthProvider > CartProvider + Toaster
                             (Auth is inside Query so logout can clear the cache)
   globals.css             — Tailwind 4 global styles
-  _components/            — shared: Nav, Footer, Container, ProductCard, Chip,
-                            CartCount, ChatWidget, VoiceSearchDialog
+  _components/            — shared: HeaderHeightSync, PromoBanner, Nav, Footer,
+                            Container, Hero, ProductCard, Chip, CartCount,
+                            ChatWidget, VoiceSearchDialog
   _data/                  — static data constants
-  (storefront)/           — public storefront routes (layout has Nav + Footer)
+  (storefront)/           — public storefront routes (layout has Header + Footer)
+                            each route's own intro block (e.g. ShopIntro,
+                            TrackOrderIntro) lives in that route's _components/,
+                            not in app/_components/ — it is not shared
   login/                  — admin login page (admin-only, checks role before redirect)
   mist-ops/               — admin panel (/mist-ops, not /admin)
     layout.tsx            — auth guard: redirects non-admin to /login
@@ -45,7 +49,7 @@ lib/
   api/products.ts         — fetchProducts(), fetchProduct() (by slug),
                             updateProduct(), searchProductsByVoice()
   api/orders.ts           — fetchOrders(), updateOrderStatus(), createOrder(),
-                            lookupOrders()
+                            lookupOrders(code) — order ID only, no email
   api/users.ts            — fetchUsers(), updateUser()
   api/chat.ts             — sendChatMessage()
 hooks/
@@ -85,7 +89,7 @@ All auth endpoints live in `lib/api/auth.ts` — never call them with a bare `fe
 
 **Do not recreate** any of these — grep before adding:
 
-- Shared: `app/_components/` — Nav, Footer, Container, ErrorNotice, ProductCard, Chip, CartCount, ChatWidget, VoiceSearchDialog
+- Shared: `app/_components/` — HeaderHeightSync, PromoBanner, Nav, Footer, Container, Hero, ErrorNotice, ProductCard, Chip, CartCount, ChatWidget, VoiceSearchDialog
 - Admin: `app/mist-ops/_components/` — AdminSidebar, Badge, DataTable, Pagination, PageHeader, StatCard
 - shadcn: `@/components/ui/*` — add with `npx shadcn add <name>`
 
@@ -117,15 +121,38 @@ All auth endpoints live in `lib/api/auth.ts` — never call them with a bare `fe
 
 Use shadcn/ui CSS tokens only. MD3/Material tokens (`bg-surface-*`, `bg-secondary-container`, etc.) will not resolve. Full list + examples: `.claude/skills/design-tokens/SKILL.md`. Pre-edit hook blocks violations automatically — fix them, don't bypass.
 
+## Page structure (storefront)
+
+Every `(storefront)` page follows the same shape:
+
+```
+Header (fixed, rendered once in app/(storefront)/layout.tsx)
+  ├─ PromoBanner
+  └─ Nav
+Main
+  ├─ Hero          — optional, full-bleed image + title (home, story, journal)
+  ├─ PageIntro     — optional, centered/aligned title + description, no image
+  │                  (own component per page, e.g. ShopIntro, TrackOrderIntro —
+  │                  do NOT create a shared generic PageIntro/Hero-content component)
+  └─ PageContent   — the actual page content
+Footer
+```
+
+A page has Hero **or** PageIntro **or** neither — never build a page missing this shape entirely (a bare `<h1>` inside page content instead of one of the above is what caused the drift this section fixes).
+
 ## Navigation
 
-`Nav` is `position: fixed`. Storefront pages need `pt-28`–`pt-40` to clear it. Full-bleed hero pages intentionally have no top padding. Never make Nav sticky.
+The fixed header (`PromoBanner` + `Nav`) is **not a constant height** — the promo banner and logo can wrap on narrow phones (measured: 104px normally, 116px at ≤360px width). `HeaderHeightSync` (`app/_components/HeaderHeightSync.tsx`) measures the real height via `ResizeObserver` and publishes it as the CSS var `--header-height`.
+
+- **`Container navOffset`** uses `HEADER_HEIGHT_CSS` (`var(--header-height, 104px)`) plus a fixed `2rem` breathing-room gap — this is for text-content pages (`shop`, `shop/[slug]`, `checkout`, `track-order`).
+- **`Hero`** (`app/_components/Hero.tsx`) uses `HEADER_HEIGHT_CSS` with **no** extra gap — its image sits flush against the header on purpose.
+- Never hard-code a `pt-*` value to clear the header — both mechanisms above already do it correctly at every breakpoint. Never make Nav sticky.
 
 ## Consistency rules
 
 These exist because the codebase drifted; a review found each one. Do not reintroduce them.
 
-- **Page wrappers**: always `<Container>`. Never hand-write `max-w-7xl mx-auto px-4 sm:px-6 md:px-gutter`. `size` is `narrow | default | wide`; `as` keeps `<section>` semantics; `navOffset` applies the one true Nav clearance (`pt-28 sm:pt-32 md:pt-36`) — never hard-code a `pt-*` to clear the Nav.
+- **Page wrappers**: always `<Container>`. Never hand-write `max-w-7xl mx-auto px-4 sm:px-6 md:px-gutter`. `size` is `narrow | default | wide`; `as` keeps `<section>` semantics; `navOffset` applies the one true header clearance (see Navigation section above) — never hard-code a `pt-*` to clear the header.
 - **Spacing**: numeric Tailwind only (`py-12`, `gap-6`). The `--spacing-md/lg/xl` aliases are gone from components; `px-gutter` stays because the responsive padding rule below uses it.
 - **Rounding**: `rounded-lg` for controls (button, input, select), `rounded-xl` for surfaces (card, dialog, image, panel), `rounded-full` for pills and avatars. No `rounded-md`, no `rounded-2xl`.
 - **Letter spacing**: buttons use `uppercase tracking-wider`; headings, eyebrows and table labels use `uppercase tracking-widest`.

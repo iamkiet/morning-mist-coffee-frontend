@@ -1,36 +1,28 @@
 import Image from 'next/image';
 import { Container } from '@/app/_components/Container';
+import { Hero } from '@/app/_components/Hero';
 
 export default function StoryPage() {
   return (
     <div className="w-full bg-background">
-      {/* Hero Section */}
-      <section className="relative h-[600px] sm:h-[750px] md:h-[870px] w-full overflow-hidden flex items-center pt-28 sm:pt-32 md:pt-36 px-4 sm:px-6 md:px-gutter justify-center">
-        <div className="absolute inset-0 z-0 scale-105">
-          <Image
-            src="/statics/story_hero_bg.png"
-            alt="Đồi chè cà phê trong sương sớm"
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover opacity-80"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/20 to-background" />
-        </div>
-        <div className="relative z-10 text-center px-gutter max-w-4xl">
-          <span className="text-xs uppercase tracking-[0.3em] text-primary mb-6 block">
-            Khởi Nguồn
-          </span>
-          <h1 className="text-3xl sm:text-4xl font-light text-foreground mb-6 sm:mb-8">
-            Nơi đất trời thở nhẹ <br className="hidden md:block" /> và thời gian
-            trôi chậm lại.
-          </h1>
-          <p className="text-base text-muted-foreground max-w-2xl mx-auto italic">
-            Morning Mist được khai sinh từ làn sương sớm tĩnh lặng nơi đại ngàn,
-            nơi mỗi hạt cà phê là một câu chuyện kể về vùng đất trù phú đã nuôi dưỡng chúng.
-          </p>
-        </div>
-      </section>
+      <Hero
+        image="/statics/story-hero.jpg"
+        imageAlt="Đồi chè cà phê trong sương sớm"
+        imageClassName="object-cover opacity-80 scale-105"
+        overlayClassName="bg-gradient-to-b from-transparent via-background/20 to-background"
+      >
+        <span className="text-xs uppercase tracking-[0.3em] text-primary mb-6 block">
+          Khởi Nguồn
+        </span>
+        <h1 className="text-3xl sm:text-4xl font-light text-foreground mb-6 sm:mb-8">
+          Nơi đất trời thở nhẹ <br className="hidden md:block" /> và thời gian
+          trôi chậm lại.
+        </h1>
+        <p className="text-base text-muted-foreground max-w-2xl mx-auto italic">
+          Morning Mist được khai sinh từ làn sương sớm tĩnh lặng nơi đại ngàn,
+          nơi mỗi hạt cà phê là một câu chuyện kể về vùng đất trù phú đã nuôi dưỡng chúng.
+        </p>
+      </Hero>
 
       {/* Philosophy Section */}
       <section className="py-20 bg-background">

@@ -1,4 +1,5 @@
 import { Container } from '@/app/_components/Container';
+import { Hero } from '@/app/_components/Hero';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
@@ -37,38 +38,31 @@ const filters = ['Tất cả', 'Thổ Nhưỡng', 'Pha Chế', 'Rang Xay'];
 export default function JournalPage() {
   return (
     <div className="w-full bg-background">
-      {/* Hero */}
-      <Container as="section" navOffset className="relative h-[600px] sm:h-[819px] w-full overflow-hidden flex items-center">
-        <div className="absolute inset-0 z-0">
-          <Image
-            src="/statics/journal_hero_bg.png"
-            alt="Misty coffee plantation"
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover brightness-95 grayscale-[20%]"
-          />
-          <div className="absolute inset-0 bg-foreground/10" />
-        </div>
-        <div className="relative z-10 max-w-2xl bg-card/40 backdrop-blur-md p-6 sm:p-12 rounded-xl shadow-[0_40px_100px_-20px_rgba(169,183,166,0.15)]">
-          <span className="text-xs text-primary mb-4 block uppercase tracking-widest font-medium">
-            Câu Chuyện Nổi Bật
-          </span>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl text-foreground mb-6 tracking-tight font-light">
-            Nghi Thức Nguồn Cung
-          </h1>
-          <p className="text-base sm:text-lg text-muted-foreground mb-8 leading-relaxed font-light">
-            Đằng sau mỗi hạt cà phê là một hành trình thầm lặng của sự chính xác và kiên nhẫn. Chúng tôi tìm đến những nông hộ vùng cao xa xôi nhất thế giới để kiến tạo một trải nghiệm giác quan bắt đầu từ rất lâu trước khi giọt cà phê đầu tiên được rót ra.
-          </p>
-          <Link
-            href="#"
-            className="inline-flex items-center gap-3 text-xs border-b border-foreground pb-1 hover:opacity-60 transition-opacity uppercase tracking-widest"
-          >
-            Đọc bài viết
-            <ArrowRight className="size-4" />
-          </Link>
-        </div>
-      </Container>
+      <Hero
+        image="/statics/journey-hero.jpg"
+        imageAlt="Misty coffee plantation"
+        imageClassName="object-cover brightness-95 grayscale-[20%]"
+        overlayClassName="bg-foreground/10"
+        justifyClassName="justify-start"
+        contentClassName="max-w-2xl bg-card/40 backdrop-blur-md p-6 sm:p-12 rounded-xl shadow-[0_40px_100px_-20px_rgba(169,183,166,0.15)] ml-4 sm:ml-6 md:ml-gutter"
+      >
+        <span className="text-xs text-primary mb-4 block uppercase tracking-widest font-medium">
+          Câu Chuyện Nổi Bật
+        </span>
+        <h1 className="text-3xl sm:text-4xl md:text-5xl text-foreground mb-6 tracking-tight font-light">
+          Nghi Thức Nguồn Cung
+        </h1>
+        <p className="text-base sm:text-lg text-muted-foreground mb-8 leading-relaxed font-light">
+          Đằng sau mỗi hạt cà phê là một hành trình thầm lặng của sự chính xác và kiên nhẫn. Chúng tôi tìm đến những nông hộ vùng cao xa xôi nhất thế giới để kiến tạo một trải nghiệm giác quan bắt đầu từ rất lâu trước khi giọt cà phê đầu tiên được rót ra.
+        </p>
+        <Link
+          href="#"
+          className="inline-flex items-center gap-3 text-xs border-b border-foreground pb-1 hover:opacity-60 transition-opacity uppercase tracking-widest"
+        >
+          Đọc bài viết
+          <ArrowRight className="size-4" />
+        </Link>
+      </Hero>
 
       {/* Filter Bar */}
       <Container as="section" className="w-full py-12 sm:py-16 flex flex-col md:flex-row justify-between items-end gap-8 border-b border-border">

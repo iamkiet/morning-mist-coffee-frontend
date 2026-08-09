@@ -1,4 +1,5 @@
 import { Container } from '@/app/_components/Container';
+import { Hero } from '@/app/_components/Hero';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, Leaf, Paintbrush, Settings2 } from 'lucide-react';
@@ -7,20 +8,12 @@ import { Button } from '@/components/ui/button';
 export default function HomePage() {
   return (
     <>
-      {/* Hero Section */}
-      <section className="relative min-h-screen w-full flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <Image
-            src="/statics/hero_bg.png"
-            alt="Misty highland coffee plantation"
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover opacity-70"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-background" />
-        </div>
-        <div className="relative z-10 text-center max-w-4xl px-4 sm:px-6 md:px-gutter py-12 sm:py-16 md:py-20">
+      <Hero
+        image="/statics/home-hero.jpg"
+        imageAlt="Misty highland coffee plantation"
+        imageClassName="object-cover opacity-70"
+      >
+        <div className="py-12 sm:py-16 md:py-20">
           <span className="text-primary tracking-[0.3em] mb-4 sm:mb-6 block uppercase text-xs sm:text-sm font-medium">
             Nuôi Dưỡng Trong Tĩnh Lặng
           </span>
@@ -38,7 +31,7 @@ export default function HomePage() {
             <Link href="/shop">Mua Ngay Bộ Sưu Tập</Link>
           </Button>
         </div>
-      </section>
+      </Hero>
 
       {/* Featured Collections */}
       <Container as="section" className="py-12 sm:py-16 md:py-20">

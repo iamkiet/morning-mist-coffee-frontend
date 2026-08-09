@@ -34,7 +34,7 @@ export function Nav({ className }: NavProps = {}) {
 
   return (
     <nav className={`w-full bg-background/70 border-b border-border/20 backdrop-blur-xl ${className ?? ''}`}>
-      <div className="flex justify-between items-center px-4 sm:px-6 md:px-gutter py-6 max-w-7xl mx-auto">
+      <div className="flex justify-between items-center px-4 sm:px-6 md:px-gutter py-3 sm:py-4 max-w-7xl mx-auto">
         <Link
           href="/"
           onClick={closeMenu}

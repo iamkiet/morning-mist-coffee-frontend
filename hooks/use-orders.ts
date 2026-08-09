@@ -43,7 +43,6 @@ export function useCreateOrder() {
 // is per-(email, code), so there is nothing to cache or refetch in the background
 export function useLookupOrders() {
   return useMutation({
-    mutationFn: ({ email, code }: { email: string; code: string }) =>
-      lookupOrders(email, code),
+    mutationFn: (code: string) => lookupOrders(code),
   });
 }
