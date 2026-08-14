@@ -3,11 +3,11 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { ShoppingBag, Check } from 'lucide-react';
-import { Chip } from './Chip';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/lib/cart';
 import { useTemporaryFlag } from '@/hooks/use-temporary-flag';
+import { getDefaultVariant } from '@/lib/product-variants';
 import type { Product } from '@/lib/types';
 
 interface ProductCardProps {
@@ -17,9 +17,11 @@ interface ProductCardProps {
 export function ProductCard({ product }: ProductCardProps) {
   const { addItem } = useCart();
   const [added, flashAdded] = useTemporaryFlag();
+  const variant = getDefaultVariant(product);
 
   function handleAddToBag() {
-    addItem(product);
+    if (!variant) return;
+    addItem(product, variant);
     flashAdded();
   }
 
@@ -46,19 +48,11 @@ export function ProductCard({ product }: ProductCardProps) {
           )}
         </div>
         <div className="text-center px-4 mb-3">
-          <p className="text-xs text-primary tracking-widest mb-1 uppercase font-medium">
-            {product.origin}
-          </p>
           <h3 className="text-base text-foreground mb-2 font-medium">
             {product.name}
           </h3>
-          <div className="flex justify-center gap-1 mb-2 flex-wrap">
-            {product.tastingNotes.map((n) => (
-              <Chip key={n}>{n}</Chip>
-            ))}
-          </div>
           <p className="text-sm text-muted-foreground">
-            {product.price.toLocaleString('vi-VN')} ₫
+            {variant ? `${variant.price.toLocaleString('vi-VN')} ₫` : 'Hết hàng'}
           </p>
         </div>
       </Link>
@@ -68,6 +62,7 @@ export function ProductCard({ product }: ProductCardProps) {
           variant={added ? 'default' : 'outline'}
           onClick={handleAddToBag}
           aria-label={`Add ${product.name} to bag`}
+          disabled={!variant}
           className="w-full text-xs uppercase tracking-wider gap-2 transition-all duration-300"
         >
           {added ? (

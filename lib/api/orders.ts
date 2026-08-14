@@ -9,7 +9,7 @@ export type OrderStatus =
 
 export interface OrderItem {
   id: string;
-  productId: string | null;
+  productVariantId: string | null;
   name: string;
   priceCents: number;
   quantity: number;
@@ -70,7 +70,7 @@ export async function lookupOrders(code: string): Promise<Order[]> {
 }
 
 export interface CreateOrderItemInput {
-  productId?: string;
+  productVariantId?: string;
   name: string;
   priceCents: number;
   quantity: number;

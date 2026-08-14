@@ -1,18 +1,31 @@
 // Shared domain types. These live outside `app/_components` so that `lib/api`
 // and the hooks do not depend on a `'use client'` UI module.
 
+export interface ProductVariant {
+  id: string;
+  productId: string;
+  sku: string;
+  price: number;
+  currency: string;
+  stock: number;
+  expiresAt: string | null;
+}
+
 export interface Product {
   id: string;
   slug: string;
   name: string;
-  origin: string;
-  tastingNotes: string[];
   description: string;
-  price: number;
   image: string;
-  stockQuantity?: number;
+  variants: ProductVariant[];
   badge?: string;
-  productTypeId?: string;
+  categoryIds?: string[];
+}
+
+export interface ProductCategory {
+  id: string;
+  name: string;
+  parentId: string | null;
 }
 
 export type UserRole = 'user' | 'admin';

@@ -1,21 +1,28 @@
-import type { Product } from '@/lib/types';
+import type { Product, ProductVariant } from '@/lib/types';
 import { DEFAULT_PRODUCT_IMAGE } from '@/lib/product-images';
 import { authFetch, listQuery } from './client';
 
-export type { Product };
+export type { Product, ProductVariant };
+
+interface BackendProductVariant {
+  id: string;
+  productId: string;
+  sku: string;
+  priceCents: number;
+  currency: string;
+  stock: number;
+  expiresAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
 
 interface BackendProduct {
   id: string;
   slug: string;
   name: string;
-  origin: string | null;
-  tastingNotes: string[];
   description: string | null;
-  priceCents: number;
-  currency: string;
   image: string | null;
-  productTypeId: string;
-  stockQuantity: number;
+  variants: BackendProductVariant[];
   createdAt: string;
   updatedAt: string;
 }
@@ -27,20 +34,26 @@ export interface ProductsPage {
   offset: number;
 }
 
-const DEFAULT_ORIGIN = 'Morning Mist • Collection';
+function transformVariant(v: BackendProductVariant): ProductVariant {
+  return {
+    id: v.id,
+    productId: v.productId,
+    sku: v.sku,
+    price: v.priceCents,
+    currency: v.currency,
+    stock: v.stock,
+    expiresAt: v.expiresAt,
+  };
+}
 
 function transform(p: BackendProduct): Product {
   return {
     id: p.id,
     slug: p.slug,
     name: p.name,
-    origin: p.origin ?? DEFAULT_ORIGIN,
-    tastingNotes: p.tastingNotes,
     description: p.description ?? '',
-    price: p.priceCents,
     image: p.image ?? DEFAULT_PRODUCT_IMAGE,
-    stockQuantity: p.stockQuantity,
-    productTypeId: p.productTypeId,
+    variants: p.variants.map(transformVariant),
   };
 }
 
@@ -71,14 +84,8 @@ export async function fetchProduct(slug: string): Promise<Product | undefined> {
 
 export interface UpdateProductPayload {
   name?: string;
-  origin?: string | null;
-  tastingNotes?: string[];
   description?: string | null;
-  priceCents?: number;
-  currency?: string;
   image?: string | null;
-  productTypeId?: string;
-  stockQuantity?: number;
 }
 
 export async function updateProduct(
@@ -93,16 +100,20 @@ export async function updateProduct(
   return transform(await res.json());
 }
 
-export interface CreateProductPayload {
-  name: string;
-  origin: string | null;
-  tastingNotes: string[];
-  description: string | null;
+export interface CreateProductVariantPayload {
+  sku: string;
   priceCents: number;
   currency?: string;
+  stock?: number;
+  expiresAt?: string | null;
+}
+
+export interface CreateProductPayload {
+  name: string;
+  description: string | null;
   image: string | null;
-  productTypeId: string;
-  stockQuantity?: number;
+  categoryIds?: string[];
+  variant: CreateProductVariantPayload;
 }
 
 export async function createProduct(
@@ -121,6 +132,56 @@ export async function deleteProduct(id: string): Promise<void> {
     method: 'DELETE',
   });
   if (!res.ok) throw new Error('Failed to delete product');
+}
+
+export async function setProductCategories(
+  productId: string,
+  categoryIds: string[],
+): Promise<void> {
+  const res = await authFetch(`/api/v1/products/${productId}/categories`, {
+    method: 'PUT',
+    body: JSON.stringify({ categoryIds }),
+  });
+  if (!res.ok) throw new Error('Failed to set product categories');
+}
+
+export async function createProductVariant(
+  productId: string,
+  payload: CreateProductVariantPayload,
+): Promise<ProductVariant> {
+  const res = await authFetch(`/api/v1/products/${productId}/variants`, {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) throw new Error('Failed to create product variant');
+  return transformVariant(await res.json());
+}
+
+export interface UpdateProductVariantPayload {
+  sku?: string;
+  priceCents?: number;
+  currency?: string;
+  stock?: number;
+  expiresAt?: string | null;
+}
+
+export async function updateProductVariant(
+  variantId: string,
+  payload: UpdateProductVariantPayload,
+): Promise<ProductVariant> {
+  const res = await authFetch(`/api/v1/products/variants/${variantId}`, {
+    method: 'PATCH',
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) throw new Error('Failed to update product variant');
+  return transformVariant(await res.json());
+}
+
+export async function deleteProductVariant(variantId: string): Promise<void> {
+  const res = await authFetch(`/api/v1/products/variants/${variantId}`, {
+    method: 'DELETE',
+  });
+  if (!res.ok) throw new Error('Failed to delete product variant');
 }
 
 export interface VoiceSearchResult {

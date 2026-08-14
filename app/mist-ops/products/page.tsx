@@ -36,25 +36,29 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Separator } from '@/components/ui/separator';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { useProducts, useUpdateProduct, useCreateProduct, useDeleteProduct } from '@/hooks/use-products';
-import { useProductTypes } from '@/hooks/use-product-types';
+  useProducts,
+  useUpdateProduct,
+  useCreateProduct,
+  useDeleteProduct,
+  useCreateProductVariant,
+  useUpdateProductVariant,
+  useDeleteProductVariant,
+} from '@/hooks/use-products';
+import { useProductCategories } from '@/hooks/use-product-categories';
 import { useDebouncedValue } from '@/hooks/use-debounced-value';
 import { toast } from 'sonner';
 import { ErrorNotice } from '@/app/_components/ErrorNotice';
-import type { Product } from '@/lib/types';
+import { getDefaultVariant, getPriceRange, getTotalStock } from '@/lib/product-variants';
+import type { Product, ProductCategory, ProductVariant } from '@/lib/types';
 
 const LIMIT = 10;
 
 const productSchema = z.object({
   name: z.string().min(1, 'Tên sản phẩm là bắt buộc').max(200),
-  productTypeId: z.string().min(1, 'Vui lòng chọn danh mục'),
+  sku: z.string().min(1, 'SKU là bắt buộc').max(100),
   price: z
     .string()
     .min(1, 'Giá bán là bắt buộc')
@@ -63,20 +67,233 @@ const productSchema = z.object({
     .string()
     .min(1, 'Tồn kho là bắt buộc')
     .regex(/^\d+$/, 'Tồn kho phải là số nguyên không âm'),
-  origin: z.string().max(200).optional(),
-  tastingNotes: z.string().optional(),
+  categoryIds: z.array(z.string()),
   description: z.string().max(5000).optional(),
   image: z.union([z.literal(''), z.string().url('Đường dẫn hình ảnh không hợp lệ')]),
 });
 
 type ProductForm = z.infer<typeof productSchema>;
 
-// The API stores tasting notes as an array; the form edits them one per line
-function parseNotes(raw: string | undefined): string[] {
-  return (raw ?? '')
-    .split('\n')
-    .map((l) => l.trim())
-    .filter(Boolean);
+function categoryLabel(category: ProductCategory, all: ProductCategory[]): string {
+  const parent = category.parentId
+    ? all.find((c) => c.id === category.parentId)
+    : undefined;
+  return parent ? `${parent.name} / ${category.name}` : category.name;
+}
+
+interface CategoryCheckboxListProps {
+  categories: ProductCategory[];
+  selected: string[];
+  onChange: (ids: string[]) => void;
+}
+
+function CategoryCheckboxList({
+  categories,
+  selected,
+  onChange,
+}: CategoryCheckboxListProps) {
+  if (categories.length === 0) {
+    return (
+      <p className="text-xs text-muted-foreground">Chưa có danh mục nào.</p>
+    );
+  }
+  return (
+    <div className="max-h-40 overflow-y-auto space-y-2 border border-border rounded-lg p-3">
+      {categories.map((c) => (
+        <label key={c.id} className="flex items-center gap-2 text-sm cursor-pointer">
+          <Checkbox
+            checked={selected.includes(c.id)}
+            onCheckedChange={(checked) =>
+              onChange(
+                checked ? [...selected, c.id] : selected.filter((id) => id !== c.id),
+              )
+            }
+          />
+          {categoryLabel(c, categories)}
+        </label>
+      ))}
+    </div>
+  );
+}
+
+interface VariantsEditorProps {
+  product: Product;
+}
+
+function VariantsEditor({ product }: VariantsEditorProps) {
+  const updateVariant = useUpdateProductVariant();
+  const deleteVariant = useDeleteProductVariant();
+  const createVariant = useCreateProductVariant();
+  const [drafts, setDrafts] = useState<Record<string, { sku: string; price: string; stock: string }>>(
+    () =>
+      Object.fromEntries(
+        product.variants.map((v) => [
+          v.id,
+          { sku: v.sku, price: String(v.price), stock: String(v.stock) },
+        ]),
+      ),
+  );
+  const [newVariant, setNewVariant] = useState({ sku: '', price: '', stock: '0' });
+  const [showNewVariant, setShowNewVariant] = useState(false);
+
+  function draftFor(v: ProductVariant) {
+    return drafts[v.id] ?? { sku: v.sku, price: String(v.price), stock: String(v.stock) };
+  }
+
+  function updateDraft(id: string, field: 'sku' | 'price' | 'stock', value: string) {
+    setDrafts((d) => {
+      const current = d[id] ?? { sku: '', price: '', stock: '' };
+      return { ...d, [id]: { ...current, [field]: value } };
+    });
+  }
+
+  function saveVariant(v: ProductVariant) {
+    const draft = draftFor(v);
+    const priceCents = Number(draft.price);
+    const stock = Number(draft.stock);
+    if (!draft.sku.trim() || Number.isNaN(priceCents) || Number.isNaN(stock)) {
+      toast.error('Vui lòng nhập SKU, giá và tồn kho hợp lệ');
+      return;
+    }
+    updateVariant.mutate(
+      { variantId: v.id, payload: { sku: draft.sku.trim(), priceCents, stock } },
+      { onSuccess: () => toast.success('Đã cập nhật phân loại') },
+    );
+  }
+
+  function addVariant() {
+    const priceCents = Number(newVariant.price);
+    const stock = Number(newVariant.stock);
+    if (!newVariant.sku.trim() || !Number.isFinite(priceCents) || Number.isNaN(stock)) {
+      toast.error('Vui lòng nhập SKU, giá và tồn kho hợp lệ');
+      return;
+    }
+    createVariant.mutate(
+      { productId: product.id, payload: { sku: newVariant.sku.trim(), priceCents, stock } },
+      {
+        onSuccess: () => {
+          toast.success('Đã thêm phân loại mới');
+          setNewVariant({ sku: '', price: '', stock: '0' });
+          setShowNewVariant(false);
+        },
+      },
+    );
+  }
+
+  return (
+    <div className="space-y-3">
+      {product.variants.map((v) => {
+        const draft = draftFor(v);
+        return (
+          <div key={v.id} className="grid grid-cols-[1fr_1fr_1fr_auto_auto] gap-2 items-center">
+            <Input
+              value={draft.sku}
+              onChange={(e) => updateDraft(v.id, 'sku', e.target.value)}
+              placeholder="SKU"
+              className="h-9"
+            />
+            <Input
+              type="number"
+              min="0"
+              value={draft.price}
+              onChange={(e) => updateDraft(v.id, 'price', e.target.value)}
+              placeholder="Giá"
+              className="h-9"
+            />
+            <Input
+              type="number"
+              min="0"
+              value={draft.stock}
+              onChange={(e) => updateDraft(v.id, 'stock', e.target.value)}
+              placeholder="Tồn kho"
+              className="h-9"
+            />
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="h-9 text-xs uppercase tracking-wider"
+              disabled={updateVariant.isPending}
+              onClick={() => saveVariant(v)}
+            >
+              Lưu
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="size-9 hover:text-destructive"
+              disabled={deleteVariant.isPending || product.variants.length <= 1}
+              title={
+                product.variants.length <= 1
+                  ? 'Sản phẩm phải có ít nhất một phân loại'
+                  : undefined
+              }
+              onClick={() => deleteVariant.mutate(v.id)}
+            >
+              <Trash2 className="size-4" />
+            </Button>
+          </div>
+        );
+      })}
+
+      {showNewVariant ? (
+        <div className="grid grid-cols-[1fr_1fr_1fr_auto_auto] gap-2 items-center">
+          <Input
+            value={newVariant.sku}
+            onChange={(e) => setNewVariant((v) => ({ ...v, sku: e.target.value }))}
+            placeholder="SKU mới"
+            className="h-9"
+          />
+          <Input
+            type="number"
+            min="0"
+            value={newVariant.price}
+            onChange={(e) => setNewVariant((v) => ({ ...v, price: e.target.value }))}
+            placeholder="Giá"
+            className="h-9"
+          />
+          <Input
+            type="number"
+            min="0"
+            value={newVariant.stock}
+            onChange={(e) => setNewVariant((v) => ({ ...v, stock: e.target.value }))}
+            placeholder="Tồn kho"
+            className="h-9"
+          />
+          <Button
+            type="button"
+            size="sm"
+            className="h-9 text-xs uppercase tracking-wider"
+            disabled={createVariant.isPending}
+            onClick={addVariant}
+          >
+            Thêm
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="size-9"
+            onClick={() => setShowNewVariant(false)}
+          >
+            <XCircle className="size-4" />
+          </Button>
+        </div>
+      ) : (
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          className="text-xs uppercase tracking-wider gap-2"
+          onClick={() => setShowNewVariant(true)}
+        >
+          <Plus className="size-3.5" />
+          Thêm phân loại
+        </Button>
+      )}
+    </div>
+  );
 }
 
 interface ProductDialogProps {
@@ -89,38 +306,33 @@ function ProductDialog({ product, onClose }: ProductDialogProps) {
   const update = useUpdateProduct();
   const create = useCreateProduct();
   const mutation = isEdit ? update : create;
-  const { data: catData } = useProductTypes();
+  const { data: catData } = useProductCategories();
   const categories = catData?.items ?? [];
+  const defaultVariant = product ? getDefaultVariant(product) : undefined;
 
   const form = useForm<ProductForm>({
     resolver: zodResolver(productSchema),
     defaultValues: {
       name: product?.name ?? '',
-      productTypeId: product?.productTypeId ?? '',
-      price: product ? String(Math.round(product.price)) : '',
-      stock: String(product?.stockQuantity ?? 0),
-      origin: product?.origin ?? '',
-      tastingNotes: product?.tastingNotes.join('\n') ?? '',
+      sku: defaultVariant?.sku ?? '',
+      price: defaultVariant ? String(Math.round(defaultVariant.price)) : '',
+      stock: String(defaultVariant?.stock ?? 0),
+      categoryIds: [],
       description: product?.description ?? '',
       image: product?.image ?? '',
     },
   });
 
   function onSubmit(values: ProductForm) {
-    const shared = {
-      origin: values.origin?.trim() || null,
-      tastingNotes: parseNotes(values.tastingNotes),
-      description: values.description?.trim() || null,
-      priceCents: Number(values.price),
-      image: values.image.trim() || null,
-      stockQuantity: Number(values.stock),
-    };
-
     if (isEdit) {
       update.mutate(
         {
           id: product.id,
-          payload: { ...shared, name: values.name.trim(), productTypeId: values.productTypeId },
+          payload: {
+            name: values.name.trim(),
+            description: values.description?.trim() || null,
+            image: values.image.trim() || null,
+          },
         },
         {
           onSuccess: () => {
@@ -133,7 +345,17 @@ function ProductDialog({ product, onClose }: ProductDialogProps) {
     }
 
     create.mutate(
-      { ...shared, name: values.name.trim(), productTypeId: values.productTypeId },
+      {
+        name: values.name.trim(),
+        description: values.description?.trim() || null,
+        image: values.image.trim() || null,
+        categoryIds: values.categoryIds.length > 0 ? values.categoryIds : undefined,
+        variant: {
+          sku: values.sku.trim(),
+          priceCents: Number(values.price),
+          stock: Number(values.stock),
+        },
+      },
       {
         onSuccess: () => {
           toast.success('Đã thêm sản phẩm mới');
@@ -145,7 +367,7 @@ function ProductDialog({ product, onClose }: ProductDialogProps) {
 
   return (
     <Dialog open onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-[28rem]">
+      <DialogContent className="sm:max-w-[28rem] max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-sm uppercase tracking-widest font-medium">
             {isEdit ? 'Chỉnh sửa Sản phẩm' : 'Thêm sản phẩm mới'}
@@ -153,30 +375,6 @@ function ProductDialog({ product, onClose }: ProductDialogProps) {
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-2">
-            <FormField
-              control={form.control}
-              name="productTypeId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Danh mục sản phẩm</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Chọn danh mục..." />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {categories.map((c) => (
-                        <SelectItem key={c.id} value={c.id}>
-                          {c.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
             <FormField
               control={form.control}
               name="name"
@@ -190,60 +388,69 @@ function ProductDialog({ product, onClose }: ProductDialogProps) {
                 </FormItem>
               )}
             />
-            <div className="grid grid-cols-2 gap-4">
+
+            {!isEdit && (
               <FormField
                 control={form.control}
-                name="price"
+                name="categoryIds"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Giá bán (VNĐ)</FormLabel>
-                    <FormControl>
-                      <Input type="number" min="0" step="1" placeholder="0" {...field} />
-                    </FormControl>
+                    <FormLabel>Danh mục sản phẩm</FormLabel>
+                    <CategoryCheckboxList
+                      categories={categories}
+                      selected={field.value}
+                      onChange={field.onChange}
+                    />
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="stock"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Số lượng tồn kho</FormLabel>
-                    <FormControl>
-                      <Input type="number" min="0" step="1" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <FormField
-              control={form.control}
-              name="origin"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nguồn gốc</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Cầu Đất • Đà Lạt" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="tastingNotes"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nốt hương (mỗi dòng một nốt)</FormLabel>
-                  <FormControl>
-                    <Textarea rows={3} placeholder={'Hoa nhài\nChua thanh'} {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            )}
+
+            {!isEdit && (
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="sku"
+                  render={({ field }) => (
+                    <FormItem className="col-span-2">
+                      <FormLabel>SKU</FormLabel>
+                      <FormControl>
+                        <Input placeholder="VD: DALAT-250G" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="price"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Giá bán (VNĐ)</FormLabel>
+                      <FormControl>
+                        <Input type="number" min="0" step="1" placeholder="0" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="stock"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Số lượng tồn kho</FormLabel>
+                      <FormControl>
+                        <Input type="number" min="0" step="1" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            )}
+
             <FormField
               control={form.control}
               name="description"
@@ -270,6 +477,17 @@ function ProductDialog({ product, onClose }: ProductDialogProps) {
                 </FormItem>
               )}
             />
+
+            {isEdit && (
+              <>
+                <Separator />
+                <div className="space-y-2">
+                  <FormLabel>Phân loại &amp; tồn kho</FormLabel>
+                  <VariantsEditor product={product} />
+                </div>
+              </>
+            )}
+
             {mutation.isError && (
               <ErrorNotice className="mb-0">
                 {isEdit
@@ -285,7 +503,7 @@ function ProductDialog({ product, onClose }: ProductDialogProps) {
                 onClick={onClose}
                 className="uppercase tracking-wider text-xs"
               >
-                Hủy
+                {isEdit ? 'Đóng' : 'Hủy'}
               </Button>
               <Button
                 type="submit"
@@ -338,7 +556,9 @@ export default function AdminProductsPage() {
             <div className="text-base font-medium text-foreground">
               {r.name}
             </div>
-            <div className="text-sm text-muted-foreground">{r.origin}</div>
+            <div className="text-sm text-muted-foreground">
+              {r.variants.length} phân loại
+            </div>
           </div>
         </div>
       ),
@@ -346,13 +566,22 @@ export default function AdminProductsPage() {
     {
       key: 'price',
       header: 'Giá',
-      render: (r) => <span className="font-medium">{r.price.toLocaleString('vi-VN')} ₫</span>,
+      render: (r) => {
+        const { min, max } = getPriceRange(r);
+        return (
+          <span className="font-medium">
+            {min === max
+              ? `${min.toLocaleString('vi-VN')} ₫`
+              : `${min.toLocaleString('vi-VN')}–${max.toLocaleString('vi-VN')} ₫`}
+          </span>
+        );
+      },
     },
     {
       key: 'stock',
       header: 'Kho hàng',
       render: (r) => {
-        const qty = r.stockQuantity ?? 0;
+        const qty = getTotalStock(r);
         if (qty === 0)
           return (
             <span className="text-xs font-medium text-destructive uppercase tracking-wider">
@@ -367,16 +596,6 @@ export default function AdminProductsPage() {
           );
         return <span className="text-sm text-foreground">{qty}</span>;
       },
-    },
-    {
-      key: 'notes',
-      header: 'Nốt hương',
-      hideOnMobile: true,
-      render: (r) => (
-        <span className="text-muted-foreground text-sm">
-          {r.tastingNotes.length > 0 ? r.tastingNotes[0] : '—'}
-        </span>
-      ),
     },
     {
       key: 'actions',
@@ -444,7 +663,10 @@ export default function AdminProductsPage() {
           value={
             isLoading
               ? '—'
-              : String(items.filter((p) => (p.stockQuantity ?? 0) > 0 && (p.stockQuantity ?? 0) <= 5).length)
+              : String(
+                  items.filter((p) => getTotalStock(p) > 0 && getTotalStock(p) <= 5)
+                    .length,
+                )
           }
           delta="Trên trang này"
           icon={AlertTriangle}
@@ -452,7 +674,7 @@ export default function AdminProductsPage() {
         />
         <StatCard
           label="Hết hàng"
-          value={isLoading ? '—' : String(items.filter((p) => (p.stockQuantity ?? 0) === 0).length)}
+          value={isLoading ? '—' : String(items.filter((p) => getTotalStock(p) === 0).length)}
           delta="Trên trang này"
           icon={XCircle}
           tone="tertiary"

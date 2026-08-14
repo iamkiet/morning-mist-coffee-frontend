@@ -1,14 +1,16 @@
 'use client';
 
 import { createContext, useContext, useSyncExternalStore } from 'react';
-import type { Product } from '@/lib/types';
+import type { Product, ProductVariant } from '@/lib/types';
 
 const STORAGE_KEY = 'morning-mist-cart';
 
 export interface CartItem {
-  id: string;
+  productId: string;
+  productVariantId: string;
   slug: string;
   name: string;
+  sku: string;
   price: number;
   image: string;
   quantity: number;
@@ -16,9 +18,9 @@ export interface CartItem {
 
 interface CartContextValue {
   items: CartItem[];
-  addItem: (product: Product, quantity?: number) => void;
-  removeItem: (slug: string) => void;
-  updateQuantity: (slug: string, quantity: number) => void;
+  addItem: (product: Product, variant: ProductVariant, quantity?: number) => void;
+  removeItem: (productVariantId: string) => void;
+  updateQuantity: (productVariantId: string, quantity: number) => void;
   clearCart: () => void;
   itemCount: number;
   total: number;
@@ -78,22 +80,24 @@ interface CartProviderProps {
 export function CartProvider({ children }: CartProviderProps) {
   const items = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
-  function addItem(product: Product, quantity = 1) {
-    const existing = items.find((i) => i.slug === product.slug);
+  function addItem(product: Product, variant: ProductVariant, quantity = 1) {
+    const existing = items.find((i) => i.productVariantId === variant.id);
     writeCart(
       existing
         ? items.map((i) =>
-            i.slug === product.slug
+            i.productVariantId === variant.id
               ? { ...i, quantity: i.quantity + quantity }
               : i,
           )
         : [
             ...items,
             {
-              id: product.id,
+              productId: product.id,
+              productVariantId: variant.id,
               slug: product.slug,
               name: product.name,
-              price: product.price,
+              sku: variant.sku,
+              price: variant.price,
               image: product.image,
               quantity,
             },
@@ -101,16 +105,20 @@ export function CartProvider({ children }: CartProviderProps) {
     );
   }
 
-  function removeItem(slug: string) {
-    writeCart(items.filter((i) => i.slug !== slug));
+  function removeItem(productVariantId: string) {
+    writeCart(items.filter((i) => i.productVariantId !== productVariantId));
   }
 
-  function updateQuantity(slug: string, quantity: number) {
+  function updateQuantity(productVariantId: string, quantity: number) {
     if (quantity <= 0) {
-      removeItem(slug);
+      removeItem(productVariantId);
       return;
     }
-    writeCart(items.map((i) => (i.slug === slug ? { ...i, quantity } : i)));
+    writeCart(
+      items.map((i) =>
+        i.productVariantId === productVariantId ? { ...i, quantity } : i,
+      ),
+    );
   }
 
   function clearCart() {

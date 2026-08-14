@@ -68,7 +68,7 @@ export default function CheckoutPage() {
         email: data.email,
         totalCents: Math.round(total),
         items: items.map((item) => ({
-          productId: item.id,
+          productVariantId: item.productVariantId,
           name: item.name,
           priceCents: Math.round(item.price),
           quantity: item.quantity,
@@ -123,7 +123,7 @@ export default function CheckoutPage() {
                   <div className="space-y-4">
                     {items.map((item) => (
                       <div
-                        key={item.id}
+                        key={item.productVariantId}
                         className="flex space-x-4 items-center"
                       >
                         <div className="relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 bg-muted">
@@ -142,7 +142,7 @@ export default function CheckoutPage() {
                           <div className="flex items-center gap-1 mt-1">
                             <button
                               onClick={() =>
-                                updateQuantity(item.slug, item.quantity - 1)
+                                updateQuantity(item.productVariantId, item.quantity - 1)
                               }
                               className="size-5 flex items-center justify-center border border-border rounded-lg text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                               aria-label="Decrease quantity"
@@ -154,7 +154,7 @@ export default function CheckoutPage() {
                             </span>
                             <button
                               onClick={() =>
-                                updateQuantity(item.slug, item.quantity + 1)
+                                updateQuantity(item.productVariantId, item.quantity + 1)
                               }
                               className="size-5 flex items-center justify-center border border-border rounded-lg text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                               aria-label="Increase quantity"
@@ -168,7 +168,7 @@ export default function CheckoutPage() {
                             {(item.price * item.quantity).toLocaleString('vi-VN')} ₫
                           </span>
                           <button
-                            onClick={() => removeItem(item.slug)}
+                            onClick={() => removeItem(item.productVariantId)}
                             className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                             aria-label={`Remove ${item.name}`}
                           >

@@ -47,22 +47,29 @@ lib/
   auth-context.tsx        — AuthProvider: in-memory access token, HttpOnly refresh cookie
   cart.tsx                — CartProvider: localStorage cart via useSyncExternalStore
   product-attributes.ts   — roast/process inferred from product name (stopgap)
+  product-variants.ts     — getDefaultVariant()/getTotalStock()/getPriceRange()
+                            helpers over Product.variants
   api/client.ts           — authFetch() with auto-retry on 401,
                             refreshAccessToken() (deduped), listQuery()
   api/auth.ts             — postLogin(), postLogout(), postRefresh(), fetchMe()
   api/products.ts         — fetchProducts(), fetchProduct() (by slug),
-                            updateProduct(), searchProductsByVoice()
+                            updateProduct(), searchProductsByVoice(),
+                            createProductVariant()/updateProductVariant()/
+                            deleteProductVariant(), setProductCategories()
+  api/product-categories.ts — fetchProductCategories(), createProductCategory()
   api/orders.ts           — fetchOrders(), updateOrderStatus(), createOrder(),
                             lookupOrders(code) — order ID only, no email
   api/users.ts            — fetchUsers(), updateUser()
   api/chat.ts             — sendChatMessage()
 hooks/
   use-products.ts         — useProducts(), useUpdateProduct(), useCreateProduct(),
-                            useDeleteProduct()
+                            useDeleteProduct(), useCreateProductVariant(),
+                            useUpdateProductVariant(), useDeleteProductVariant(),
+                            useSetProductCategories()
   use-orders.ts           — useOrders(), useUpdateOrderStatus(), useCreateOrder(),
                             useLookupOrders()
   use-users.ts            — useUsers(), useUpdateUser()
-  use-product-types.ts    — useProductTypes()
+  use-product-categories.ts — useProductCategories()
   use-chat.ts             — useChat()
   use-voice-search.ts     — useVoiceSearch()
   use-temporary-flag.ts   — useTemporaryFlag(): self-clearing "Đã thêm" confirmations
@@ -75,7 +82,7 @@ hooks/
 
 **Browser-API state stays local.** `useVoiceSearch` keeps the `MediaRecorder` lifecycle (`isRecording`, countdown, stream refs) in `useState`/`useRef` and hands only the resulting `Blob` to `useMutation` — Query owns the request, not the device.
 
-**Global staleTime:** `providers.tsx` sets `staleTime: 60_000` on the `QueryClient`. Do not restate it per hook. Override only when the value genuinely differs from the global, and add a comment saying why (see `use-product-types.ts`).
+**Global staleTime:** `providers.tsx` sets `staleTime: 60_000` on the `QueryClient`. Do not restate it per hook. Override only when the value genuinely differs from the global, and add a comment saying why (see `use-product-categories.ts`).
 
 ## Auth flow
 
@@ -103,7 +110,7 @@ All auth endpoints live in `lib/api/auth.ts` — never call them with a bare `fe
 
 **`slug` comes from the API — never derive it.** The backend owns `products.slug` (unique, stable across renames). `fetchProduct(slug)` hits `GET /api/v1/products/slug/:slug` in a single request. Do not reconstruct a slug from `name`: it collides on duplicate names and mangles Vietnamese diacritics.
 
-**`origin` / `tastingNotes` / `description` are three real API fields** — not parsed out of one string any more. `transform()` maps them straight through (`origin` falls back to a placeholder when null). Never re-introduce line-count parsing, and never merge them back into a single textarea: the admin form edits each one separately and sends `tastingNotes` as an array.
+**Products are variant-based, not flat.** `Product` only carries identity/copy (`slug`, `name`, `description`, `image`); price, SKU, stock and expiry live on `Product.variants: ProductVariant[]`. There is no more `origin`/`tastingNotes`/`price`/`stockQuantity`/`productTypeId` on `Product` — the backend dropped them along with the `product_type` concept in favor of `product_categories` (hierarchical) and an EAV `product_properties` model. Use `lib/product-variants.ts` helpers (`getDefaultVariant`, `getPriceRange`, `getTotalStock`) instead of reading a single price/stock field. The API does not return a product's assigned `categoryIds` on `GET` (only accepts them on create/`PUT .../categories`), so the admin edit dialog cannot safely re-display or preserve existing category assignments — category selection only happens at product creation until the backend adds that field to the read response.
 
 ## Admin Dashboard Best Practices
 

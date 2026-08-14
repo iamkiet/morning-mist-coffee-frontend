@@ -2,7 +2,6 @@ import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { Coffee, Thermometer, Leaf } from 'lucide-react';
 import { Container } from '@/app/_components/Container';
-import { Badge } from '@/components/ui/badge';
 import { fetchProduct } from '@/lib/api/products';
 import { getProductAttributes } from '@/lib/product-attributes';
 import { AddToBag } from './AddToBag';
@@ -62,9 +61,6 @@ export default async function ProductPage(props: {
             <h1 className="text-4xl md:text-5xl text-foreground mb-1">
               {product.name}
             </h1>
-            <p className="text-muted-foreground font-light">
-              Nguồn Gốc: {product.origin}
-            </p>
           </header>
 
           <div className="mb-12">
@@ -86,31 +82,6 @@ export default async function ProductPage(props: {
                 Phương Pháp Chế Biến
               </span>
               <span className="text-primary font-medium">{processMethod}</span>
-            </div>
-            <div className="col-span-2 p-6 bg-card rounded-lg border border-border flex flex-col items-center">
-              <span className="text-muted-foreground block mb-2 uppercase text-xs tracking-wider">
-                Nốt Hương Đặc Trưng
-              </span>
-              <div className="flex flex-wrap gap-2 justify-center">
-                {product.tastingNotes.length > 0 ? (
-                  product.tastingNotes.map((note) => (
-                    <Badge
-                      key={note}
-                      variant="outline"
-                      className="uppercase tracking-wider text-[11px]"
-                    >
-                      {note}
-                    </Badge>
-                  ))
-                ) : (
-                  <Badge
-                    variant="outline"
-                    className="uppercase tracking-wider text-[11px]"
-                  >
-                    Thơm Ngát • Đặc Trưng
-                  </Badge>
-                )}
-              </div>
             </div>
           </div>
 
