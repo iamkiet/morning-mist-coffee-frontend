@@ -28,6 +28,14 @@ export interface ProductCategory {
   parentId: string | null;
 }
 
+export type PropertyDataType = 'text' | 'number' | 'enum';
+
+export interface ProductProperty {
+  id: string;
+  name: string;
+  dataType: PropertyDataType;
+}
+
 export type UserRole = 'user' | 'admin';
 export type UserStatus = 'active' | 'inactive' | 'banned';
 

@@ -9,6 +9,7 @@ import {
   Package,
   AlertTriangle,
   XCircle,
+  Tags,
 } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -39,6 +40,13 @@ import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Separator } from '@/components/ui/separator';
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
   useProducts,
   useUpdateProduct,
   useCreateProduct,
@@ -47,12 +55,13 @@ import {
   useUpdateProductVariant,
   useDeleteProductVariant,
 } from '@/hooks/use-products';
-import { useProductCategories } from '@/hooks/use-product-categories';
+import { useProductCategories, useCreateProductCategory } from '@/hooks/use-product-categories';
+import { useProductProperties, useCreateProductProperty } from '@/hooks/use-product-properties';
 import { useDebouncedValue } from '@/hooks/use-debounced-value';
 import { toast } from 'sonner';
 import { ErrorNotice } from '@/app/_components/ErrorNotice';
 import { getDefaultVariant, getPriceRange, getTotalStock } from '@/lib/product-variants';
-import type { Product, ProductCategory, ProductVariant } from '@/lib/types';
+import type { Product, ProductCategory, ProductVariant, PropertyDataType } from '@/lib/types';
 
 const LIMIT = 10;
 
@@ -116,170 +125,463 @@ function CategoryCheckboxList({
   );
 }
 
-interface VariantsEditorProps {
-  product: Product;
+const PROPERTY_DATA_TYPES: { value: PropertyDataType; label: string }[] = [
+  { value: 'text', label: 'Văn bản' },
+  { value: 'number', label: 'Số' },
+  { value: 'enum', label: 'Lựa chọn' },
+];
+
+const NO_PARENT = '__none__';
+
+const categoryFormSchema = z.object({
+  name: z.string().min(1, 'Tên danh mục là bắt buộc').max(100),
+  parentId: z.string(),
+});
+
+type CategoryForm = z.infer<typeof categoryFormSchema>;
+
+interface CategoryCreateFormProps {
+  categories: ProductCategory[];
 }
 
-function VariantsEditor({ product }: VariantsEditorProps) {
-  const updateVariant = useUpdateProductVariant();
-  const deleteVariant = useDeleteProductVariant();
-  const createVariant = useCreateProductVariant();
-  const [drafts, setDrafts] = useState<Record<string, { sku: string; price: string; stock: string }>>(
-    () =>
-      Object.fromEntries(
-        product.variants.map((v) => [
-          v.id,
-          { sku: v.sku, price: String(v.price), stock: String(v.stock) },
-        ]),
-      ),
-  );
-  const [newVariant, setNewVariant] = useState({ sku: '', price: '', stock: '0' });
-  const [showNewVariant, setShowNewVariant] = useState(false);
+function CategoryCreateForm({ categories }: CategoryCreateFormProps) {
+  const createCategory = useCreateProductCategory();
+  const form = useForm<CategoryForm>({
+    resolver: zodResolver(categoryFormSchema),
+    defaultValues: { name: '', parentId: NO_PARENT },
+  });
 
-  function draftFor(v: ProductVariant) {
-    return drafts[v.id] ?? { sku: v.sku, price: String(v.price), stock: String(v.stock) };
-  }
-
-  function updateDraft(id: string, field: 'sku' | 'price' | 'stock', value: string) {
-    setDrafts((d) => {
-      const current = d[id] ?? { sku: '', price: '', stock: '' };
-      return { ...d, [id]: { ...current, [field]: value } };
-    });
-  }
-
-  function saveVariant(v: ProductVariant) {
-    const draft = draftFor(v);
-    const priceCents = Number(draft.price);
-    const stock = Number(draft.stock);
-    if (!draft.sku.trim() || Number.isNaN(priceCents) || Number.isNaN(stock)) {
-      toast.error('Vui lòng nhập SKU, giá và tồn kho hợp lệ');
-      return;
-    }
-    updateVariant.mutate(
-      { variantId: v.id, payload: { sku: draft.sku.trim(), priceCents, stock } },
-      { onSuccess: () => toast.success('Đã cập nhật phân loại') },
-    );
-  }
-
-  function addVariant() {
-    const priceCents = Number(newVariant.price);
-    const stock = Number(newVariant.stock);
-    if (!newVariant.sku.trim() || !Number.isFinite(priceCents) || Number.isNaN(stock)) {
-      toast.error('Vui lòng nhập SKU, giá và tồn kho hợp lệ');
-      return;
-    }
-    createVariant.mutate(
-      { productId: product.id, payload: { sku: newVariant.sku.trim(), priceCents, stock } },
+  function onSubmit(values: CategoryForm) {
+    createCategory.mutate(
+      {
+        name: values.name.trim(),
+        parentId: values.parentId === NO_PARENT ? null : values.parentId,
+      },
       {
         onSuccess: () => {
-          toast.success('Đã thêm phân loại mới');
-          setNewVariant({ sku: '', price: '', stock: '0' });
-          setShowNewVariant(false);
+          toast.success('Đã thêm danh mục');
+          form.reset();
         },
       },
     );
   }
 
   return (
-    <div className="space-y-3">
-      {product.variants.map((v) => {
-        const draft = draftFor(v);
-        return (
-          <div key={v.id} className="grid grid-cols-[1fr_1fr_1fr_auto_auto] gap-2 items-center">
-            <Input
-              value={draft.sku}
-              onChange={(e) => updateDraft(v.id, 'sku', e.target.value)}
-              placeholder="SKU"
-              className="h-9"
-            />
-            <Input
-              type="number"
-              min="0"
-              value={draft.price}
-              onChange={(e) => updateDraft(v.id, 'price', e.target.value)}
-              placeholder="Giá"
-              className="h-9"
-            />
-            <Input
-              type="number"
-              min="0"
-              value={draft.stock}
-              onChange={(e) => updateDraft(v.id, 'stock', e.target.value)}
-              placeholder="Tồn kho"
-              className="h-9"
-            />
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              className="h-9 text-xs uppercase tracking-wider"
-              disabled={updateVariant.isPending}
-              onClick={() => saveVariant(v)}
-            >
-              Lưu
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              className="size-9 hover:text-destructive"
-              disabled={deleteVariant.isPending || product.variants.length <= 1}
-              title={
-                product.variants.length <= 1
-                  ? 'Sản phẩm phải có ít nhất một phân loại'
-                  : undefined
-              }
-              onClick={() => deleteVariant.mutate(v.id)}
-            >
-              <Trash2 className="size-4" />
-            </Button>
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-[1fr_1fr_auto] gap-2">
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <Input placeholder="Tên danh mục mới" className="h-9" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="parentId"
+          render={({ field }) => (
+            <FormItem>
+              <Select onValueChange={field.onChange} value={field.value}>
+                <FormControl>
+                  <SelectTrigger className="h-9 w-full">
+                    <SelectValue placeholder="Danh mục cha (tùy chọn)" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value={NO_PARENT}>Không có</SelectItem>
+                  {categories.map((c) => (
+                    <SelectItem key={c.id} value={c.id}>
+                      {categoryLabel(c, categories)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button
+          type="submit"
+          size="sm"
+          className="h-9 text-xs uppercase tracking-wider"
+          disabled={createCategory.isPending}
+        >
+          Thêm
+        </Button>
+      </form>
+    </Form>
+  );
+}
+
+const propertyFormSchema = z.object({
+  name: z.string().min(1, 'Tên thuộc tính là bắt buộc').max(100),
+  dataType: z.enum(['text', 'number', 'enum']),
+});
+
+type PropertyForm = z.infer<typeof propertyFormSchema>;
+
+function PropertyCreateForm() {
+  const createProperty = useCreateProductProperty();
+  const form = useForm<PropertyForm>({
+    resolver: zodResolver(propertyFormSchema),
+    defaultValues: { name: '', dataType: 'text' },
+  });
+
+  function onSubmit(values: PropertyForm) {
+    createProperty.mutate(
+      { name: values.name.trim(), dataType: values.dataType },
+      {
+        onSuccess: () => {
+          toast.success('Đã thêm thuộc tính');
+          form.reset();
+        },
+      },
+    );
+  }
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-[1fr_1fr_auto] gap-2">
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <Input placeholder="Tên thuộc tính mới" className="h-9" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="dataType"
+          render={({ field }) => (
+            <FormItem>
+              <Select onValueChange={field.onChange} value={field.value}>
+                <FormControl>
+                  <SelectTrigger className="h-9 w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {PROPERTY_DATA_TYPES.map((t) => (
+                    <SelectItem key={t.value} value={t.value}>
+                      {t.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button
+          type="submit"
+          size="sm"
+          className="h-9 text-xs uppercase tracking-wider"
+          disabled={createProperty.isPending}
+        >
+          Thêm
+        </Button>
+      </form>
+    </Form>
+  );
+}
+
+interface ManageTaxonomyDialogProps {
+  onClose: () => void;
+}
+
+function ManageTaxonomyDialog({ onClose }: ManageTaxonomyDialogProps) {
+  const { data: catData, isLoading: catLoading } = useProductCategories();
+  const { data: propData, isLoading: propLoading } = useProductProperties();
+
+  const categories = catData?.items ?? [];
+  const properties = propData?.items ?? [];
+
+  return (
+    <Dialog open onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="sm:max-w-[32rem] max-h-[85vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="text-sm uppercase tracking-widest font-medium">
+            Quản lý Danh mục &amp; Thuộc tính
+          </DialogTitle>
+        </DialogHeader>
+
+        <div className="space-y-6 py-2">
+          <div className="space-y-3">
+            <h3 className="text-xs uppercase tracking-wider text-muted-foreground font-medium">
+              Danh mục sản phẩm
+            </h3>
+            {catLoading ? (
+              <Skeleton className="h-24 w-full" />
+            ) : categories.length > 0 ? (
+              <ul className="max-h-32 overflow-y-auto text-sm space-y-1 border border-border rounded-lg p-3">
+                {categories.map((c) => (
+                  <li key={c.id} className="text-foreground">
+                    {categoryLabel(c, categories)}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-xs text-muted-foreground">Chưa có danh mục nào.</p>
+            )}
+            <CategoryCreateForm categories={categories} />
           </div>
-        );
-      })}
+
+          <Separator />
+
+          <div className="space-y-3">
+            <h3 className="text-xs uppercase tracking-wider text-muted-foreground font-medium">
+              Thuộc tính sản phẩm
+            </h3>
+            {propLoading ? (
+              <Skeleton className="h-24 w-full" />
+            ) : properties.length > 0 ? (
+              <ul className="max-h-32 overflow-y-auto text-sm space-y-1 border border-border rounded-lg p-3">
+                {properties.map((p) => (
+                  <li key={p.id} className="text-foreground flex justify-between">
+                    <span>{p.name}</span>
+                    <span className="text-muted-foreground text-xs uppercase">
+                      {PROPERTY_DATA_TYPES.find((t) => t.value === p.dataType)?.label}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-xs text-muted-foreground">Chưa có thuộc tính nào.</p>
+            )}
+            <PropertyCreateForm />
+          </div>
+        </div>
+
+        <DialogFooter>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={onClose}
+            className="uppercase tracking-wider text-xs"
+          >
+            Đóng
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+const variantFormSchema = z.object({
+  sku: z.string().min(1, 'SKU là bắt buộc').max(100),
+  price: z
+    .string()
+    .min(1, 'Giá là bắt buộc')
+    .regex(/^\d+$/, 'Giá phải là số nguyên không âm'),
+  stock: z
+    .string()
+    .min(1, 'Tồn kho là bắt buộc')
+    .regex(/^\d+$/, 'Tồn kho phải là số nguyên không âm'),
+});
+
+type VariantForm = z.infer<typeof variantFormSchema>;
+
+const VARIANT_ROW_CLASS = 'grid grid-cols-[1fr_1fr_1fr_auto_auto] gap-2 items-start';
+
+interface VariantRowProps {
+  variant: ProductVariant;
+  deletable: boolean;
+}
+
+function VariantRow({ variant, deletable }: VariantRowProps) {
+  const updateVariant = useUpdateProductVariant();
+  const deleteVariant = useDeleteProductVariant();
+  const form = useForm<VariantForm>({
+    resolver: zodResolver(variantFormSchema),
+    defaultValues: {
+      sku: variant.sku,
+      price: String(variant.price),
+      stock: String(variant.stock),
+    },
+  });
+
+  function onSubmit(values: VariantForm) {
+    updateVariant.mutate(
+      {
+        variantId: variant.id,
+        payload: { sku: values.sku.trim(), priceCents: Number(values.price), stock: Number(values.stock) },
+      },
+      { onSuccess: () => toast.success('Đã cập nhật phân loại') },
+    );
+  }
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className={VARIANT_ROW_CLASS}>
+        <FormField
+          control={form.control}
+          name="sku"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <Input placeholder="SKU" className="h-9" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="price"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <Input type="number" min="0" placeholder="Giá" className="h-9" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="stock"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <Input type="number" min="0" placeholder="Tồn kho" className="h-9" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button
+          type="submit"
+          variant="outline"
+          size="sm"
+          className="h-9 text-xs uppercase tracking-wider"
+          disabled={updateVariant.isPending}
+        >
+          Lưu
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className="size-9 hover:text-destructive"
+          disabled={deleteVariant.isPending || !deletable}
+          title={deletable ? undefined : 'Sản phẩm phải có ít nhất một phân loại'}
+          onClick={() => deleteVariant.mutate(variant.id)}
+        >
+          <Trash2 className="size-4" />
+        </Button>
+      </form>
+    </Form>
+  );
+}
+
+interface NewVariantFormProps {
+  productId: string;
+  onDone: () => void;
+}
+
+function NewVariantForm({ productId, onDone }: NewVariantFormProps) {
+  const createVariant = useCreateProductVariant();
+  const form = useForm<VariantForm>({
+    resolver: zodResolver(variantFormSchema),
+    defaultValues: { sku: '', price: '', stock: '0' },
+  });
+
+  function onSubmit(values: VariantForm) {
+    createVariant.mutate(
+      {
+        productId,
+        payload: { sku: values.sku.trim(), priceCents: Number(values.price), stock: Number(values.stock) },
+      },
+      {
+        onSuccess: () => {
+          toast.success('Đã thêm phân loại mới');
+          onDone();
+        },
+      },
+    );
+  }
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className={VARIANT_ROW_CLASS}>
+        <FormField
+          control={form.control}
+          name="sku"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <Input placeholder="SKU mới" className="h-9" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="price"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <Input type="number" min="0" placeholder="Giá" className="h-9" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="stock"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <Input type="number" min="0" placeholder="Tồn kho" className="h-9" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button
+          type="submit"
+          size="sm"
+          className="h-9 text-xs uppercase tracking-wider"
+          disabled={createVariant.isPending}
+        >
+          Thêm
+        </Button>
+        <Button type="button" variant="ghost" size="icon" className="size-9" onClick={onDone}>
+          <XCircle className="size-4" />
+        </Button>
+      </form>
+    </Form>
+  );
+}
+
+interface VariantsEditorProps {
+  product: Product;
+}
+
+function VariantsEditor({ product }: VariantsEditorProps) {
+  const [showNewVariant, setShowNewVariant] = useState(false);
+
+  return (
+    <div className="space-y-3">
+      {product.variants.map((v) => (
+        <VariantRow key={v.id} variant={v} deletable={product.variants.length > 1} />
+      ))}
 
       {showNewVariant ? (
-        <div className="grid grid-cols-[1fr_1fr_1fr_auto_auto] gap-2 items-center">
-          <Input
-            value={newVariant.sku}
-            onChange={(e) => setNewVariant((v) => ({ ...v, sku: e.target.value }))}
-            placeholder="SKU mới"
-            className="h-9"
-          />
-          <Input
-            type="number"
-            min="0"
-            value={newVariant.price}
-            onChange={(e) => setNewVariant((v) => ({ ...v, price: e.target.value }))}
-            placeholder="Giá"
-            className="h-9"
-          />
-          <Input
-            type="number"
-            min="0"
-            value={newVariant.stock}
-            onChange={(e) => setNewVariant((v) => ({ ...v, stock: e.target.value }))}
-            placeholder="Tồn kho"
-            className="h-9"
-          />
-          <Button
-            type="button"
-            size="sm"
-            className="h-9 text-xs uppercase tracking-wider"
-            disabled={createVariant.isPending}
-            onClick={addVariant}
-          >
-            Thêm
-          </Button>
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            className="size-9"
-            onClick={() => setShowNewVariant(false)}
-          >
-            <XCircle className="size-4" />
-          </Button>
-        </div>
+        <NewVariantForm productId={product.id} onDone={() => setShowNewVariant(false)} />
       ) : (
         <Button
           type="button"
@@ -525,6 +827,7 @@ export default function AdminProductsPage() {
   const [page, setPage] = useState(1);
   const [editProduct, setEditProduct] = useState<Product | null>(null);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [taxonomyDialogOpen, setTaxonomyDialogOpen] = useState(false);
   const [deleteProductConfirm, setDeleteProductConfirm] = useState<Product | null>(null);
   const [search, setSearch] = useState('');
   const debouncedSearch = useDebouncedValue(search);
@@ -557,7 +860,9 @@ export default function AdminProductsPage() {
               {r.name}
             </div>
             <div className="text-sm text-muted-foreground">
-              {r.variants.length} phân loại
+              {r.variants.length === 1
+                ? r.variants[0].sku
+                : `${r.variants.length} phân loại`}
             </div>
           </div>
         </div>
@@ -644,6 +949,15 @@ export default function AdminProductsPage() {
                 }}
               />
             </div>
+            <Button
+              size="sm"
+              variant="outline"
+              className="uppercase tracking-wider"
+              onClick={() => setTaxonomyDialogOpen(true)}
+            >
+              <Tags className="size-4" />
+              Danh mục &amp; Thuộc tính
+            </Button>
             <Button size="sm" className="uppercase tracking-wider" onClick={() => setCreateDialogOpen(true)}>
               <Plus className="size-4" />
               Thêm sản phẩm
@@ -717,6 +1031,10 @@ export default function AdminProductsPage() {
 
       {createDialogOpen && (
         <ProductDialog onClose={() => setCreateDialogOpen(false)} />
+      )}
+
+      {taxonomyDialogOpen && (
+        <ManageTaxonomyDialog onClose={() => setTaxonomyDialogOpen(false)} />
       )}
 
       {deleteProductConfirm && (

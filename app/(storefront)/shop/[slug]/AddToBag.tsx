@@ -46,7 +46,7 @@ export function AddToBag({ product }: AddToBagProps) {
 
   return (
     <div className="space-y-6">
-      {product.variants.length > 1 && (
+      {product.variants.length > 1 ? (
         <Select value={variantId} onValueChange={setVariantId}>
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Chọn phân loại..." />
@@ -60,6 +60,12 @@ export function AddToBag({ product }: AddToBagProps) {
             ))}
           </SelectContent>
         </Select>
+      ) : (
+        variant && (
+          <p className="text-xs text-muted-foreground uppercase tracking-widest">
+            Phân loại: {variant.sku}
+          </p>
+        )
       )}
       <div className="flex items-center justify-between">
         <span className="text-3xl text-foreground">
