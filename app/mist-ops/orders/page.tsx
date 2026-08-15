@@ -216,7 +216,7 @@ export default function AdminOrdersPage() {
     {
       key: 'customer',
       header: 'Khách hàng',
-      width: '30%',
+      width: '25%',
       render: (r) => (
         <div className="flex items-center gap-3 min-w-0">
           <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-[10px] text-muted-foreground font-bold shrink-0">
@@ -254,7 +254,7 @@ export default function AdminOrdersPage() {
       key: 'date',
       header: 'Ngày đặt',
       hideOnMobile: true,
-      width: '15%',
+      width: '10%',
       render: (r) => (
         <span className="text-muted-foreground text-xs">
           {new Date(r.createdAt).toLocaleDateString('vi-VN')}
@@ -265,7 +265,7 @@ export default function AdminOrdersPage() {
       key: 'actions',
       header: '',
       align: 'right',
-      width: '10%',
+      width: '25%',
       render: (r) => {
         const next = NEXT_STATUSES[r.status];
         return (

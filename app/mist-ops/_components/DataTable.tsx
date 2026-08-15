@@ -46,9 +46,9 @@ export function DataTable<T extends { id: string | number }>({
                     <TableHead
                       key={c.key}
                       style={c.width ? { width: c.width } : undefined}
-                      className={`uppercase text-xs tracking-wider text-muted-foreground overflow-hidden text-ellipsis ${
-                        c.align === 'right' ? 'text-right' : ''
-                      }`}
+                      className={`uppercase text-xs tracking-wider text-muted-foreground ${
+                        c.key === 'actions' ? '' : 'overflow-hidden text-ellipsis'
+                      } ${c.align === 'right' ? 'text-right' : ''}`}
                     >
                       {c.header}
                     </TableHead>
@@ -61,7 +61,9 @@ export function DataTable<T extends { id: string | number }>({
                     {columns.map((c) => (
                       <TableCell
                         key={c.key}
-                        className={`overflow-hidden text-ellipsis ${c.align === 'right' ? 'text-right' : ''}`}
+                        className={`${
+                          c.key === 'actions' ? '' : 'overflow-hidden text-ellipsis'
+                        } ${c.align === 'right' ? 'text-right' : ''}`}
                       >
                         {c.render(row)}
                       </TableCell>
