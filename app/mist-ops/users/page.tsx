@@ -432,7 +432,7 @@ export default function AdminUsersPage() {
   return (
     <div className="p-4 sm:p-8">
       <PageHeader
-        eyebrow="Tổng quan về tất cả tài khoản đã đăng ký"
+        eyebrow="Người dùng"
         title="Quản lý Người dùng"
         actions={
           <div className="relative w-full sm:w-64">

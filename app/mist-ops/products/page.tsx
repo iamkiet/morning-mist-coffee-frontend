@@ -55,13 +55,28 @@ import {
   useUpdateProductVariant,
   useDeleteProductVariant,
 } from '@/hooks/use-products';
-import { useProductCategories, useCreateProductCategory } from '@/hooks/use-product-categories';
-import { useProductProperties, useCreateProductProperty } from '@/hooks/use-product-properties';
+import {
+  useProductCategories,
+  useCreateProductCategory,
+} from '@/hooks/use-product-categories';
+import {
+  useProductProperties,
+  useCreateProductProperty,
+} from '@/hooks/use-product-properties';
 import { useDebouncedValue } from '@/hooks/use-debounced-value';
 import { toast } from 'sonner';
 import { ErrorNotice } from '@/app/_components/ErrorNotice';
-import { getDefaultVariant, getPriceRange, getTotalStock } from '@/lib/product-variants';
-import type { Product, ProductCategory, ProductVariant, PropertyDataType } from '@/lib/types';
+import {
+  getDefaultVariant,
+  getPriceRange,
+  getTotalStock,
+} from '@/lib/product-variants';
+import type {
+  Product,
+  ProductCategory,
+  ProductVariant,
+  PropertyDataType,
+} from '@/lib/types';
 
 const LIMIT = 10;
 
@@ -78,12 +93,18 @@ const productSchema = z.object({
     .regex(/^\d+$/, 'Tồn kho phải là số nguyên không âm'),
   categoryIds: z.array(z.string()),
   description: z.string().max(5000).optional(),
-  image: z.union([z.literal(''), z.string().url('Đường dẫn hình ảnh không hợp lệ')]),
+  image: z.union([
+    z.literal(''),
+    z.string().url('Đường dẫn hình ảnh không hợp lệ'),
+  ]),
 });
 
 type ProductForm = z.infer<typeof productSchema>;
 
-function categoryLabel(category: ProductCategory, all: ProductCategory[]): string {
+function categoryLabel(
+  category: ProductCategory,
+  all: ProductCategory[],
+): string {
   const parent = category.parentId
     ? all.find((c) => c.id === category.parentId)
     : undefined;
@@ -109,12 +130,17 @@ function CategoryCheckboxList({
   return (
     <div className="max-h-40 overflow-y-auto space-y-2 border border-border rounded-lg p-3">
       {categories.map((c) => (
-        <label key={c.id} className="flex items-center gap-2 text-sm cursor-pointer">
+        <label
+          key={c.id}
+          className="flex items-center gap-2 text-sm cursor-pointer"
+        >
           <Checkbox
             checked={selected.includes(c.id)}
             onCheckedChange={(checked) =>
               onChange(
-                checked ? [...selected, c.id] : selected.filter((id) => id !== c.id),
+                checked
+                  ? [...selected, c.id]
+                  : selected.filter((id) => id !== c.id),
               )
             }
           />
@@ -168,14 +194,17 @@ function CategoryCreateForm({ categories }: CategoryCreateFormProps) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-[1fr_1fr_auto] gap-2">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="grid grid-cols-[1fr_1fr_auto] gap-2"
+      >
         <FormField
           control={form.control}
           name="name"
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Input placeholder="Tên danh mục mới" className="h-9" {...field} />
+                <Input placeholder="Tên danh mục mới" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -188,7 +217,7 @@ function CategoryCreateForm({ categories }: CategoryCreateFormProps) {
             <FormItem>
               <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
-                  <SelectTrigger className="h-9 w-full">
+                  <SelectTrigger className="w-full">
                     <SelectValue placeholder="Danh mục cha (tùy chọn)" />
                   </SelectTrigger>
                 </FormControl>
@@ -207,8 +236,8 @@ function CategoryCreateForm({ categories }: CategoryCreateFormProps) {
         />
         <Button
           type="submit"
-          size="sm"
-          className="h-9 text-xs uppercase tracking-wider"
+          size="default"
+          className="text-xs uppercase tracking-wider"
           disabled={createCategory.isPending}
         >
           Thêm
@@ -246,14 +275,17 @@ function PropertyCreateForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-[1fr_1fr_auto] gap-2">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="grid grid-cols-[1fr_1fr_auto] gap-2"
+      >
         <FormField
           control={form.control}
           name="name"
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Input placeholder="Tên thuộc tính mới" className="h-9" {...field} />
+                <Input placeholder="Tên thuộc tính mới" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -266,7 +298,7 @@ function PropertyCreateForm() {
             <FormItem>
               <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
-                  <SelectTrigger className="h-9 w-full">
+                  <SelectTrigger className="w-full">
                     <SelectValue />
                   </SelectTrigger>
                 </FormControl>
@@ -284,8 +316,8 @@ function PropertyCreateForm() {
         />
         <Button
           type="submit"
-          size="sm"
-          className="h-9 text-xs uppercase tracking-wider"
+          size="default"
+          className="text-xs uppercase tracking-wider"
           disabled={createProperty.isPending}
         >
           Thêm
@@ -317,7 +349,7 @@ function ManageTaxonomyDialog({ onClose }: ManageTaxonomyDialogProps) {
 
         <div className="space-y-6 py-2">
           <div className="space-y-3">
-            <h3 className="text-xs uppercase tracking-wider text-muted-foreground font-medium">
+            <h3 className="text-xs uppercase tracking-widest text-muted-foreground font-medium">
               Danh mục sản phẩm
             </h3>
             {catLoading ? (
@@ -331,7 +363,9 @@ function ManageTaxonomyDialog({ onClose }: ManageTaxonomyDialogProps) {
                 ))}
               </ul>
             ) : (
-              <p className="text-xs text-muted-foreground">Chưa có danh mục nào.</p>
+              <p className="text-xs text-muted-foreground">
+                Chưa có danh mục nào.
+              </p>
             )}
             <CategoryCreateForm categories={categories} />
           </div>
@@ -339,7 +373,7 @@ function ManageTaxonomyDialog({ onClose }: ManageTaxonomyDialogProps) {
           <Separator />
 
           <div className="space-y-3">
-            <h3 className="text-xs uppercase tracking-wider text-muted-foreground font-medium">
+            <h3 className="text-xs uppercase tracking-widest text-muted-foreground font-medium">
               Thuộc tính sản phẩm
             </h3>
             {propLoading ? (
@@ -347,16 +381,24 @@ function ManageTaxonomyDialog({ onClose }: ManageTaxonomyDialogProps) {
             ) : properties.length > 0 ? (
               <ul className="max-h-32 overflow-y-auto text-sm space-y-1 border border-border rounded-lg p-3">
                 {properties.map((p) => (
-                  <li key={p.id} className="text-foreground flex justify-between">
+                  <li
+                    key={p.id}
+                    className="text-foreground flex justify-between"
+                  >
                     <span>{p.name}</span>
                     <span className="text-muted-foreground text-xs uppercase">
-                      {PROPERTY_DATA_TYPES.find((t) => t.value === p.dataType)?.label}
+                      {
+                        PROPERTY_DATA_TYPES.find((t) => t.value === p.dataType)
+                          ?.label
+                      }
                     </span>
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="text-xs text-muted-foreground">Chưa có thuộc tính nào.</p>
+              <p className="text-xs text-muted-foreground">
+                Chưa có thuộc tính nào.
+              </p>
             )}
             <PropertyCreateForm />
           </div>
@@ -392,7 +434,8 @@ const variantFormSchema = z.object({
 
 type VariantForm = z.infer<typeof variantFormSchema>;
 
-const VARIANT_ROW_CLASS = 'grid grid-cols-[1fr_1fr_1fr_auto_auto] gap-2 items-start';
+const VARIANT_ROW_CLASS =
+  'grid grid-cols-[1fr_1fr_1fr_auto_auto] gap-2 items-start';
 
 interface VariantRowProps {
   variant: ProductVariant;
@@ -415,7 +458,11 @@ function VariantRow({ variant, deletable }: VariantRowProps) {
     updateVariant.mutate(
       {
         variantId: variant.id,
-        payload: { sku: values.sku.trim(), priceCents: Number(values.price), stock: Number(values.stock) },
+        payload: {
+          sku: values.sku.trim(),
+          priceCents: Number(values.price),
+          stock: Number(values.stock),
+        },
       },
       { onSuccess: () => toast.success('Đã cập nhật phân loại') },
     );
@@ -423,14 +470,17 @@ function VariantRow({ variant, deletable }: VariantRowProps) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className={VARIANT_ROW_CLASS}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className={VARIANT_ROW_CLASS}
+      >
         <FormField
           control={form.control}
           name="sku"
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Input placeholder="SKU" className="h-9" {...field} />
+                <Input placeholder="SKU" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -442,7 +492,7 @@ function VariantRow({ variant, deletable }: VariantRowProps) {
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Input type="number" min="0" placeholder="Giá" className="h-9" {...field} />
+                <Input type="number" min="0" placeholder="Giá" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -454,7 +504,7 @@ function VariantRow({ variant, deletable }: VariantRowProps) {
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Input type="number" min="0" placeholder="Tồn kho" className="h-9" {...field} />
+                <Input type="number" min="0" placeholder="Tồn kho" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -463,8 +513,8 @@ function VariantRow({ variant, deletable }: VariantRowProps) {
         <Button
           type="submit"
           variant="outline"
-          size="sm"
-          className="h-9 text-xs uppercase tracking-wider"
+          size="default"
+          className="text-xs uppercase tracking-wider"
           disabled={updateVariant.isPending}
         >
           Lưu
@@ -473,9 +523,11 @@ function VariantRow({ variant, deletable }: VariantRowProps) {
           type="button"
           variant="ghost"
           size="icon"
-          className="size-9 hover:text-destructive"
+          className="size-8 hover:text-destructive"
           disabled={deleteVariant.isPending || !deletable}
-          title={deletable ? undefined : 'Sản phẩm phải có ít nhất một phân loại'}
+          title={
+            deletable ? undefined : 'Sản phẩm phải có ít nhất một phân loại'
+          }
           onClick={() => deleteVariant.mutate(variant.id)}
         >
           <Trash2 className="size-4" />
@@ -501,7 +553,11 @@ function NewVariantForm({ productId, onDone }: NewVariantFormProps) {
     createVariant.mutate(
       {
         productId,
-        payload: { sku: values.sku.trim(), priceCents: Number(values.price), stock: Number(values.stock) },
+        payload: {
+          sku: values.sku.trim(),
+          priceCents: Number(values.price),
+          stock: Number(values.stock),
+        },
       },
       {
         onSuccess: () => {
@@ -514,14 +570,17 @@ function NewVariantForm({ productId, onDone }: NewVariantFormProps) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className={VARIANT_ROW_CLASS}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className={VARIANT_ROW_CLASS}
+      >
         <FormField
           control={form.control}
           name="sku"
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Input placeholder="SKU mới" className="h-9" {...field} />
+                <Input placeholder="SKU mới" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -533,7 +592,7 @@ function NewVariantForm({ productId, onDone }: NewVariantFormProps) {
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Input type="number" min="0" placeholder="Giá" className="h-9" {...field} />
+                <Input type="number" min="0" placeholder="Giá" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -545,7 +604,7 @@ function NewVariantForm({ productId, onDone }: NewVariantFormProps) {
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Input type="number" min="0" placeholder="Tồn kho" className="h-9" {...field} />
+                <Input type="number" min="0" placeholder="Tồn kho" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -553,13 +612,13 @@ function NewVariantForm({ productId, onDone }: NewVariantFormProps) {
         />
         <Button
           type="submit"
-          size="sm"
-          className="h-9 text-xs uppercase tracking-wider"
+          size="default"
+          className="text-xs uppercase tracking-wider"
           disabled={createVariant.isPending}
         >
           Thêm
         </Button>
-        <Button type="button" variant="ghost" size="icon" className="size-9" onClick={onDone}>
+        <Button type="button" variant="ghost" size="icon" onClick={onDone}>
           <XCircle className="size-4" />
         </Button>
       </form>
@@ -577,11 +636,18 @@ function VariantsEditor({ product }: VariantsEditorProps) {
   return (
     <div className="space-y-3">
       {product.variants.map((v) => (
-        <VariantRow key={v.id} variant={v} deletable={product.variants.length > 1} />
+        <VariantRow
+          key={v.id}
+          variant={v}
+          deletable={product.variants.length > 1}
+        />
       ))}
 
       {showNewVariant ? (
-        <NewVariantForm productId={product.id} onDone={() => setShowNewVariant(false)} />
+        <NewVariantForm
+          productId={product.id}
+          onDone={() => setShowNewVariant(false)}
+        />
       ) : (
         <Button
           type="button"
@@ -651,7 +717,8 @@ function ProductDialog({ product, onClose }: ProductDialogProps) {
         name: values.name.trim(),
         description: values.description?.trim() || null,
         image: values.image.trim() || null,
-        categoryIds: values.categoryIds.length > 0 ? values.categoryIds : undefined,
+        categoryIds:
+          values.categoryIds.length > 0 ? values.categoryIds : undefined,
         variant: {
           sku: values.sku.trim(),
           priceCents: Number(values.price),
@@ -676,7 +743,10 @@ function ProductDialog({ product, onClose }: ProductDialogProps) {
           </DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-2">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-4 py-2"
+          >
             <FormField
               control={form.control}
               name="name"
@@ -731,7 +801,13 @@ function ProductDialog({ product, onClose }: ProductDialogProps) {
                     <FormItem>
                       <FormLabel>Giá bán (VNĐ)</FormLabel>
                       <FormControl>
-                        <Input type="number" min="0" step="1" placeholder="0" {...field} />
+                        <Input
+                          type="number"
+                          min="0"
+                          step="1"
+                          placeholder="0"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -760,7 +836,11 @@ function ProductDialog({ product, onClose }: ProductDialogProps) {
                 <FormItem>
                   <FormLabel>Mô tả</FormLabel>
                   <FormControl>
-                    <Textarea rows={3} placeholder="Mô tả ngắn về hương vị..." {...field} />
+                    <Textarea
+                      rows={3}
+                      placeholder="Mô tả ngắn về hương vị..."
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -828,11 +908,16 @@ export default function AdminProductsPage() {
   const [editProduct, setEditProduct] = useState<Product | null>(null);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [taxonomyDialogOpen, setTaxonomyDialogOpen] = useState(false);
-  const [deleteProductConfirm, setDeleteProductConfirm] = useState<Product | null>(null);
+  const [deleteProductConfirm, setDeleteProductConfirm] =
+    useState<Product | null>(null);
   const [search, setSearch] = useState('');
   const debouncedSearch = useDebouncedValue(search);
 
-  const { data, isLoading, isError } = useProducts(page, LIMIT, debouncedSearch);
+  const { data, isLoading, isError } = useProducts(
+    page,
+    LIMIT,
+    debouncedSearch,
+  );
   const deleteMut = useDeleteProduct();
 
   const items = data?.items ?? [];
@@ -932,8 +1017,8 @@ export default function AdminProductsPage() {
   return (
     <div className="p-4 sm:p-8">
       <PageHeader
+        eyebrow="Sản phẩm"
         title="Quản lý Kho hàng"
-        description="Morning Mist được khai sinh từ làn sương sớm tĩnh lặng nơi đại ngàn, nơi mỗi hạt cà phê là một câu chuyện kể về vùng thổ nhưỡng đã nuôi dưỡng chúng."
         actions={
           <>
             <div className="relative w-full sm:w-64">
@@ -950,7 +1035,6 @@ export default function AdminProductsPage() {
               />
             </div>
             <Button
-              size="sm"
               variant="outline"
               className="uppercase tracking-wider"
               onClick={() => setTaxonomyDialogOpen(true)}
@@ -958,7 +1042,10 @@ export default function AdminProductsPage() {
               <Tags className="size-4" />
               Danh mục &amp; Thuộc tính
             </Button>
-            <Button size="sm" className="uppercase tracking-wider" onClick={() => setCreateDialogOpen(true)}>
+            <Button
+              className="uppercase tracking-wider"
+              onClick={() => setCreateDialogOpen(true)}
+            >
               <Plus className="size-4" />
               Thêm sản phẩm
             </Button>
@@ -978,8 +1065,9 @@ export default function AdminProductsPage() {
             isLoading
               ? '—'
               : String(
-                  items.filter((p) => getTotalStock(p) > 0 && getTotalStock(p) <= 5)
-                    .length,
+                  items.filter(
+                    (p) => getTotalStock(p) > 0 && getTotalStock(p) <= 5,
+                  ).length,
                 )
           }
           delta="Trên trang này"
@@ -988,7 +1076,11 @@ export default function AdminProductsPage() {
         />
         <StatCard
           label="Hết hàng"
-          value={isLoading ? '—' : String(items.filter((p) => getTotalStock(p) === 0).length)}
+          value={
+            isLoading
+              ? '—'
+              : String(items.filter((p) => getTotalStock(p) === 0).length)
+          }
           delta="Trên trang này"
           icon={XCircle}
           tone="tertiary"
@@ -996,7 +1088,9 @@ export default function AdminProductsPage() {
       </section>
 
       {isError && (
-        <ErrorNotice>Không thể tải danh sách sản phẩm. Vui lòng thử lại.</ErrorNotice>
+        <ErrorNotice>
+          Không thể tải danh sách sản phẩm. Vui lòng thử lại.
+        </ErrorNotice>
       )}
 
       {isLoading ? (
@@ -1022,11 +1116,13 @@ export default function AdminProductsPage() {
             />
           }
         />
-      )
-      }
+      )}
 
       {editProduct && (
-        <ProductDialog product={editProduct} onClose={() => setEditProduct(null)} />
+        <ProductDialog
+          product={editProduct}
+          onClose={() => setEditProduct(null)}
+        />
       )}
 
       {createDialogOpen && (
@@ -1038,7 +1134,10 @@ export default function AdminProductsPage() {
       )}
 
       {deleteProductConfirm && (
-        <Dialog open onOpenChange={(open) => !open && setDeleteProductConfirm(null)}>
+        <Dialog
+          open
+          onOpenChange={(open) => !open && setDeleteProductConfirm(null)}
+        >
           <DialogContent className="sm:max-w-[24rem]">
             <DialogHeader>
               <DialogTitle className="text-sm uppercase tracking-widest font-medium">
@@ -1046,7 +1145,9 @@ export default function AdminProductsPage() {
               </DialogTitle>
             </DialogHeader>
             <div className="py-2 text-sm text-muted-foreground">
-              Bạn có chắc chắn muốn xóa sản phẩm <strong>{deleteProductConfirm.name}</strong> không? Hành động này không thể hoàn tác.
+              Bạn có chắc chắn muốn xóa sản phẩm{' '}
+              <strong>{deleteProductConfirm.name}</strong> không? Hành động này
+              không thể hoàn tác.
             </div>
             <DialogFooter>
               <Button

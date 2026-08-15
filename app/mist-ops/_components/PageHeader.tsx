@@ -3,21 +3,17 @@ import type { ReactNode } from 'react';
 interface PageHeaderProps {
   eyebrow?: string;
   title: string;
-  description?: string;
   actions?: ReactNode;
   size?: 'headline' | 'display';
   titleColor?: 'default' | 'primary';
-  descriptionItalic?: boolean;
 }
 
 export function PageHeader({
   eyebrow,
   title,
-  description,
   actions,
   size = 'headline',
   titleColor = 'default',
-  descriptionItalic = false,
 }: PageHeaderProps) {
   const titleCls =
     size === 'display'
@@ -36,13 +32,6 @@ export function PageHeader({
         <h1 className={`${titleCls} ${colorCls} break-words font-light`}>
           {title}
         </h1>
-        {description && (
-          <p
-            className={`text-sm sm:text-base text-muted-foreground ${descriptionItalic ? 'italic' : ''}`}
-          >
-            {description}
-          </p>
-        )}
       </div>
       {actions && (
         <div className="flex flex-wrap gap-2 sm:gap-3 items-center">

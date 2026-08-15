@@ -106,7 +106,10 @@ function EditOrderDialog({ order, onClose }: EditOrderDialogProps) {
           </DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-2">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-4 py-2"
+          >
             <p className="text-xs text-muted-foreground">
               #{order.id.slice(0, 8).toUpperCase()} · {order.email}
             </p>
@@ -216,7 +219,9 @@ export default function AdminOrdersPage() {
           <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-[10px] text-muted-foreground font-bold shrink-0">
             {r.email.slice(0, 2).toUpperCase()}
           </div>
-          <p className="text-sm text-muted-foreground truncate min-w-0">{r.email}</p>
+          <p className="text-sm text-muted-foreground truncate min-w-0">
+            {r.email}
+          </p>
         </div>
       ),
     },
@@ -288,7 +293,6 @@ export default function AdminOrdersPage() {
       <PageHeader
         eyebrow="Đơn hàng"
         title="Quản lý Đơn hàng Morning Mist"
-        description="Mỗi đơn hàng đều được chuẩn bị và trân trọng tận tâm."
         actions={
           <div className="relative w-full sm:w-64">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
@@ -315,14 +319,22 @@ export default function AdminOrdersPage() {
         />
         <StatCard
           label="Chờ xử lý"
-          value={isLoading ? '—' : String(orders.filter((o) => o.status === 'pending').length)}
+          value={
+            isLoading
+              ? '—'
+              : String(orders.filter((o) => o.status === 'pending').length)
+          }
           delta="Trên trang này"
           icon={Clock}
           tone="secondary"
         />
         <StatCard
           label="Đã giao"
-          value={isLoading ? '—' : String(orders.filter((o) => o.status === 'delivered').length)}
+          value={
+            isLoading
+              ? '—'
+              : String(orders.filter((o) => o.status === 'delivered').length)
+          }
           delta="Trên trang này"
           icon={CheckCircle2}
           tone="tertiary"
@@ -396,7 +408,10 @@ export default function AdminOrdersPage() {
                           </span>
                         </span>
                         <span className="text-muted-foreground">
-                          {(item.priceCents * item.quantity).toLocaleString('vi-VN')} ₫
+                          {(item.priceCents * item.quantity).toLocaleString(
+                            'vi-VN',
+                          )}{' '}
+                          ₫
                         </span>
                       </div>
                     ))}
@@ -404,9 +419,7 @@ export default function AdminOrdersPage() {
                       <span className="uppercase tracking-widest text-xs text-muted-foreground">
                         Tổng cộng
                       </span>
-                      <span>
-                        {order.totalCents.toLocaleString('vi-VN')} ₫
-                      </span>
+                      <span>{order.totalCents.toLocaleString('vi-VN')} ₫</span>
                     </div>
                     {order.shippingAddress && (
                       <div className="space-y-1 text-xs text-muted-foreground pt-2 border-t border-dashed border-border mt-2">
@@ -418,7 +431,9 @@ export default function AdminOrdersPage() {
                         </p>
                         <p>
                           {order.shippingAddress}, {order.shippingCity}
-                          {order.shippingPostalCode ? ` ${order.shippingPostalCode}` : ''}
+                          {order.shippingPostalCode
+                            ? ` ${order.shippingPostalCode}`
+                            : ''}
                         </p>
                       </div>
                     )}

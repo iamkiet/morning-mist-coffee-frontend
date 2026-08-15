@@ -88,7 +88,7 @@ export default async function ProductPage(props: {
           </div>
 
           <div className="mb-12 space-y-2">
-            <h3 className="text-foreground border-b border-border pb-1 uppercase text-xs tracking-wider">
+            <h3 className="text-foreground border-b border-border pb-1 uppercase text-xs tracking-widest">
               Hướng Dẫn Pha Chế
             </h3>
             <div className="flex items-start gap-6 py-2">

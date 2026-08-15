@@ -114,6 +114,10 @@ All auth endpoints live in `lib/api/auth.ts` — never call them with a bare `fe
 
 **Variant `propertyValues` are real EAV data, not inferred.** `ProductVariant.propertyValues: VariantPropertyValue[]` (`{ propertyId, propertyName, value }`) comes from `GET /products`, `/products/slug/:slug`, `/products/:id`, and voice search — sourced from `product_variant_property_values` in the DB. Use `getPropertyValue(variant, propertyName)` to read one (e.g. `getPropertyValue(variant, 'Mức rang')`). It's absent (empty array) on the admin variant-mutation endpoints (create/update variant, stock adjust), which don't attach it. There used to be a `lib/product-attributes.ts` stopgap that guessed roast level/process method from the product name — it's gone; that data lives in the DB now.
 
+**A variant's customer-facing weight label is parsed from its SKU, not a DB field.** `getVariantLabel(variant)` / `getVariantLabelFromSku(sku)` in `lib/product-variants.ts` strip the trailing weight token off the SKU (`CF-0001-500G` → `500g`) — this is a stopgap, same spirit as the old `product-attributes.ts` one, because there's no weight column on `ProductVariant` (weight is only present as a `Trọng lượng` EAV property, which isn't wired into these helpers). Never show `variant.sku` raw to a customer (storefront cart, checkout, product page) — always go through one of these two functions. Admin surfaces (the products table, `VariantsEditor`) are the one place raw SKU is intentionally shown, since staff need it for inventory.
+
+**Variant/weight selector is a `Button` row, not a `Select`.** `AddToBag.tsx` renders one toggle `Button` per variant (`variant={selected ? 'default' : 'outline'}`) when a product has more than one variant, and a plain `Trọng lượng: {label}` line when it has exactly one — never a dropdown for this, and never the raw SKU (see the two rules above).
+
 ## Admin Dashboard Best Practices
 
 - **Search Inputs**: Place search inputs directly inside `<PageHeader actions={...}>` on all admin table pages (`products`, `users`, `orders`). Use unified styling (`pl-10 bg-card w-full`) and wrap with `<div className="relative w-full sm:w-64">` so the search bar spans full-width on mobile and behaves consistently on desktop.
@@ -133,6 +137,8 @@ All auth endpoints live in `lib/api/auth.ts` — never call them with a bare `fe
 ## Design Tokens
 
 Use shadcn/ui CSS tokens only. MD3/Material tokens (`bg-surface-*`, `bg-secondary-container`, etc.) will not resolve. Full list + examples: `.claude/skills/design-tokens/SKILL.md`. Pre-edit hook blocks violations automatically — fix them, don't bypass.
+
+Control heights, rounding, typography scale, tracking and spacing — everything color doesn't cover — have their own full reference table: `.claude/skills/component-sizing/SKILL.md`. This is where the `Input`/`Select`/`Button` row-height rule (see Consistency rules below) is spelled out with every component's actual height.
 
 ## Page structure (storefront)
 
@@ -169,8 +175,9 @@ These exist because the codebase drifted; a review found each one. Do not reintr
 - **Spacing**: numeric Tailwind only (`py-12`, `gap-6`). The `--spacing-md/lg/xl` aliases are gone from components; `px-gutter` stays because the responsive padding rule below uses it.
 - **Rounding**: `rounded-lg` for controls (button, input, select), `rounded-xl` for surfaces (card, dialog, image, panel), `rounded-full` for pills and avatars. No `rounded-md`, no `rounded-2xl`.
 - **Letter spacing**: buttons use `uppercase tracking-wider`; headings, eyebrows and table labels use `uppercase tracking-widest`.
-- **Controls**: always the shadcn component — `Input`, `Textarea`, `Select`, `Button`. Raw `<input>`, `<select>`, `<textarea>` and `<button>` are only acceptable for a checkbox or a genuinely inline text affordance.
+- **Controls**: always the shadcn component — `Input`, `Textarea`, `Select`, `Button`. Raw `<input>`, `<select>`, `<textarea>` and `<button>` are only acceptable for a checkbox or a genuinely inline text affordance. A selectable chip/pill (e.g. a variant/weight picker) is still a `Button` — toggle `variant={selected ? 'default' : 'outline'}`, never a hand-rolled `<button>` with manual selected/unselected classes (see `AddToBag.tsx`).
 - **Forms**: `react-hook-form` + `zod` + the shadcn `Form` primitives, always. Never hand-roll `useState` per field, and never `return` silently on invalid input — that is how the product dialog used to swallow a bad price.
+- **Row height alignment**: when `Input`/`SelectTrigger` (both default to `h-8`) sit inline next to a `Button` in the same row (e.g. an inline "add new row" form), the `Button` must be `size="default"` (`h-8`) too — `size="sm"` is `h-7` and visibly misaligns by 4px. `size="icon"` is `size-8` and already matches. Never add a manual height override (`className="h-9"` etc.) to force alignment instead — that drifts from every other Input/Select/Button in the app, which all use their unmodified defaults (see `mist-ops/products/page.tsx`'s inline category/property/variant forms).
 - **Async state**: `Skeleton` for loading, `<ErrorNotice>` for failures, `toast.success(...)` after a successful mutation. All three admin tables and the storefront follow this.
 - **Query hooks** destructure `{ data, isLoading, isError }` — not `error`.
 - **Stat cards must show real numbers.** If a figure is only true for the loaded page, label it `Trên trang này`. Never ship a placeholder number.

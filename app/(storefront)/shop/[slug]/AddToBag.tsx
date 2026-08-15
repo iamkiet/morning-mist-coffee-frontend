@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { Minus, Plus, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
 import { useCart } from '@/lib/cart';
 import { useTemporaryFlag } from '@/hooks/use-temporary-flag';
 import { getDefaultVariant, getVariantLabel } from '@/lib/product-variants';
@@ -47,24 +46,19 @@ export function AddToBag({ product }: AddToBagProps) {
           </span>
           <div className="flex flex-wrap gap-2">
             {product.variants.map((v) => (
-              <button
+              <Button
                 key={v.id}
                 type="button"
-                onClick={() => setVariantId(v.id)}
+                variant={v.id === variantId ? 'default' : 'outline'}
+                size="sm"
                 disabled={v.stock <= 0}
                 aria-pressed={v.id === variantId}
-                className={cn(
-                  'px-4 py-2 rounded-lg border text-sm uppercase tracking-wider transition-colors',
-                  v.id === variantId
-                    ? 'border-primary bg-primary/5 text-primary font-medium'
-                    : 'border-border text-muted-foreground hover:border-primary/50',
-                  v.stock <= 0
-                    ? 'opacity-40 line-through cursor-not-allowed'
-                    : 'cursor-pointer',
-                )}
+                onClick={() => setVariantId(v.id)}
+                className="uppercase tracking-wider"
               >
                 {getVariantLabel(v)}
-              </button>
+                {v.stock <= 0 ? ' (Hết hàng)' : ''}
+              </Button>
             ))}
           </div>
         </div>

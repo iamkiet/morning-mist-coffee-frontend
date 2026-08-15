@@ -69,9 +69,8 @@ export default function AdminOverviewPage() {
   return (
     <div className="p-4 sm:p-8">
       <PageHeader
+        eyebrow="Bảng điều khiển"
         title="Tổng quan Morning Mist"
-        description="Một sự phản chiếu tĩnh lặng về tiến độ hôm nay."
-        descriptionItalic={true}
         size="display"
         titleColor="primary"
         actions={
