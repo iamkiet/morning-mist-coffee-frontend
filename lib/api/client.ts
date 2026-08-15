@@ -2,17 +2,19 @@ import { API_URL } from '@/lib/config';
 import type { User } from '@/lib/types';
 import { postRefresh } from './auth';
 
-// In-memory CSRF token — lost on hard refresh, restored via the httpOnly
-// refresh-token cookie (access/refresh tokens live entirely in httpOnly
-// cookies now; this is the one value the browser client needs to hold,
-// since it must echo it back as a header on mutating requests).
-let csrfToken: string | null = null;
+const CSRF_STORAGE_KEY = 'morning-mist-csrf-token';
 
-export function setCsrfToken(token: string | null) {
-  csrfToken = token;
+function getCsrfToken(): string | null {
+  if (typeof window === 'undefined') return null;
+  return localStorage.getItem(CSRF_STORAGE_KEY);
 }
 
-/** Shared querystring for the paginated list endpoints (products, users, orders). */
+export function setCsrfToken(token: string | null) {
+  if (typeof window === 'undefined') return;
+  if (token) localStorage.setItem(CSRF_STORAGE_KEY, token);
+  else localStorage.removeItem(CSRF_STORAGE_KEY);
+}
+
 export function listQuery(limit: number, offset: number, q: string): string {
   const params = new URLSearchParams({
     limit: String(limit),
@@ -25,7 +27,6 @@ export function listQuery(limit: number, offset: number, q: string): string {
 const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
 
 function request(path: string, options: RequestInit = {}): Promise<Response> {
-  // Let the browser set its own multipart Content-Type (with boundary) for FormData bodies
   const isFormData = typeof FormData !== 'undefined' && options.body instanceof FormData;
   const headers: Record<string, string> = {
     ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
@@ -33,8 +34,9 @@ function request(path: string, options: RequestInit = {}): Promise<Response> {
   };
 
   const method = (options.method ?? 'GET').toUpperCase();
-  if (!SAFE_METHODS.has(method) && csrfToken) {
-    headers['X-CSRF-Token'] = csrfToken;
+  if (!SAFE_METHODS.has(method)) {
+    const csrfToken = getCsrfToken();
+    if (csrfToken) headers['X-CSRF-Token'] = csrfToken;
   }
 
   return fetch(`${API_URL}${path}`, {
@@ -44,26 +46,28 @@ function request(path: string, options: RequestInit = {}): Promise<Response> {
   });
 }
 
-// Shared promise — concurrent 401s all wait on the same refresh call
 let refreshPromise: Promise<boolean> | null = null;
 
-/**
- * Rotates the httpOnly access/refresh cookies via the backend and refreshes
- * the in-memory CSRF token. Deduped: concurrent callers — a 401 retry and
- * the AuthProvider's session restore — share one request.
- */
 export function refreshSession(): Promise<boolean> {
   if (refreshPromise) return refreshPromise;
   refreshPromise = postRefresh()
     .catch(() => null)
     .then((token) => {
-      csrfToken = token;
+      setCsrfToken(token);
       return token !== null;
     })
     .finally(() => {
       refreshPromise = null;
     });
   return refreshPromise;
+}
+
+async function resyncCsrfToken(): Promise<boolean> {
+  const res = await request('/api/v1/auth/me');
+  if (!res.ok) return false;
+  const data = await res.json();
+  setCsrfToken(data.csrfToken ?? null);
+  return Boolean(data.csrfToken);
 }
 
 export type OnAuthFailure = () => void;
@@ -77,19 +81,29 @@ export async function authFetch(
   path: string,
   options: RequestInit = {},
 ): Promise<Response> {
-  const res = await request(path, options);
-  if (res.status !== 401) return res;
+  let res = await request(path, options);
 
-  const refreshed = await refreshSession();
-  if (!refreshed) {
-    onAuthFailure?.();
-    return res;
+  if (res.status === 401) {
+    const refreshed = await refreshSession();
+    if (!refreshed) {
+      onAuthFailure?.();
+      return res;
+    }
+    res = await request(path, options);
   }
 
-  return request(path, options);
+  if (res.status === 403) {
+    const resynced = await resyncCsrfToken();
+    if (resynced) res = await request(path, options);
+  }
+
+  return res;
 }
 
 export async function fetchMe(): Promise<User | null> {
   const res = await authFetch('/api/v1/auth/me');
-  return res.ok ? res.json() : null;
+  if (!res.ok) return null;
+  const data = await res.json();
+  setCsrfToken(data.csrfToken ?? null);
+  return data.user ?? null;
 }
