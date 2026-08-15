@@ -29,7 +29,7 @@ const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
 function request(path: string, options: RequestInit = {}): Promise<Response> {
   const isFormData = typeof FormData !== 'undefined' && options.body instanceof FormData;
   const headers: Record<string, string> = {
-    ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
+    ...(!isFormData && options.body ? { 'Content-Type': 'application/json' } : {}),
     ...(options.headers as Record<string, string>),
   };
 
