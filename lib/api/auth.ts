@@ -4,38 +4,29 @@ import type { User } from '@/lib/types';
 export type { User };
 
 export interface LoginResult {
-  accessToken: string;
   user: User;
+  csrfToken: string;
 }
 
-function readCookie(name: string): string | null {
-  if (typeof document === 'undefined') return null;
-  const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
-  return match ? decodeURIComponent(match[1]) : null;
-}
-
-// These use plain `fetch` rather than `authFetch` on purpose: they either run
-// before a token exists or must not send an expired one. `authFetch` also
-// refreshes on 401, which would recurse through `postRefresh`.
+// `/api/v1/auth/*` is CSRF-exempt server-side, so these plain `fetch` calls
+// don't need to attach X-CSRF-Token. They avoid `authFetch` on purpose: they
+// either run before a session exists or must not trigger its 401→refresh
+// retry (which would recurse through `postRefresh`).
 function post(path: string, body: unknown = {}): Promise<Response> {
-  const csrfToken = readCookie('csrf_token');
   return fetch(`${API_URL}${path}`, {
     method: 'POST',
     credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-      ...(csrfToken ? { 'X-CSRF-Token': csrfToken } : {}),
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   });
 }
 
-/** Exchanges the HttpOnly refresh cookie for a new access token. */
+/** Rotates the httpOnly refresh cookie server-side; returns the new CSRF token. */
 export async function postRefresh(): Promise<string | null> {
   const res = await post('/api/v1/auth/refresh');
   if (!res.ok) return null;
   const data = await res.json();
-  return data.accessToken ?? null;
+  return data.csrfToken ?? null;
 }
 
 export async function postLogin(
@@ -54,12 +45,4 @@ export async function postLogin(
 
 export async function postLogout(): Promise<void> {
   await post('/api/v1/auth/logout').catch(() => {});
-}
-
-export async function fetchMe(accessToken: string): Promise<User | null> {
-  const res = await fetch(`${API_URL}/api/v1/auth/me`, {
-    credentials: 'include',
-    headers: { Authorization: `Bearer ${accessToken}` },
-  });
-  return res.ok ? res.json() : null;
 }

@@ -9,8 +9,8 @@ import {
   useState,
 } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { setAccessToken, setAuthFailureHandler, refreshAccessToken } from '@/lib/api/client';
-import { fetchMe, postLogin, postLogout, type User } from '@/lib/api/auth';
+import { setCsrfToken, setAuthFailureHandler, fetchMe } from '@/lib/api/client';
+import { postLogin, postLogout, type User } from '@/lib/api/auth';
 
 export type { User };
 
@@ -42,7 +42,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const restoreStarted = useRef(false);
 
   const clearSession = useCallback(() => {
-    setAccessToken(null);
+    setCsrfToken(null);
     setUser(null);
     // Admin data cached under the previous identity must not leak into the next
     queryClient.clear();
@@ -57,11 +57,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
     restoreStarted.current = true;
     setStatus('loading');
 
-    // On page load the access token is gone (in-memory), so try the HttpOnly cookie
+    // The access token lives in an httpOnly cookie now, so it survives a
+    // reload — fetchMe() (via authFetch) transparently refreshes on 401 if
+    // it turns out to be expired, so a single call covers both cases.
     (async () => {
       try {
-        const token = await refreshAccessToken();
-        setUser(token ? await fetchMe(token) : null);
+        setUser(await fetchMe());
       } catch {
         setUser(null);
       } finally {
@@ -71,8 +72,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, []);
 
   const login = useCallback(async (email: string, password: string) => {
-    const { accessToken, user: signedIn } = await postLogin(email, password);
-    setAccessToken(accessToken);
+    const { csrfToken, user: signedIn } = await postLogin(email, password);
+    setCsrfToken(csrfToken);
     setUser(signedIn);
     restoreStarted.current = true;
     setStatus('ready');

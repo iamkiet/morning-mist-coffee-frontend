@@ -50,8 +50,8 @@ lib/
                             getVariantLabel()/getPropertyValue()/getBrewingGuide()
                             helpers over Product.variants
   api/client.ts           — authFetch() with auto-retry on 401,
-                            refreshAccessToken() (deduped), listQuery()
-  api/auth.ts             — postLogin(), postLogout(), postRefresh(), fetchMe()
+                            refreshSession() (deduped), fetchMe(), listQuery()
+  api/auth.ts             — postLogin(), postLogout(), postRefresh()
   api/products.ts         — fetchProducts(), fetchProduct() (by slug),
                             updateProduct(), searchProductsByVoice(),
                             createProductVariant()/updateProductVariant()/
@@ -86,9 +86,9 @@ hooks/
 
 ## Auth flow
 
-`AuthProvider` (in `lib/auth-context.tsx`) holds the in-memory access token and user object. It does **not** restore the session on mount — the routes that need one (`app/mist-ops/layout.tsx`, `app/login/page.tsx`) call `ensureSession()` in an effect, so public pages fire no auth request. `ensureSession()` is idempotent; `isLoading` stays `true` until an attempt settles.
+Access and refresh tokens live entirely in httpOnly cookies set by the backend — `AuthProvider` (in `lib/auth-context.tsx`) never sees the token values, only the in-memory `csrfToken` (via `setCsrfToken()` in `client.ts`) and the `user` object. It does **not** eagerly restore the session on mount — the routes that need one (`app/mist-ops/layout.tsx`, `app/login/page.tsx`) call `ensureSession()` in an effect, so public pages fire no auth request. `ensureSession()` calls `fetchMe()` once; since the access-token cookie survives a reload, this is usually a single request — if it's expired, `authFetch`'s built-in 401→refresh→retry handles it transparently. `ensureSession()` is idempotent; `isLoading` stays `true` until an attempt settles.
 
-All auth endpoints live in `lib/api/auth.ts` — never call them with a bare `fetch()`. The deduped refresh lives in `lib/api/client.ts` as `refreshAccessToken()`; `authFetch()` and `ensureSession()` share it, so a 401 retry and a session restore never race. `authFetch()` handles 401 → refresh → retry automatically.
+All auth endpoints live in `lib/api/auth.ts` — never call them with a bare `fetch()`. FE never manually attaches an `Authorization` header or reads `csrf_token`/`access_token` cookies via `document.cookie` — the backend is on a different origin, so those cookies are never readable by FE JS at all (same-origin cookie rule, unrelated to CORS/SameSite); the CSRF token is instead returned in the JSON body of `login`/`register`/`refresh` and held in memory. The deduped refresh lives in `lib/api/client.ts` as `refreshSession()`; `authFetch()` and `ensureSession()` (via `fetchMe()`) share it, so a 401 retry and a session restore never race. `authFetch()` handles 401 → refresh → retry automatically. `/api/v1/auth/*` itself is exempt from CSRF checking (login/register can't be forged without the victim's password; refresh/logout are cookie-only and CORS blocks an attacker from reading their responses).
 
 `logout()` calls `queryClient.clear()`, so cached admin data cannot leak across accounts.
 
