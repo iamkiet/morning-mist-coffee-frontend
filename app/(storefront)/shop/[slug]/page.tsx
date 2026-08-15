@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { Coffee, Thermometer, Leaf } from 'lucide-react';
 import { Container } from '@/app/_components/Container';
 import { fetchProduct } from '@/lib/api/products';
-import { getProductAttributes } from '@/lib/product-attributes';
+import { getBrewingGuide, getDefaultVariant, getPropertyValue } from '@/lib/product-variants';
 import { AddToBag } from './AddToBag';
 
 export default async function ProductPage(props: {
@@ -13,8 +13,10 @@ export default async function ProductPage(props: {
   const product = await fetchProduct(slug);
   if (!product) notFound();
 
-  const { roastLevel, processMethod, brewingNote, temperatureNote } =
-    getProductAttributes(product.name);
+  const variant = getDefaultVariant(product);
+  const roastLevel = variant && getPropertyValue(variant, 'Mức rang');
+  const processMethod = variant && getPropertyValue(variant, 'Phương pháp chế biến');
+  const { brewingNote, temperatureNote } = getBrewingGuide(roastLevel);
 
   return (
     <Container navOffset className="pb-20">

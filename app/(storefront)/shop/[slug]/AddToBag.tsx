@@ -58,7 +58,9 @@ export function AddToBag({ product }: AddToBagProps) {
                   v.id === variantId
                     ? 'border-primary bg-primary/5 text-primary font-medium'
                     : 'border-border text-muted-foreground hover:border-primary/50',
-                  v.stock <= 0 && 'opacity-40 line-through cursor-not-allowed',
+                  v.stock <= 0
+                    ? 'opacity-40 line-through cursor-not-allowed'
+                    : 'cursor-pointer',
                 )}
               >
                 {getVariantLabel(v)}

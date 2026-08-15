@@ -1,4 +1,4 @@
-import type { Product, ProductVariant } from '@/lib/types';
+import type { Product, ProductVariant, VariantPropertyValue } from '@/lib/types';
 import { DEFAULT_PRODUCT_IMAGE } from '@/lib/product-images';
 import { authFetch, listQuery } from './client';
 
@@ -14,6 +14,7 @@ interface BackendProductVariant {
   expiresAt: string | null;
   createdAt: string;
   updatedAt: string;
+  propertyValues?: VariantPropertyValue[];
 }
 
 interface BackendProduct {
@@ -43,6 +44,7 @@ function transformVariant(v: BackendProductVariant): ProductVariant {
     currency: v.currency,
     stock: v.stock,
     expiresAt: v.expiresAt,
+    propertyValues: v.propertyValues ?? [],
   };
 }
 

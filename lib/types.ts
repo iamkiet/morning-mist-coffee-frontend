@@ -1,6 +1,12 @@
 // Shared domain types. These live outside `app/_components` so that `lib/api`
 // and the hooks do not depend on a `'use client'` UI module.
 
+export interface VariantPropertyValue {
+  propertyId: string;
+  propertyName: string;
+  value: string;
+}
+
 export interface ProductVariant {
   id: string;
   productId: string;
@@ -9,6 +15,7 @@ export interface ProductVariant {
   currency: string;
   stock: number;
   expiresAt: string | null;
+  propertyValues: VariantPropertyValue[];
 }
 
 export interface Product {

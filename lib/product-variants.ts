@@ -1,6 +1,5 @@
 import type { Product, ProductVariant } from '@/lib/types';
 
-/** The variant shown by default on cards/listings — the cheapest one in stock, falling back to the cheapest overall. */
 export function getDefaultVariant(product: Product): ProductVariant | undefined {
   const variants = product.variants;
   if (variants.length === 0) return undefined;
@@ -21,13 +20,35 @@ export function getPriceRange(product: Product): { min: number; max: number } {
 
 const WEIGHT_SUFFIX = /-(\d+(?:[.,]\d+)?(?:kg|g|ml|l))$/i;
 
-/**
- * A customer-facing label for a variant. The API doesn't return the weight
- * property on variants yet, so this parses the trailing weight token off the
- * SKU (e.g. `CF-0001-500G` → `500g`) instead of showing the raw SKU. Falls
- * back to the SKU if it doesn't follow that convention.
- */
+export function getVariantLabelFromSku(sku: string): string {
+  const match = sku.match(WEIGHT_SUFFIX);
+  return match ? match[1].toLowerCase() : sku;
+}
+
 export function getVariantLabel(variant: ProductVariant): string {
-  const match = variant.sku.match(WEIGHT_SUFFIX);
-  return match ? match[1].toLowerCase() : variant.sku;
+  return getVariantLabelFromSku(variant.sku);
+}
+
+export function getPropertyValue(
+  variant: ProductVariant,
+  propertyName: string,
+): string | undefined {
+  return variant.propertyValues.find((p) => p.propertyName === propertyName)?.value;
+}
+
+export interface BrewingGuide {
+  brewingNote: string;
+  temperatureNote: string;
+}
+
+export function getBrewingGuide(roastLevel: string | undefined): BrewingGuide {
+  const isDarkRoast = roastLevel?.includes('Đậm') ?? false;
+  return {
+    brewingNote: isDarkRoast
+      ? 'Thưởng thức trọn vẹn nhất với phin pha truyền thống hoặc máy Espresso để cảm nhận lớp crema sánh mịn cùng vị đắng đậm đà.'
+      : 'Phù hợp nhất cho phương pháp pha Pour Over (phễu lọc V60 hoặc Chemex) để cảm nhận trọn vẹn hương hoa thanh tao và hậu vị chua dịu tinh tế.',
+    temperatureNote: isDarkRoast
+      ? 'Nên dùng nước sôi từ 90°C - 95°C để chiết xuất trọn vẹn vị đậm sâu và hương thơm nồng nàn.'
+      : 'Nên dùng nước mềm ở nhiệt độ 92°C để lưu giữ tốt nhất độ chua thanh tự nhiên của hạt.',
+  };
 }

@@ -46,8 +46,8 @@ lib/
                             from a component module.
   auth-context.tsx        — AuthProvider: in-memory access token, HttpOnly refresh cookie
   cart.tsx                — CartProvider: localStorage cart via useSyncExternalStore
-  product-attributes.ts   — roast/process inferred from product name (stopgap)
-  product-variants.ts     — getDefaultVariant()/getTotalStock()/getPriceRange()
+  product-variants.ts     — getDefaultVariant()/getTotalStock()/getPriceRange()/
+                            getVariantLabel()/getPropertyValue()/getBrewingGuide()
                             helpers over Product.variants
   api/client.ts           — authFetch() with auto-retry on 401,
                             refreshAccessToken() (deduped), listQuery()
@@ -111,6 +111,8 @@ All auth endpoints live in `lib/api/auth.ts` — never call them with a bare `fe
 **`slug` comes from the API — never derive it.** The backend owns `products.slug` (unique, stable across renames). `fetchProduct(slug)` hits `GET /api/v1/products/slug/:slug` in a single request. Do not reconstruct a slug from `name`: it collides on duplicate names and mangles Vietnamese diacritics.
 
 **Products are variant-based, not flat.** `Product` only carries identity/copy (`slug`, `name`, `description`, `image`); price, SKU, stock and expiry live on `Product.variants: ProductVariant[]`. There is no more `origin`/`tastingNotes`/`price`/`stockQuantity`/`productTypeId` on `Product` — the backend dropped them along with the `product_type` concept in favor of `product_categories` (hierarchical) and an EAV `product_properties` model. Use `lib/product-variants.ts` helpers (`getDefaultVariant`, `getPriceRange`, `getTotalStock`) instead of reading a single price/stock field. The API does not return a product's assigned `categoryIds` on `GET` (only accepts them on create/`PUT .../categories`), so the admin edit dialog cannot safely re-display or preserve existing category assignments — category selection only happens at product creation until the backend adds that field to the read response.
+
+**Variant `propertyValues` are real EAV data, not inferred.** `ProductVariant.propertyValues: VariantPropertyValue[]` (`{ propertyId, propertyName, value }`) comes from `GET /products`, `/products/slug/:slug`, `/products/:id`, and voice search — sourced from `product_variant_property_values` in the DB. Use `getPropertyValue(variant, propertyName)` to read one (e.g. `getPropertyValue(variant, 'Mức rang')`). It's absent (empty array) on the admin variant-mutation endpoints (create/update variant, stock adjust), which don't attach it. There used to be a `lib/product-attributes.ts` stopgap that guessed roast level/process method from the product name — it's gone; that data lives in the DB now.
 
 ## Admin Dashboard Best Practices
 

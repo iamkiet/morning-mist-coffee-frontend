@@ -22,6 +22,7 @@ import { Container } from '@/app/_components/Container';
 import { ErrorNotice } from '@/app/_components/ErrorNotice';
 import { useCart } from '@/lib/cart';
 import { useCreateOrder } from '@/hooks/use-orders';
+import { getVariantLabelFromSku } from '@/lib/product-variants';
 import { toast } from 'sonner';
 
 const checkoutSchema = z.object({
@@ -69,7 +70,7 @@ export default function CheckoutPage() {
         totalCents: Math.round(total),
         items: items.map((item) => ({
           productVariantId: item.productVariantId,
-          name: item.name,
+          name: `${item.name} — ${getVariantLabelFromSku(item.sku)}`,
           priceCents: Math.round(item.price),
           quantity: item.quantity,
         })),
@@ -137,7 +138,7 @@ export default function CheckoutPage() {
                         </div>
                         <div className="flex-grow min-w-0">
                           <p className="text-sm font-medium truncate">
-                            {item.name}
+                            {item.name} — {getVariantLabelFromSku(item.sku)}
                           </p>
                           <div className="flex items-center gap-1 mt-1">
                             <button
