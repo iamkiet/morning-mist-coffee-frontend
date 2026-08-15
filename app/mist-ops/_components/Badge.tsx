@@ -1,16 +1,7 @@
 import type { ReactNode } from 'react';
 import { Badge as ShadcnBadge } from '@/components/ui/badge';
 
-type Status =
-  | 'success'
-  | 'info'
-  | 'warning'
-  | 'neutral'
-  | 'error'
-  | 'primary'
-  | 'purple'
-  | 'pink'
-  | 'indigo';
+type Status = 'success' | 'info' | 'warning' | 'neutral' | 'error' | 'primary';
 
 interface BadgeProps {
   children: ReactNode;
@@ -26,9 +17,6 @@ const statusCls: Record<Status, string> = {
   error: 'bg-card text-destructive border-destructive/30 hover:bg-muted',
   primary:
     'bg-primary text-primary-foreground border-primary hover:bg-primary/90',
-  purple: 'bg-muted text-muted-foreground border-border hover:bg-muted/60',
-  pink: 'bg-accent/10 text-accent-foreground border-accent/20 hover:bg-accent/20',
-  indigo: 'bg-primary/10 text-primary border-primary/20 hover:bg-primary/20',
 };
 
 export function Badge({ children, status = 'neutral' }: BadgeProps) {

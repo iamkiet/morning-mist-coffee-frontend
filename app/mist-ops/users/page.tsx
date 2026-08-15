@@ -49,9 +49,9 @@ import { ErrorNotice } from '@/app/_components/ErrorNotice';
 import { useDebouncedValue } from '@/hooks/use-debounced-value';
 import type { AdminUser, UserRole, UserStatus } from '@/lib/types';
 
-const roleStyle: Record<UserRole, 'primary' | 'purple'> = {
+const roleStyle: Record<UserRole, 'primary' | 'neutral'> = {
   admin: 'primary',
-  user: 'purple',
+  user: 'neutral',
 };
 
 const statusStyle: Record<UserStatus, 'success' | 'neutral' | 'error'> = {
@@ -105,7 +105,7 @@ const ROLE_OPTIONS: { value: UserRole; label: string }[] = [
 const STATUS_OPTIONS: { value: UserStatus; label: string }[] = [
   { value: 'active', label: 'Hoạt động' },
   { value: 'inactive', label: 'Không hoạt động' },
-  { value: 'banned', label: 'Bị cấm' },
+  { value: 'banned', label: 'Bị khóa' },
 ];
 
 function EditUserDialog({ user, onClose }: EditUserDialogProps) {

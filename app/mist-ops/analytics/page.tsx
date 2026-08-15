@@ -92,7 +92,7 @@ export default function AdminAnalyticsPage() {
           </h4>
           <div className="flex items-center space-x-2">
             <span className="w-3 h-3 rounded-full bg-accent" />
-            <span className="text-[10px] text-xs uppercase tracking-wider text-muted-foreground uppercase">
+            <span className="text-xs uppercase tracking-wider text-muted-foreground">
               Sản lượng hàng tháng
             </span>
           </div>
@@ -107,12 +107,12 @@ export default function AdminAnalyticsPage() {
               <linearGradient id="revGrad" x1="0" x2="0" y1="0" y2="1">
                 <stop
                   offset="0%"
-                  stopColor="var(--color-primary-container)"
+                  stopColor="var(--accent)"
                   stopOpacity="0.4"
                 />
                 <stop
                   offset="100%"
-                  stopColor="var(--color-primary-container)"
+                  stopColor="var(--accent)"
                   stopOpacity="0"
                 />
               </linearGradient>
@@ -120,7 +120,7 @@ export default function AdminAnalyticsPage() {
             <path
               d="M0,250 Q100,230 200,240 T400,180 T600,150 T800,100 T1000,80"
               fill="none"
-              stroke="var(--color-primary-container)"
+              stroke="var(--accent)"
               strokeWidth="2"
             />
             <path
@@ -184,13 +184,13 @@ export default function AdminAnalyticsPage() {
                 <path
                   d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                   fill="transparent"
-                  stroke="var(--color-surface-container)"
+                  stroke="var(--muted)"
                   strokeWidth="3"
                 />
                 <path
                   d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                   fill="transparent"
-                  stroke="var(--color-primary-container)"
+                  stroke="var(--accent)"
                   strokeDasharray="65, 100"
                   strokeLinecap="round"
                   strokeWidth="3"
@@ -198,7 +198,7 @@ export default function AdminAnalyticsPage() {
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
                 <span className="text-2xl font-light text-foreground">65%</span>
-                <span className="text-[9px] text-xs uppercase tracking-wider text-muted-foreground uppercase">
+                <span className="text-xs uppercase tracking-wider text-muted-foreground">
                   Tự nhiên
                 </span>
               </div>

@@ -132,7 +132,7 @@ export function Pagination({
 }: PaginationProps) {
   return (
     <div className="px-4 py-3 flex items-center justify-between">
-      <p className="text-xs uppercase tracking-widest text-muted-foreground">
+      <p className="text-xs uppercase tracking-wider text-muted-foreground">
         {showing}
       </p>
       {totalPages > 1 && (

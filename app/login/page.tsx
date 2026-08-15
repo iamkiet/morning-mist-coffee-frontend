@@ -17,6 +17,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import { ErrorNotice } from '@/app/_components/ErrorNotice';
 import { useAuth } from '@/lib/auth-context';
 
@@ -145,11 +146,9 @@ export default function LoginPage() {
             />
 
             <Label className="flex items-center gap-2 cursor-pointer select-none font-normal">
-              <input
-                type="checkbox"
+              <Checkbox
                 checked={rememberMe}
-                onChange={(e) => setRememberMe(e.target.checked)}
-                className="size-4 accent-foreground cursor-pointer"
+                onCheckedChange={(checked) => setRememberMe(checked === true)}
               />
               <span className="text-xs text-muted-foreground normal-case tracking-normal">
                 Ghi nhớ email của tôi
