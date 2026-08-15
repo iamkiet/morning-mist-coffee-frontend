@@ -74,17 +74,21 @@ app/
 components/ui/          # shadcn components only
 
 lib/
-├── types.ts             # Shared domain types (Product)
-├── auth-context.tsx      # AuthProvider: in-memory access token, refresh cookie
-├── cart.tsx               # CartProvider: localStorage cart via useSyncExternalStore
+├── types.ts               # Shared domain types (Product, ProductVariant, ...)
+├── auth-context.tsx        # AuthProvider: access/refresh tokens live in httpOnly
+│                             # cookies (backend-set); FE only holds csrfToken + user
+├── cart.tsx                 # CartProvider: localStorage cart via useSyncExternalStore
+├── product-variants.ts       # getDefaultVariant(), getVariantLabel(), getPropertyValue()
 └── api/
-    ├── client.ts           # authFetch() (401 → refresh → retry), listQuery()
-    ├── auth.ts              # postLogin(), postLogout(), postRefresh(), fetchMe()
-    ├── products.ts           # fetchProducts(), fetchProduct(slug), CRUD, searchProductsByVoice()
-    ├── orders.ts              # fetchOrders(), createOrder(), lookupOrders(), updateOrderStatus()
-    ├── users.ts                # fetchUsers(), updateUser()
-    ├── product-types.ts         # fetchProductTypes(), createProductType()
-    └── chat.ts                   # sendChatMessage()
+    ├── client.ts              # authFetch() (401 → refresh, 403 → CSRF resync, retry once),
+    │                          # csrfToken storage (localStorage), listQuery()
+    ├── auth.ts                 # postLogin(), postLogout(), postRefresh()
+    ├── products.ts              # fetchProducts(), fetchProduct(slug), CRUD, searchProductsByVoice()
+    ├── product-categories.ts    # fetchProductCategories(), createProductCategory()
+    ├── product-properties.ts    # fetchProductProperties(), createProductProperty()
+    ├── orders.ts                 # fetchOrders(), createOrder(), lookupOrders(), updateOrderStatus()
+    ├── users.ts                   # fetchUsers(), updateUser()
+    └── chat.ts                     # sendChatMessage()
 
 hooks/                    # TanStack Query wrappers around lib/api/* — no fetch here
 ```
