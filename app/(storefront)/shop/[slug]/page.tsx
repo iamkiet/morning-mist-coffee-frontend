@@ -24,7 +24,7 @@ export default async function ProductPage(props: {
         <div className="lg:col-span-7 space-y-6">
           <div className="relative aspect-[4/5] bg-muted rounded-xl overflow-hidden shadow-[0_30px_60px_-15px_rgba(85,98,84,0.1)] group">
             <Image
-              src={product.image}
+              src={product.imageUrl}
               alt={product.name}
               fill
               priority

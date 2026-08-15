@@ -30,7 +30,7 @@ export function ProductCard({ product }: ProductCardProps) {
       <Link href={`/shop/${product.slug}`} className="block">
         <div className="relative overflow-hidden aspect-[4/5] mb-4 rounded-xl bg-card shadow-sm transition-all duration-500 group-hover:shadow-lg">
           <Image
-            src={product.image}
+            src={product.imageUrl}
             alt={product.name}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"

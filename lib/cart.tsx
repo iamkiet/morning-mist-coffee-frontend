@@ -12,7 +12,7 @@ export interface CartItem {
   name: string;
   sku: string;
   price: number;
-  image: string;
+  imageUrl: string;
   quantity: number;
 }
 
@@ -98,7 +98,7 @@ export function CartProvider({ children }: CartProviderProps) {
               name: product.name,
               sku: variant.sku,
               price: variant.price,
-              image: product.image,
+              imageUrl: product.imageUrl,
               quantity,
             },
           ],

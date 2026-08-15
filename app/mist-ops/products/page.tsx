@@ -93,7 +93,7 @@ const productSchema = z.object({
     .regex(/^\d+$/, 'Tồn kho phải là số nguyên không âm'),
   categoryIds: z.array(z.string()),
   description: z.string().max(5000).optional(),
-  image: z.union([
+  imageUrl: z.union([
     z.literal(''),
     z.string().url('Đường dẫn hình ảnh không hợp lệ'),
   ]),
@@ -687,7 +687,7 @@ function ProductDialog({ product, onClose }: ProductDialogProps) {
       stock: String(defaultVariant?.stock ?? 0),
       categoryIds: [],
       description: product?.description ?? '',
-      image: product?.image ?? '',
+      imageUrl: product?.imageUrl ?? '',
     },
   });
 
@@ -699,7 +699,7 @@ function ProductDialog({ product, onClose }: ProductDialogProps) {
           payload: {
             name: values.name.trim(),
             description: values.description?.trim() || null,
-            image: values.image.trim() || null,
+            imageUrl: values.imageUrl.trim() || null,
           },
         },
         {
@@ -716,7 +716,7 @@ function ProductDialog({ product, onClose }: ProductDialogProps) {
       {
         name: values.name.trim(),
         description: values.description?.trim() || null,
-        image: values.image.trim() || null,
+        imageUrl: values.imageUrl.trim() || null,
         categoryIds:
           values.categoryIds.length > 0 ? values.categoryIds : undefined,
         variant: {
@@ -848,7 +848,7 @@ function ProductDialog({ product, onClose }: ProductDialogProps) {
             />
             <FormField
               control={form.control}
-              name="image"
+              name="imageUrl"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Đường dẫn hình ảnh</FormLabel>
@@ -933,7 +933,7 @@ export default function AdminProductsPage() {
         <div className="flex items-center gap-4">
           <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-card flex-shrink-0">
             <Image
-              src={r.image}
+              src={r.imageUrl}
               alt={r.name}
               fill
               sizes="64px"

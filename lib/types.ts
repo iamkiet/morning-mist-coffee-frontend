@@ -23,7 +23,7 @@ export interface Product {
   slug: string;
   name: string;
   description: string;
-  image: string;
+  imageUrl: string;
   variants: ProductVariant[];
   badge?: string;
   categoryIds?: string[];

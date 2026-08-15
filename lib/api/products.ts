@@ -22,7 +22,7 @@ interface BackendProduct {
   slug: string;
   name: string;
   description: string | null;
-  image: string | null;
+  imageUrl: string | null;
   variants: BackendProductVariant[];
   createdAt: string;
   updatedAt: string;
@@ -54,7 +54,7 @@ function transform(p: BackendProduct): Product {
     slug: p.slug,
     name: p.name,
     description: p.description ?? '',
-    image: p.image ?? DEFAULT_PRODUCT_IMAGE,
+    imageUrl: p.imageUrl ?? DEFAULT_PRODUCT_IMAGE,
     variants: p.variants.map(transformVariant),
   };
 }
@@ -87,7 +87,7 @@ export async function fetchProduct(slug: string): Promise<Product | undefined> {
 export interface UpdateProductPayload {
   name?: string;
   description?: string | null;
-  image?: string | null;
+  imageUrl?: string | null;
 }
 
 export async function updateProduct(
@@ -113,7 +113,7 @@ export interface CreateProductVariantPayload {
 export interface CreateProductPayload {
   name: string;
   description: string | null;
-  image: string | null;
+  imageUrl: string | null;
   categoryIds?: string[];
   variant: CreateProductVariantPayload;
 }

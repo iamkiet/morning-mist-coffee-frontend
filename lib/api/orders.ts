@@ -7,17 +7,24 @@ export type OrderStatus =
   | 'delivered'
   | 'cancelled';
 
+export interface OrderItemPropertyValue {
+  propertyName: string;
+  value: string;
+}
+
 export interface OrderItem {
   id: string;
   productVariantId: string | null;
-  name: string;
+  productName: string;
+  variantSku: string | null;
+  variantPropertyValues: OrderItemPropertyValue[];
   priceCents: number;
   quantity: number;
 }
 
 export interface Order {
   id: string;
-  email: string;
+  customerEmail: string;
   status: OrderStatus;
   totalCents: number;
   currency: string;
@@ -71,13 +78,13 @@ export async function lookupOrders(code: string): Promise<Order[]> {
 
 export interface CreateOrderItemInput {
   productVariantId?: string;
-  name: string;
+  productName: string;
   priceCents: number;
   quantity: number;
 }
 
 export interface CreateOrderPayload {
-  email: string;
+  customerEmail: string;
   totalCents: number;
   items: CreateOrderItemInput[];
   currency?: string;

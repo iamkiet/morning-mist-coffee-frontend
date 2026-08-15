@@ -14,6 +14,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { useTemporaryFlag } from '@/hooks/use-temporary-flag';
 import type { Order, OrderStatus } from '@/lib/api/orders';
+import { getVariantLabelFromSku } from '@/lib/product-variants';
 
 const STATUS_CONFIG: Record<
   OrderStatus,
@@ -107,7 +108,13 @@ export function OrderCard({ order }: OrderCardProps) {
                 className="flex justify-between items-center text-sm"
               >
                 <span className="text-foreground">
-                  {item.name}
+                  {item.productName}
+                  {item.variantSku && (
+                    <span className="text-muted-foreground">
+                      {' '}
+                      — {getVariantLabelFromSku(item.variantSku)}
+                    </span>
+                  )}
                   <span className="text-muted-foreground ml-1">
                     ×{item.quantity}
                   </span>

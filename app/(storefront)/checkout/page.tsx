@@ -66,11 +66,11 @@ export default function CheckoutPage() {
 
     createOrder.mutate(
       {
-        email: data.email,
+        customerEmail: data.email,
         totalCents: Math.round(total),
         items: items.map((item) => ({
           productVariantId: item.productVariantId,
-          name: `${item.name} — ${getVariantLabelFromSku(item.sku)}`,
+          productName: `${item.name} — ${getVariantLabelFromSku(item.sku)}`,
           priceCents: Math.round(item.price),
           quantity: item.quantity,
         })),
@@ -129,7 +129,7 @@ export default function CheckoutPage() {
                       >
                         <div className="relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 bg-muted">
                           <Image
-                            src={item.image}
+                            src={item.imageUrl}
                             alt={item.name}
                             fill
                             sizes="80px"

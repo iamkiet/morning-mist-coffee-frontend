@@ -46,6 +46,7 @@ import { toast } from 'sonner';
 import { ErrorNotice } from '@/app/_components/ErrorNotice';
 import { useDebouncedValue } from '@/hooks/use-debounced-value';
 import type { Order, OrderStatus } from '@/lib/api/orders';
+import { getVariantLabelFromSku } from '@/lib/product-variants';
 
 const ALL_STATUSES: OrderStatus[] = [
   'pending',
@@ -111,7 +112,7 @@ function EditOrderDialog({ order, onClose }: EditOrderDialogProps) {
             className="space-y-4 py-2"
           >
             <p className="text-xs text-muted-foreground">
-              #{order.id.slice(0, 8).toUpperCase()} · {order.email}
+              #{order.id.slice(0, 8).toUpperCase()} · {order.customerEmail}
             </p>
             <FormField
               control={form.control}
@@ -217,10 +218,10 @@ export default function AdminOrdersPage() {
       render: (r) => (
         <div className="flex items-center gap-3 min-w-0">
           <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-[10px] text-muted-foreground font-bold shrink-0">
-            {r.email.slice(0, 2).toUpperCase()}
+            {r.customerEmail.slice(0, 2).toUpperCase()}
           </div>
           <p className="text-sm text-muted-foreground truncate min-w-0">
-            {r.email}
+            {r.customerEmail}
           </p>
         </div>
       ),
@@ -402,7 +403,13 @@ export default function AdminOrdersPage() {
                         className="flex items-center justify-between text-sm"
                       >
                         <span className="text-foreground">
-                          {item.name}
+                          {item.productName}
+                          {item.variantSku && (
+                            <span className="text-muted-foreground">
+                              {' '}
+                              — {getVariantLabelFromSku(item.variantSku)}
+                            </span>
+                          )}
                           <span className="text-muted-foreground ml-2">
                             ×{item.quantity}
                           </span>
