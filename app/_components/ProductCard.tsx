@@ -48,7 +48,7 @@ export function ProductCard({ product }: ProductCardProps) {
           )}
         </div>
         <div className="text-center px-4 mb-3">
-          <h3 className="text-base text-foreground mb-2 font-medium">
+          <h3 className="text-base text-foreground mb-2 font-medium line-clamp-2 min-h-12">
             {product.name}
           </h3>
           <p className="text-sm text-muted-foreground">
