@@ -18,6 +18,7 @@ export interface Column<T> {
   header: string;
   align?: 'left' | 'right';
   hideOnMobile?: boolean;
+  width?: string;
   render: (row: T) => ReactNode;
 }
 
@@ -44,7 +45,8 @@ export function DataTable<T extends { id: string | number }>({
                   {columns.map((c) => (
                     <TableHead
                       key={c.key}
-                      className={`uppercase text-xs tracking-wider text-muted-foreground ${
+                      style={c.width ? { width: c.width } : undefined}
+                      className={`uppercase text-xs tracking-wider text-muted-foreground overflow-hidden text-ellipsis ${
                         c.align === 'right' ? 'text-right' : ''
                       }`}
                     >
@@ -59,7 +61,7 @@ export function DataTable<T extends { id: string | number }>({
                     {columns.map((c) => (
                       <TableCell
                         key={c.key}
-                        className={c.align === 'right' ? 'text-right' : ''}
+                        className={`overflow-hidden text-ellipsis ${c.align === 'right' ? 'text-right' : ''}`}
                       >
                         {c.render(row)}
                       </TableCell>

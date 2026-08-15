@@ -5,6 +5,7 @@ import {
   UserX,
   UserCheck,
   Pencil,
+  Trash2,
   Search,
   Users as UsersIcon,
   Zap,
@@ -42,11 +43,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { useUsers, useUpdateUser, useUpdateUserPassword } from '@/hooks/use-users';
+import {
+  useUsers,
+  useUpdateUser,
+  useUpdateUserPassword,
+  useDeleteUser,
+} from '@/hooks/use-users';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
 import { ErrorNotice } from '@/app/_components/ErrorNotice';
 import { useDebouncedValue } from '@/hooks/use-debounced-value';
+import { useAuth } from '@/lib/auth-context';
 import type { AdminUser, UserRole, UserStatus } from '@/lib/types';
 
 const roleStyle: Record<UserRole, 'primary' | 'neutral'> = {
@@ -328,7 +335,10 @@ export default function AdminUsersPage() {
   const { data, isLoading, isError } = useUsers(page, LIMIT, debouncedSearch);
   const [editUser, setEditUser] = useState<AdminUser | null>(null);
   const [resetPasswordUser, setResetPasswordUser] = useState<AdminUser | null>(null);
+  const [deleteUserConfirm, setDeleteUserConfirm] = useState<AdminUser | null>(null);
   const toggleStatus = useUpdateUser();
+  const deleteMut = useDeleteUser();
+  const { user: currentUser } = useAuth();
 
   const users = data?.items ?? [];
   const total = data?.total ?? 0;
@@ -339,6 +349,7 @@ export default function AdminUsersPage() {
     {
       key: 'name',
       header: 'Chi tiết người dùng',
+      width: '35%',
       render: (r) => (
         <div className="flex items-center gap-4">
           <UserAvatar firstName={r.firstName} lastName={r.lastName} />
@@ -354,12 +365,14 @@ export default function AdminUsersPage() {
     {
       key: 'role',
       header: 'Vai trò tài khoản',
+      width: '20%',
       render: (r) => <Badge status={roleStyle[r.role]}>{ROLE_VIETNAMESE[r.role]}</Badge>,
     },
     {
       key: 'joined',
       header: 'Ngày tham gia',
       hideOnMobile: true,
+      width: '20%',
       render: (r) => (
         <span className="text-muted-foreground text-sm">
           {new Date(r.createdAt).toLocaleDateString('vi-VN', {
@@ -373,12 +386,14 @@ export default function AdminUsersPage() {
     {
       key: 'status',
       header: 'Trạng thái',
+      width: '15%',
       render: (r) => <Badge status={statusStyle[r.status]}>{STATUS_VIETNAMESE[r.status]}</Badge>,
     },
     {
       key: 'actions',
       header: 'Thao tác',
       align: 'right',
+      width: '10%',
       render: (r) => (
         <div className="flex justify-end gap-1">
           <Button
@@ -424,6 +439,17 @@ export default function AdminUsersPage() {
           >
             <Pencil className="size-4" />
           </Button>
+          {r.id !== currentUser?.id && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-8 hover:text-destructive"
+              title="Xóa"
+              onClick={() => setDeleteUserConfirm(r)}
+            >
+              <Trash2 className="size-4" />
+            </Button>
+          )}
         </div>
       ),
     },
@@ -512,6 +538,61 @@ export default function AdminUsersPage() {
           user={resetPasswordUser}
           onClose={() => setResetPasswordUser(null)}
         />
+      )}
+
+      {deleteUserConfirm && (
+        <Dialog
+          open
+          onOpenChange={(open) => !open && setDeleteUserConfirm(null)}
+        >
+          <DialogContent className="sm:max-w-[24rem]">
+            <DialogHeader>
+              <DialogTitle className="text-sm uppercase tracking-widest font-medium">
+                Xác nhận Xóa
+              </DialogTitle>
+            </DialogHeader>
+            <div className="py-2 text-sm text-muted-foreground">
+              Bạn có chắc chắn muốn xóa tài khoản{' '}
+              <strong>
+                {deleteUserConfirm.firstName} {deleteUserConfirm.lastName}
+              </strong>{' '}
+              không? Hành động này không thể hoàn tác.
+            </div>
+            {deleteMut.isError && (
+              <ErrorNotice className="mb-0">
+                {deleteMut.error instanceof Error
+                  ? deleteMut.error.message
+                  : 'Không thể xóa người dùng. Vui lòng thử lại.'}
+              </ErrorNotice>
+            )}
+            <DialogFooter>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setDeleteUserConfirm(null)}
+                className="uppercase tracking-wider text-xs"
+              >
+                Hủy
+              </Button>
+              <Button
+                variant="destructive"
+                size="sm"
+                className="uppercase tracking-wider text-xs"
+                disabled={deleteMut.isPending}
+                onClick={() => {
+                  deleteMut.mutate(deleteUserConfirm.id, {
+                    onSuccess: () => {
+                      toast.success('Đã xóa người dùng');
+                      setDeleteUserConfirm(null);
+                    },
+                  });
+                }}
+              >
+                {deleteMut.isPending ? 'Đang xóa...' : 'Xóa'}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       )}
     </div>
   );

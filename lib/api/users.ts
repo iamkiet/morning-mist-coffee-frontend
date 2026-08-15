@@ -44,3 +44,15 @@ export async function updateUserPassword(id: string, password: string): Promise<
   });
   if (!res.ok) throw new Error('Failed to reset password');
 }
+
+export async function deleteUser(id: string): Promise<void> {
+  const res = await authFetch(`/api/v1/users/${id}`, {
+    method: 'DELETE',
+  });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(
+      (body as { message?: string }).message ?? 'Failed to delete user',
+    );
+  }
+}

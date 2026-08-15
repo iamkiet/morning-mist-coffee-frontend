@@ -24,6 +24,7 @@ interface BackendProduct {
   description: string | null;
   imageUrl: string | null;
   variants: BackendProductVariant[];
+  categoryIds?: string[];
   createdAt: string;
   updatedAt: string;
 }
@@ -56,6 +57,7 @@ function transform(p: BackendProduct): Product {
     description: p.description ?? '',
     imageUrl: p.imageUrl ?? DEFAULT_PRODUCT_IMAGE,
     variants: p.variants.map(transformVariant),
+    categoryIds: p.categoryIds ?? [],
   };
 }
 
@@ -184,6 +186,17 @@ export async function deleteProductVariant(variantId: string): Promise<void> {
     method: 'DELETE',
   });
   if (!res.ok) throw new Error('Failed to delete product variant');
+}
+
+export async function setVariantPropertyValues(
+  variantId: string,
+  values: Array<{ propertyId: string; value: string }>,
+): Promise<void> {
+  const res = await authFetch(`/api/v1/products/variants/${variantId}/properties`, {
+    method: 'PUT',
+    body: JSON.stringify({ values }),
+  });
+  if (!res.ok) throw new Error('Failed to set variant properties');
 }
 
 export interface VoiceSearchResult {

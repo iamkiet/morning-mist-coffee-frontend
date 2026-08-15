@@ -1,5 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { fetchUsers, updateUser, updateUserPassword, type UpdateUserPayload } from '@/lib/api/users';
+import {
+  fetchUsers,
+  updateUser,
+  updateUserPassword,
+  deleteUser,
+  type UpdateUserPayload,
+} from '@/lib/api/users';
 
 export function useUsers(page: number, limit: number, q = '') {
   const offset = (page - 1) * limit;
@@ -24,5 +30,15 @@ export function useUpdateUserPassword() {
   return useMutation({
     mutationFn: ({ id, password }: { id: string; password: string }) =>
       updateUserPassword(id, password),
+  });
+}
+
+export function useDeleteUser() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => deleteUser(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+    },
   });
 }

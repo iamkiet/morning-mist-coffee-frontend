@@ -8,6 +8,7 @@ import {
   createProductVariant,
   updateProductVariant,
   deleteProductVariant,
+  setVariantPropertyValues,
   type UpdateProductPayload,
   type CreateProductPayload,
   type CreateProductVariantPayload,
@@ -100,6 +101,22 @@ export function useDeleteProductVariant() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (variantId: string) => deleteProductVariant(variantId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+    },
+  });
+}
+
+export function useSetVariantPropertyValues() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      variantId,
+      values,
+    }: {
+      variantId: string;
+      values: Array<{ propertyId: string; value: string }>;
+    }) => setVariantPropertyValues(variantId, values),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['products'] });
     },

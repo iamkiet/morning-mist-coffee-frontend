@@ -51,9 +51,11 @@ import {
   useUpdateProduct,
   useCreateProduct,
   useDeleteProduct,
+  useSetProductCategories,
   useCreateProductVariant,
   useUpdateProductVariant,
   useDeleteProductVariant,
+  useSetVariantPropertyValues,
 } from '@/hooks/use-products';
 import {
   useProductCategories,
@@ -74,6 +76,7 @@ import {
 import type {
   Product,
   ProductCategory,
+  ProductProperty,
   ProductVariant,
   PropertyDataType,
 } from '@/lib/types';
@@ -437,12 +440,76 @@ type VariantForm = z.infer<typeof variantFormSchema>;
 const VARIANT_ROW_CLASS =
   'grid grid-cols-[1fr_1fr_1fr_auto_auto] gap-2 items-start';
 
+interface VariantPropertiesFormProps {
+  variant: ProductVariant;
+  properties: ProductProperty[];
+}
+
+function VariantPropertiesForm({ variant, properties }: VariantPropertiesFormProps) {
+  const setPropertyValues = useSetVariantPropertyValues();
+  const form = useForm<Record<string, string>>({
+    defaultValues: Object.fromEntries(
+      properties.map((p) => [
+        p.id,
+        variant.propertyValues.find((v) => v.propertyId === p.id)?.value ?? '',
+      ]),
+    ),
+  });
+
+  function onSubmit(values: Record<string, string>) {
+    const filled = properties
+      .map((p) => ({ propertyId: p.id, value: (values[p.id] ?? '').trim() }))
+      .filter((v) => v.value.length > 0);
+    setPropertyValues.mutate(
+      { variantId: variant.id, values: filled },
+      { onSuccess: () => toast.success('Đã cập nhật thuộc tính') },
+    );
+  }
+
+  return (
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="grid grid-cols-2 sm:grid-cols-4 gap-2 items-end pl-1 pb-2"
+      >
+        {properties.map((p) => (
+          <FormField
+            key={p.id}
+            control={form.control}
+            name={p.id}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                  {p.name}
+                </FormLabel>
+                <FormControl>
+                  <Input {...field} className="h-8" />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        ))}
+        <Button
+          type="submit"
+          variant="outline"
+          size="default"
+          className="text-xs uppercase tracking-wider"
+          disabled={setPropertyValues.isPending}
+        >
+          Lưu thuộc tính
+        </Button>
+      </form>
+    </Form>
+  );
+}
+
 interface VariantRowProps {
   variant: ProductVariant;
+  properties: ProductProperty[];
   deletable: boolean;
 }
 
-function VariantRow({ variant, deletable }: VariantRowProps) {
+function VariantRow({ variant, properties, deletable }: VariantRowProps) {
   const updateVariant = useUpdateProductVariant();
   const deleteVariant = useDeleteProductVariant();
   const form = useForm<VariantForm>({
@@ -469,71 +536,76 @@ function VariantRow({ variant, deletable }: VariantRowProps) {
   }
 
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className={VARIANT_ROW_CLASS}
-      >
-        <FormField
-          control={form.control}
-          name="sku"
-          render={({ field }) => (
-            <FormItem>
-              <FormControl>
-                <Input placeholder="SKU" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="price"
-          render={({ field }) => (
-            <FormItem>
-              <FormControl>
-                <Input type="number" min="0" placeholder="Giá" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="stock"
-          render={({ field }) => (
-            <FormItem>
-              <FormControl>
-                <Input type="number" min="0" placeholder="Tồn kho" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button
-          type="submit"
-          variant="outline"
-          size="default"
-          className="text-xs uppercase tracking-wider"
-          disabled={updateVariant.isPending}
+    <div className="space-y-1">
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className={VARIANT_ROW_CLASS}
         >
-          Lưu
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          className="size-8 hover:text-destructive"
-          disabled={deleteVariant.isPending || !deletable}
-          title={
-            deletable ? undefined : 'Sản phẩm phải có ít nhất một phân loại'
-          }
-          onClick={() => deleteVariant.mutate(variant.id)}
-        >
-          <Trash2 className="size-4" />
-        </Button>
-      </form>
-    </Form>
+          <FormField
+            control={form.control}
+            name="sku"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <Input placeholder="SKU" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="price"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <Input type="number" min="0" placeholder="Giá" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="stock"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <Input type="number" min="0" placeholder="Tồn kho" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button
+            type="submit"
+            variant="outline"
+            size="default"
+            className="text-xs uppercase tracking-wider"
+            disabled={updateVariant.isPending}
+          >
+            Lưu
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="size-8 hover:text-destructive"
+            disabled={deleteVariant.isPending || !deletable}
+            title={
+              deletable ? undefined : 'Sản phẩm phải có ít nhất một phân loại'
+            }
+            onClick={() => deleteVariant.mutate(variant.id)}
+          >
+            <Trash2 className="size-4" />
+          </Button>
+        </form>
+      </Form>
+      {properties.length > 0 && (
+        <VariantPropertiesForm variant={variant} properties={properties} />
+      )}
+    </div>
   );
 }
 
@@ -632,6 +704,8 @@ interface VariantsEditorProps {
 
 function VariantsEditor({ product }: VariantsEditorProps) {
   const [showNewVariant, setShowNewVariant] = useState(false);
+  const { data: propData } = useProductProperties();
+  const properties = propData?.items ?? [];
 
   return (
     <div className="space-y-3">
@@ -639,6 +713,7 @@ function VariantsEditor({ product }: VariantsEditorProps) {
         <VariantRow
           key={v.id}
           variant={v}
+          properties={properties}
           deletable={product.variants.length > 1}
         />
       ))}
@@ -673,6 +748,7 @@ function ProductDialog({ product, onClose }: ProductDialogProps) {
   const isEdit = product !== undefined;
   const update = useUpdateProduct();
   const create = useCreateProduct();
+  const setCategoriesMut = useSetProductCategories();
   const mutation = isEdit ? update : create;
   const { data: catData } = useProductCategories();
   const categories = catData?.items ?? [];
@@ -685,7 +761,7 @@ function ProductDialog({ product, onClose }: ProductDialogProps) {
       sku: defaultVariant?.sku ?? '',
       price: defaultVariant ? String(Math.round(defaultVariant.price)) : '',
       stock: String(defaultVariant?.stock ?? 0),
-      categoryIds: [],
+      categoryIds: product?.categoryIds ?? [],
       description: product?.description ?? '',
       imageUrl: product?.imageUrl ?? '',
     },
@@ -704,8 +780,15 @@ function ProductDialog({ product, onClose }: ProductDialogProps) {
         },
         {
           onSuccess: () => {
-            toast.success('Đã cập nhật sản phẩm');
-            onClose();
+            setCategoriesMut.mutate(
+              { id: product.id, categoryIds: values.categoryIds },
+              {
+                onSuccess: () => {
+                  toast.success('Đã cập nhật sản phẩm');
+                  onClose();
+                },
+              },
+            );
           },
         },
       );
@@ -761,23 +844,21 @@ function ProductDialog({ product, onClose }: ProductDialogProps) {
               )}
             />
 
-            {!isEdit && (
-              <FormField
-                control={form.control}
-                name="categoryIds"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Danh mục sản phẩm</FormLabel>
-                    <CategoryCheckboxList
-                      categories={categories}
-                      selected={field.value}
-                      onChange={field.onChange}
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            )}
+            <FormField
+              control={form.control}
+              name="categoryIds"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Danh mục sản phẩm</FormLabel>
+                  <CategoryCheckboxList
+                    categories={categories}
+                    selected={field.value}
+                    onChange={field.onChange}
+                  />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             {!isEdit && (
               <div className="grid grid-cols-2 gap-4">
@@ -870,7 +951,7 @@ function ProductDialog({ product, onClose }: ProductDialogProps) {
               </>
             )}
 
-            {mutation.isError && (
+            {(mutation.isError || setCategoriesMut.isError) && (
               <ErrorNotice className="mb-0">
                 {isEdit
                   ? 'Không thể cập nhật sản phẩm. Vui lòng thử lại.'
@@ -891,9 +972,13 @@ function ProductDialog({ product, onClose }: ProductDialogProps) {
                 type="submit"
                 size="sm"
                 className="uppercase tracking-wider text-xs"
-                disabled={mutation.isPending}
+                disabled={mutation.isPending || setCategoriesMut.isPending}
               >
-                {mutation.isPending ? 'Đang lưu…' : isEdit ? 'Lưu' : 'Thêm mới'}
+                {mutation.isPending || setCategoriesMut.isPending
+                  ? 'Đang lưu…'
+                  : isEdit
+                    ? 'Lưu'
+                    : 'Thêm mới'}
               </Button>
             </DialogFooter>
           </form>
@@ -929,6 +1014,7 @@ export default function AdminProductsPage() {
     {
       key: 'details',
       header: 'Chi tiết sản phẩm',
+      width: '45%',
       render: (r) => (
         <div className="flex items-center gap-4">
           <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-card flex-shrink-0">
@@ -956,6 +1042,7 @@ export default function AdminProductsPage() {
     {
       key: 'price',
       header: 'Giá',
+      width: '20%',
       render: (r) => {
         const { min, max } = getPriceRange(r);
         return (
@@ -970,6 +1057,7 @@ export default function AdminProductsPage() {
     {
       key: 'stock',
       header: 'Kho hàng',
+      width: '20%',
       render: (r) => {
         const qty = getTotalStock(r);
         if (qty === 0)
@@ -991,6 +1079,7 @@ export default function AdminProductsPage() {
       key: 'actions',
       header: 'Thao tác',
       align: 'right',
+      width: '15%',
       render: (r) => (
         <div className="flex items-center justify-end gap-1">
           <Button

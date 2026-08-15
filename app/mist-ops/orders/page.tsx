@@ -203,6 +203,7 @@ export default function AdminOrdersPage() {
     {
       key: 'id',
       header: 'Mã đơn hàng',
+      width: '15%',
       render: (r) => (
         <button
           onClick={() => setExpandedId(expandedId === r.id ? null : r.id)}
@@ -215,6 +216,7 @@ export default function AdminOrdersPage() {
     {
       key: 'customer',
       header: 'Khách hàng',
+      width: '30%',
       render: (r) => (
         <div className="flex items-center gap-3 min-w-0">
           <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-[10px] text-muted-foreground font-bold shrink-0">
@@ -229,6 +231,7 @@ export default function AdminOrdersPage() {
     {
       key: 'status',
       header: 'Trạng thái',
+      width: '15%',
       render: (r) => (
         <Badge status={STATUS_BADGE[r.status] ?? 'neutral'}>
           {STATUS_VIETNAMESE[r.status]}
@@ -240,6 +243,7 @@ export default function AdminOrdersPage() {
       header: 'Tổng tiền',
       align: 'right',
       hideOnMobile: true,
+      width: '15%',
       render: (r) => (
         <span className="font-medium">
           {r.totalCents.toLocaleString('vi-VN')} ₫
@@ -250,6 +254,7 @@ export default function AdminOrdersPage() {
       key: 'date',
       header: 'Ngày đặt',
       hideOnMobile: true,
+      width: '15%',
       render: (r) => (
         <span className="text-muted-foreground text-xs">
           {new Date(r.createdAt).toLocaleDateString('vi-VN')}
@@ -260,6 +265,7 @@ export default function AdminOrdersPage() {
       key: 'actions',
       header: '',
       align: 'right',
+      width: '10%',
       render: (r) => {
         const next = NEXT_STATUSES[r.status];
         return (
@@ -350,7 +356,7 @@ export default function AdminOrdersPage() {
 
       {isLoading ? (
         <div className="space-y-3">
-          {Array.from({ length: 6 }).map((_, i) => (
+          {Array.from({ length: LIMIT }).map((_, i) => (
             <Skeleton key={i} className="h-16 w-full" />
           ))}
         </div>
