@@ -40,7 +40,7 @@ export function AdminSidebar({ onClose }: AdminSidebarProps) {
   };
 
   const initials = user
-    ? `${user.firstName[0]}${user.lastName[0]}`.toUpperCase()
+    ? `${user.firstName[0] ?? ''}${user.lastName[0] ?? ''}`.toUpperCase()
     : '??';
 
   return (
@@ -62,7 +62,7 @@ export function AdminSidebar({ onClose }: AdminSidebarProps) {
         </div>
         <div className="min-w-0">
           <p className="text-xs font-medium tracking-wider uppercase text-foreground truncate">
-            {user ? `${user.firstName} ${user.lastName}` : '—'}
+            {user ? `${user.firstName} ${user.lastName}`.trim() : '—'}
           </p>
           <p className="text-[10px] text-muted-foreground tracking-widest truncate">
             {user?.email ?? ''}
