@@ -1,5 +1,5 @@
 import type { AdminUser, UserRole, UserStatus } from '@/lib/types';
-import { authFetch, listQuery } from './client';
+import { authFetch, listQuery, type ListQueryOptions } from './client';
 
 export type { AdminUser, UserRole, UserStatus };
 
@@ -14,8 +14,11 @@ export async function fetchUsers(
   limit = 20,
   offset = 0,
   q = '',
+  opts: ListQueryOptions = {},
 ): Promise<UsersPage> {
-  const res = await authFetch(`/api/v1/users?${listQuery(limit, offset, q)}`);
+  const res = await authFetch(
+    `/api/v1/users?${listQuery(limit, offset, q, opts)}`,
+  );
   if (!res.ok) throw new Error('Failed to fetch users');
   return res.json();
 }

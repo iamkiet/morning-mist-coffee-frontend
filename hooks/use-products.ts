@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import type { ListQueryOptions } from '@/lib/api/client';
 import {
   fetchProducts,
   updateProduct,
@@ -15,11 +16,16 @@ import {
   type UpdateProductVariantPayload,
 } from '@/lib/api/products';
 
-export function useProducts(page: number, limit: number, q = '') {
+export function useProducts(
+  page: number,
+  limit: number,
+  q = '',
+  opts: ListQueryOptions = {},
+) {
   const offset = (page - 1) * limit;
   return useQuery({
-    queryKey: ['products', page, limit, q],
-    queryFn: () => fetchProducts(limit, offset, q),
+    queryKey: ['products', page, limit, q, opts],
+    queryFn: () => fetchProducts(limit, offset, q, opts),
   });
 }
 

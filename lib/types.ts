@@ -29,6 +29,13 @@ export interface Product {
   categoryIds?: string[];
 }
 
+export interface OrderReview {
+  id: string;
+  rating: number | null;
+  commentText: string;
+  createdAt: string;
+}
+
 export interface ProductCategory {
   id: string;
   name: string;

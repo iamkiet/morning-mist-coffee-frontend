@@ -5,6 +5,7 @@ import { Container } from '@/app/_components/Container';
 import { fetchProduct } from '@/lib/api/products';
 import { getBrewingGuide, getDefaultVariant, getPropertyValue } from '@/lib/product-variants';
 import { AddToBag } from './AddToBag';
+import { ProductReviews } from './ProductReviews';
 
 export default async function ProductPage(props: {
   params: Promise<{ slug: string }>;
@@ -112,6 +113,7 @@ export default async function ProductPage(props: {
           </div>
         </div>
       </div>
+      <ProductReviews productId={product.id} />
     </Container>
   );
 }

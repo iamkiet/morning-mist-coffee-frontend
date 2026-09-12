@@ -1,4 +1,4 @@
-import { authFetch, listQuery } from './client';
+import { authFetch, listQuery, type ListQueryOptions } from './client';
 
 export type OrderStatus =
   | 'pending'
@@ -49,8 +49,11 @@ export async function fetchOrders(
   limit = 20,
   offset = 0,
   q = '',
+  opts: ListQueryOptions = {},
 ): Promise<OrdersPage> {
-  const res = await authFetch(`/api/v1/orders?${listQuery(limit, offset, q)}`);
+  const res = await authFetch(
+    `/api/v1/orders?${listQuery(limit, offset, q, opts)}`,
+  );
   if (!res.ok) throw new Error('Failed to fetch orders');
   return res.json();
 }

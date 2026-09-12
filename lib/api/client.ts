@@ -15,12 +15,28 @@ export function setCsrfToken(token: string | null) {
   else localStorage.removeItem(CSRF_STORAGE_KEY);
 }
 
-export function listQuery(limit: number, offset: number, q: string): string {
+export interface ListQueryOptions {
+  sortBy?: string;
+  sortDir?: 'asc' | 'desc';
+  filters?: Record<string, string | number | undefined>;
+}
+
+export function listQuery(
+  limit: number,
+  offset: number,
+  q = '',
+  opts: ListQueryOptions = {},
+): string {
   const params = new URLSearchParams({
     limit: String(limit),
     offset: String(offset),
   });
   if (q) params.set('q', q);
+  if (opts.sortBy) params.set('sortBy', opts.sortBy);
+  if (opts.sortDir) params.set('sortDir', opts.sortDir);
+  for (const [key, value] of Object.entries(opts.filters ?? {})) {
+    if (value !== undefined && value !== '') params.set(key, String(value));
+  }
   return params.toString();
 }
 

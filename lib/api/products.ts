@@ -1,6 +1,6 @@
 import type { Product, ProductVariant, VariantPropertyValue } from '@/lib/types';
 import { DEFAULT_PRODUCT_IMAGE } from '@/lib/product-images';
-import { authFetch, listQuery } from './client';
+import { authFetch, listQuery, type ListQueryOptions } from './client';
 
 export type { Product, ProductVariant };
 
@@ -65,8 +65,11 @@ export async function fetchProducts(
   limit = 8,
   offset = 0,
   q = '',
+  opts: ListQueryOptions = {},
 ): Promise<ProductsPage> {
-  const res = await authFetch(`/api/v1/products?${listQuery(limit, offset, q)}`);
+  const res = await authFetch(
+    `/api/v1/products?${listQuery(limit, offset, q, opts)}`,
+  );
   if (!res.ok) throw new Error('Failed to fetch products');
   const data = await res.json();
   return {
