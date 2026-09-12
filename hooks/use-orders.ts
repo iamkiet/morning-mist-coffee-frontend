@@ -37,12 +37,10 @@ export function useUpdateOrderStatus() {
   });
 }
 
-export type CreateOrderInput = CreateOrderPayload;
-
 export function useCreateOrder() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (input: CreateOrderInput) => createOrder(input),
+    mutationFn: (input: CreateOrderPayload) => createOrder(input),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['orders'] });
     },

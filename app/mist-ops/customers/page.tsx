@@ -54,7 +54,7 @@ import { toast } from 'sonner';
 import { ErrorNotice } from '@/app/_components/ErrorNotice';
 import { useDebouncedValue } from '@/hooks/use-debounced-value';
 import type { AdminCustomer, UserStatus } from '@/lib/types';
-import { passwordSchema } from '@/lib/validation';
+import { passwordSchema, registrationKeySchema } from '@/lib/validation';
 import { getInitials } from '@/lib/utils';
 
 const statusStyle: Record<UserStatus, 'success' | 'neutral' | 'error'> = {
@@ -96,7 +96,7 @@ const createCustomerSchema = z.object({
   phone: z.string().optional(),
   address: z.string().optional(),
   password: passwordSchema,
-  registrationKey: z.string().min(1, 'Mã đăng ký là bắt buộc'),
+  registrationKey: registrationKeySchema,
 });
 
 type CreateCustomerForm = z.infer<typeof createCustomerSchema>;

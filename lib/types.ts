@@ -25,7 +25,6 @@ export interface Product {
   description: string;
   imageUrl: string;
   variants: ProductVariant[];
-  badge?: string;
   categoryIds?: string[];
 }
 

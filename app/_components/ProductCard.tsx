@@ -3,7 +3,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { ShoppingBag, Check } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/lib/cart';
 import { useTemporaryFlag } from '@/hooks/use-temporary-flag';
@@ -36,16 +35,6 @@ export function ProductCard({ product }: ProductCardProps) {
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
             className="object-cover transition-transform duration-700 group-hover:scale-105 opacity-90 group-hover:opacity-100"
           />
-          {product.badge && (
-            <div className="absolute top-4 right-4">
-              <Badge
-                variant="outline"
-                className="bg-card/80 backdrop-blur-xl text-primary border-transparent text-[10px] uppercase tracking-wider"
-              >
-                {product.badge}
-              </Badge>
-            </div>
-          )}
         </div>
         <div className="text-center px-4 mb-3">
           <h3 className="text-base text-foreground mb-2 font-medium line-clamp-2 min-h-12">

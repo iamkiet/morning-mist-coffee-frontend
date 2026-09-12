@@ -21,14 +21,14 @@ import { Container } from '@/app/_components/Container';
 import { useAuth } from '@/lib/auth-context';
 import { createCustomer } from '@/lib/api/customers';
 import { ACCOUNT_TYPE } from '@/lib/types';
-import { passwordSchema } from '@/lib/validation';
+import { passwordSchema, registrationKeySchema } from '@/lib/validation';
 
 const registerSchema = z.object({
   firstName: z.string().min(1, 'Họ là bắt buộc'),
   lastName: z.string().min(1, 'Tên là bắt buộc'),
   email: z.string().min(1, 'Email là bắt buộc').email('Email không hợp lệ'),
   password: passwordSchema,
-  registrationKey: z.string().min(1, 'Mã đăng ký là bắt buộc'),
+  registrationKey: registrationKeySchema,
 });
 
 type RegisterForm = z.infer<typeof registerSchema>;

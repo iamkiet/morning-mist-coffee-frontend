@@ -49,8 +49,9 @@ lib/
   product-variants.ts     — getDefaultVariant()/getTotalStock()/getPriceRange()/
                             getVariantLabel()/getPropertyValue()/getBrewingGuide()
                             helpers over Product.variants
-  api/client.ts           — authFetch() with auto-retry on 401,
-                            refreshSession() (deduped), fetchMe(), listQuery()
+  api/client.ts           — authFetch() with auto-retry on 401
+                            (internally deduped via refreshSession()),
+                            fetchMe(), listQuery()
   api/auth.ts             — postLogin(), postLogout(), postRefresh()
   api/products.ts         — fetchProducts(), fetchProduct() (by slug),
                             updateProduct(), searchProductsByVoice(),

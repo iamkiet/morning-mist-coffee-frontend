@@ -64,7 +64,7 @@ function request(path: string, options: RequestInit = {}): Promise<Response> {
 
 let refreshPromise: Promise<boolean> | null = null;
 
-export function refreshSession(): Promise<boolean> {
+function refreshSession(): Promise<boolean> {
   if (refreshPromise) return refreshPromise;
   refreshPromise = postRefresh()
     .catch(() => null)
