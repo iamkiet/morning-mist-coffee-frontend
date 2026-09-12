@@ -6,6 +6,7 @@ import { fetchProduct } from '@/lib/api/products';
 import { getBrewingGuide, getDefaultVariant, getPropertyValue } from '@/lib/product-variants';
 import { AddToBag } from './AddToBag';
 import { ProductReviews } from './ProductReviews';
+import { ReviewForm } from './ReviewForm';
 
 export default async function ProductPage(props: {
   params: Promise<{ slug: string }>;
@@ -113,7 +114,13 @@ export default async function ProductPage(props: {
           </div>
         </div>
       </div>
-      <ProductReviews productId={product.id} />
+      <div className="mt-20 space-y-10">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-light text-foreground">
+          Đánh Giá Sản Phẩm
+        </h2>
+        <ReviewForm productId={product.id} />
+        <ProductReviews productId={product.id} />
+      </div>
     </Container>
   );
 }

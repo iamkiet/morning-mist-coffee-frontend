@@ -41,7 +41,7 @@ export async function ProductReviews({ productId }: { productId: string }) {
   if (items.length === 0) return null;
 
   return (
-    <div className="mt-16 space-y-6">
+    <div className="space-y-6">
       <h3 className="text-foreground border-b border-border pb-1 uppercase text-xs tracking-widest">
         Khách Hàng Nói Gì
       </h3>
