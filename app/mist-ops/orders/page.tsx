@@ -45,7 +45,7 @@ import { useOrders, useUpdateOrderStatus } from '@/hooks/use-orders';
 import { toast } from 'sonner';
 import { ErrorNotice } from '@/app/_components/ErrorNotice';
 import { useDebouncedValue } from '@/hooks/use-debounced-value';
-import type { Order, OrderStatus } from '@/lib/api/orders';
+import { ORDER_STATUS_VIETNAMESE, type Order, type OrderStatus } from '@/lib/api/orders';
 import { getVariantLabelFromSku } from '@/lib/product-variants';
 
 const ALL_STATUSES: OrderStatus[] = [
@@ -55,14 +55,6 @@ const ALL_STATUSES: OrderStatus[] = [
   'delivered',
   'cancelled',
 ];
-
-const STATUS_VIETNAMESE: Record<OrderStatus, string> = {
-  pending: 'Chờ xử lý',
-  paid: 'Đã thanh toán',
-  shipped: 'Đang giao hàng',
-  delivered: 'Đã giao',
-  cancelled: 'Đã hủy',
-};
 
 interface EditOrderDialogProps {
   order: Order;
@@ -129,7 +121,7 @@ function EditOrderDialog({ order, onClose }: EditOrderDialogProps) {
                     <SelectContent>
                       {ALL_STATUSES.map((s) => (
                         <SelectItem key={s} value={s}>
-                          {STATUS_VIETNAMESE[s]}
+                          {ORDER_STATUS_VIETNAMESE[s]}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -234,7 +226,7 @@ export default function AdminOrdersPage() {
       width: '15%',
       render: (r) => (
         <Badge status={STATUS_BADGE[r.status] ?? 'neutral'}>
-          {STATUS_VIETNAMESE[r.status]}
+          {ORDER_STATUS_VIETNAMESE[r.status]}
         </Badge>
       ),
     },
@@ -278,7 +270,7 @@ export default function AdminOrdersPage() {
                 disabled={updateStatus.isPending}
                 onClick={() => updateStatus.mutate({ id: r.id, status: next })}
               >
-                Chuyển sang: {STATUS_VIETNAMESE[next]}
+                Chuyển sang: {ORDER_STATUS_VIETNAMESE[next]}
               </Button>
             )}
             <Button
@@ -443,6 +435,7 @@ export default function AdminOrdersPage() {
                           {order.shippingFullName}
                         </p>
                         <p>{order.shippingAddress}</p>
+                        {order.shippingPhone && <p>{order.shippingPhone}</p>}
                       </div>
                     )}
                   </div>

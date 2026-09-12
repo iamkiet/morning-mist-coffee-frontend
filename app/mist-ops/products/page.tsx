@@ -10,6 +10,8 @@ import {
   AlertTriangle,
   XCircle,
   Tags,
+  Check,
+  X,
 } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -60,6 +62,8 @@ import {
 import {
   useProductCategories,
   useCreateProductCategory,
+  useUpdateProductCategory,
+  useDeleteProductCategory,
 } from '@/hooks/use-product-categories';
 import {
   useProductProperties,
@@ -152,32 +156,23 @@ const PROPERTY_DATA_TYPES: { value: PropertyDataType; label: string }[] = [
   { value: 'enum', label: 'Lựa chọn' },
 ];
 
-const NO_PARENT = '__none__';
-
 const categoryFormSchema = z.object({
   name: z.string().min(1, 'Tên danh mục là bắt buộc').max(100),
-  parentId: z.string(),
 });
 
 type CategoryForm = z.infer<typeof categoryFormSchema>;
 
-interface CategoryCreateFormProps {
-  categories: ProductCategory[];
-}
-
-function CategoryCreateForm({ categories }: CategoryCreateFormProps) {
+function CategoryCreateForm() {
   const createCategory = useCreateProductCategory();
   const form = useForm<CategoryForm>({
     resolver: zodResolver(categoryFormSchema),
-    defaultValues: { name: '', parentId: NO_PARENT },
+    defaultValues: { name: '' },
   });
 
   function onSubmit(values: CategoryForm) {
+    // Categories are flat (one level) — no parent to pick.
     createCategory.mutate(
-      {
-        name: values.name.trim(),
-        parentId: values.parentId === NO_PARENT ? null : values.parentId,
-      },
+      { name: values.name.trim(), parentId: null },
       {
         onSuccess: () => {
           toast.success('Đã thêm danh mục');
@@ -191,7 +186,7 @@ function CategoryCreateForm({ categories }: CategoryCreateFormProps) {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="grid grid-cols-[1fr_1fr_auto] gap-2"
+        className="grid grid-cols-[1fr_auto] gap-2"
       >
         <FormField
           control={form.control}
@@ -201,30 +196,6 @@ function CategoryCreateForm({ categories }: CategoryCreateFormProps) {
               <FormControl>
                 <Input placeholder="Tên danh mục mới" {...field} />
               </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="parentId"
-          render={({ field }) => (
-            <FormItem>
-              <Select onValueChange={field.onChange} value={field.value}>
-                <FormControl>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Danh mục cha (tùy chọn)" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value={NO_PARENT}>Không có</SelectItem>
-                  {sortCategoryTree(categories).map((c) => (
-                    <SelectItem key={c.id} value={c.id}>
-                      <span style={{ paddingLeft: c.depth * CATEGORY_INDENT_PX }}>{c.name}</span>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
               <FormMessage />
             </FormItem>
           )}
@@ -239,6 +210,111 @@ function CategoryCreateForm({ categories }: CategoryCreateFormProps) {
         </Button>
       </form>
     </Form>
+  );
+}
+
+interface CategoryRowProps {
+  category: ProductCategory;
+}
+
+function CategoryRow({ category }: CategoryRowProps) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [name, setName] = useState(category.name);
+  const updateCategory = useUpdateProductCategory();
+  const deleteCategory = useDeleteProductCategory();
+
+  function handleRename() {
+    const trimmed = name.trim();
+    if (!trimmed || trimmed === category.name) {
+      setIsEditing(false);
+      setName(category.name);
+      return;
+    }
+    updateCategory.mutate(
+      { id: category.id, payload: { name: trimmed } },
+      {
+        onSuccess: () => {
+          toast.success('Đã đổi tên danh mục');
+          setIsEditing(false);
+        },
+        onError: (err) => {
+          toast.error(err instanceof Error ? err.message : 'Không thể đổi tên danh mục');
+        },
+      },
+    );
+  }
+
+  function handleDelete() {
+    deleteCategory.mutate(category.id, {
+      onSuccess: () => toast.success('Đã xoá danh mục'),
+      onError: (err) => {
+        toast.error(err instanceof Error ? err.message : 'Không thể xoá danh mục');
+      },
+    });
+  }
+
+  if (isEditing) {
+    return (
+      <li className="flex items-center gap-2">
+        <Input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && handleRename()}
+          className="h-8"
+          autoFocus
+        />
+        <Button
+          type="button"
+          size="icon"
+          className="size-8"
+          disabled={updateCategory.isPending}
+          onClick={handleRename}
+        >
+          <Check className="size-4" />
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className="size-8"
+          onClick={() => {
+            setIsEditing(false);
+            setName(category.name);
+          }}
+        >
+          <X className="size-4" />
+        </Button>
+      </li>
+    );
+  }
+
+  return (
+    <li className="flex items-center justify-between gap-2 text-foreground">
+      <span>{category.name}</span>
+      <div className="flex gap-1 shrink-0">
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className="size-7"
+          title="Đổi tên"
+          onClick={() => setIsEditing(true)}
+        >
+          <Pencil className="size-3.5" />
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className="size-7 hover:text-destructive"
+          title="Xoá"
+          disabled={deleteCategory.isPending}
+          onClick={handleDelete}
+        >
+          <Trash2 className="size-3.5" />
+        </Button>
+      </div>
+    </li>
   );
 }
 
@@ -351,14 +427,8 @@ function ManageTaxonomyDialog({ onClose }: ManageTaxonomyDialogProps) {
               <Skeleton className="h-24 w-full" />
             ) : categories.length > 0 ? (
               <ul className="max-h-32 overflow-y-auto text-sm space-y-1 border border-border rounded-lg p-3">
-                {sortCategoryTree(categories).map((c) => (
-                  <li
-                    key={c.id}
-                    className="text-foreground"
-                    style={{ paddingLeft: c.depth * CATEGORY_INDENT_PX }}
-                  >
-                    {c.name}
-                  </li>
+                {categories.map((c) => (
+                  <CategoryRow key={c.id} category={c} />
                 ))}
               </ul>
             ) : (
@@ -366,7 +436,7 @@ function ManageTaxonomyDialog({ onClose }: ManageTaxonomyDialogProps) {
                 Chưa có danh mục nào.
               </p>
             )}
-            <CategoryCreateForm categories={categories} />
+            <CategoryCreateForm />
           </div>
 
           <Separator />

@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   fetchOrders,
+  fetchMyOrders,
   updateOrderStatus,
   createOrder,
   lookupOrders,
@@ -13,6 +14,15 @@ export function useOrders(page: number, limit: number, q = '') {
   return useQuery({
     queryKey: ['orders', page, limit, q],
     queryFn: () => fetchOrders(limit, offset, q),
+  });
+}
+
+export function useMyOrders(page: number, limit: number, enabled = true) {
+  const offset = (page - 1) * limit;
+  return useQuery({
+    queryKey: ['orders', 'me', page, limit],
+    queryFn: () => fetchMyOrders(limit, offset),
+    enabled,
   });
 }
 

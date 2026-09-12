@@ -9,11 +9,12 @@ import {
   type UpdateEmployeePayload,
 } from '@/lib/api/employees';
 
-export function useEmployees(page: number, limit: number, q = '') {
+export function useEmployees(page: number, limit: number, q = '', enabled = true) {
   const offset = (page - 1) * limit;
   return useQuery({
     queryKey: ['employees', page, limit, q],
     queryFn: () => fetchEmployees(limit, offset, q),
+    enabled,
   });
 }
 

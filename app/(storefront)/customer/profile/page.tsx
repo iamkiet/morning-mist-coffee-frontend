@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Star, LogOut } from 'lucide-react';
+import { Star, LogOut, Package } from 'lucide-react';
 import {
   Form,
   FormControl,
@@ -21,6 +21,8 @@ import { ErrorNotice } from '@/app/_components/ErrorNotice';
 import { Container } from '@/app/_components/Container';
 import { useAuth } from '@/lib/auth-context';
 import { useMyAccount, useUpdateMyAccount } from '@/hooks/use-customers';
+import { useMyOrders } from '@/hooks/use-orders';
+import { ORDER_STATUS_VIETNAMESE } from '@/lib/api/orders';
 import { toast } from 'sonner';
 
 const profileSchema = z.object({
@@ -38,6 +40,12 @@ export default function CustomerProfilePage() {
   const isCustomer = user?.role === 'customer';
   const { data: account, isLoading, isError } = useMyAccount(isCustomer);
   const update = useUpdateMyAccount();
+  const {
+    data: ordersPage,
+    isLoading: ordersLoading,
+    isError: ordersError,
+  } = useMyOrders(1, 10, isCustomer);
+  const orders = ordersPage?.items ?? [];
 
   const form = useForm<ProfileForm>({
     resolver: zodResolver(profileSchema),
@@ -188,6 +196,57 @@ export default function CustomerProfilePage() {
                   </Button>
                 </form>
               </Form>
+            </div>
+
+            <div className="bg-card border border-border rounded-xl p-6 space-y-4">
+              <h2 className="text-xs uppercase tracking-widest text-muted-foreground font-medium">
+                Đơn Hàng Của Tôi
+              </h2>
+              {ordersLoading ? (
+                <div className="space-y-3">
+                  <Skeleton className="h-14 w-full" />
+                  <Skeleton className="h-14 w-full" />
+                </div>
+              ) : ordersError ? (
+                <ErrorNotice className="mb-0">
+                  Không thể tải danh sách đơn hàng.
+                </ErrorNotice>
+              ) : orders.length === 0 ? (
+                <p className="text-sm text-muted-foreground">
+                  Bạn chưa có đơn hàng nào.
+                </p>
+              ) : (
+                <ul className="space-y-3">
+                  {orders.map((order) => (
+                    <li
+                      key={order.id}
+                      className="flex items-center justify-between gap-3 p-3 border border-border rounded-lg"
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="size-8 rounded-full bg-muted flex items-center justify-center shrink-0">
+                          <Package className="size-4 text-muted-foreground" />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-xs font-mono font-medium text-foreground truncate">
+                            #{order.id.slice(0, 8).toUpperCase()}
+                          </p>
+                          <p className="text-[10px] text-muted-foreground">
+                            {new Date(order.createdAt).toLocaleDateString('vi-VN')}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <p className="text-sm font-medium text-foreground">
+                          {order.totalCents.toLocaleString('vi-VN')} ₫
+                        </p>
+                        <p className="text-[10px] text-muted-foreground uppercase tracking-widest">
+                          {ORDER_STATUS_VIETNAMESE[order.status]}
+                        </p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
           </>
         )}

@@ -7,6 +7,14 @@ export type OrderStatus =
   | 'delivered'
   | 'cancelled';
 
+export const ORDER_STATUS_VIETNAMESE: Record<OrderStatus, string> = {
+  pending: 'Chờ xử lý',
+  paid: 'Đã thanh toán',
+  shipped: 'Đang giao hàng',
+  delivered: 'Đã giao',
+  cancelled: 'Đã hủy',
+};
+
 export interface OrderItemPropertyValue {
   propertyName: string;
   value: string;
@@ -30,6 +38,7 @@ export interface Order {
   currency: string;
   shippingFullName: string | null;
   shippingAddress: string | null;
+  shippingPhone: string | null;
   items: OrderItem[];
   createdAt: string;
   updatedAt: string;
@@ -50,6 +59,17 @@ export async function fetchOrders(
 ): Promise<OrdersPage> {
   const res = await authFetch(
     `/api/v1/orders?${listQuery(limit, offset, q, opts)}`,
+  );
+  if (!res.ok) throw new Error('Failed to fetch orders');
+  return res.json();
+}
+
+export async function fetchMyOrders(
+  limit = 20,
+  offset = 0,
+): Promise<OrdersPage> {
+  const res = await authFetch(
+    `/api/v1/orders/me?${listQuery(limit, offset)}`,
   );
   if (!res.ok) throw new Error('Failed to fetch orders');
   return res.json();
@@ -89,6 +109,7 @@ export interface CreateOrderPayload {
   currency?: string;
   shippingFullName: string;
   shippingAddress: string;
+  shippingPhone: string;
 }
 
 export async function createOrder(payload: CreateOrderPayload): Promise<Order> {

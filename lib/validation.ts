@@ -8,3 +8,5 @@ export const passwordSchema = z
   .regex(/[A-Z]/, 'Mật khẩu cần có chữ hoa')
   .regex(/[0-9]/, 'Mật khẩu cần có chữ số')
   .regex(/[^a-zA-Z0-9]/, 'Mật khẩu cần có ký tự đặc biệt');
+
+export const registrationKeySchema = z.string().min(1, 'Mã đăng ký là bắt buộc');

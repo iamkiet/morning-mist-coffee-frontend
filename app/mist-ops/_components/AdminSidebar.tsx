@@ -22,14 +22,14 @@ interface AdminSidebarProps {
   onClose?: () => void;
 }
 
-const nav: { href: string; label: string; icon: LucideIcon }[] = [
+const nav: { href: string; label: string; icon: LucideIcon; adminOnly?: boolean }[] = [
   { href: '/mist-ops', label: 'Tổng quan', icon: LayoutDashboard },
   { href: '/mist-ops/analytics', label: 'Phân tích', icon: LineChart },
   { href: '/mist-ops/orders', label: 'Đơn hàng', icon: Receipt },
   { href: '/mist-ops/product-reviews', label: 'Đánh giá', icon: MessageSquareText },
   { href: '/mist-ops/products', label: 'Kho hàng', icon: Package },
   { href: '/mist-ops/customers', label: 'Khách hàng', icon: Users },
-  { href: '/mist-ops/employees', label: 'Nhân viên', icon: UserCog },
+  { href: '/mist-ops/employees', label: 'Nhân viên', icon: UserCog, adminOnly: true },
 ];
 
 const footerNav: { href: string; label: string; icon: LucideIcon }[] = [
@@ -45,6 +45,7 @@ export function AdminSidebar({ onClose }: AdminSidebarProps) {
   };
 
   const initials = user ? getInitials(user.firstName, user.lastName) : '??';
+  const visibleNav = nav.filter((n) => !n.adminOnly || user?.role === 'admin');
 
   return (
     <aside className="h-full lg:h-screen w-full lg:w-64 lg:fixed lg:left-0 lg:top-0 lg:border-r border-border/30 bg-sidebar flex flex-col p-6 space-y-6 z-40">
@@ -75,7 +76,7 @@ export function AdminSidebar({ onClose }: AdminSidebarProps) {
 
       {/* Main nav */}
       <nav className="flex-grow space-y-1">
-        {nav.map((n) => {
+        {visibleNav.map((n) => {
           const active = n.href === pathname;
           const Icon = n.icon;
           return (

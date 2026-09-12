@@ -28,7 +28,7 @@ app/
                             (Auth is inside Query so logout can clear the cache)
   globals.css             — Tailwind 4 global styles
   _components/            — shared: HeaderHeightSync, PromoBanner, Nav, Footer,
-                            Container, Hero, ProductCard, Chip, CartCount,
+                            Container, Hero, ProductCard, CartCount,
                             ChatWidget, VoiceSearchDialog
   _data/                  — static data constants
   (storefront)/           — public storefront routes (layout has Header + Footer)
@@ -100,11 +100,11 @@ All auth endpoints live in `lib/api/auth.ts` — never call them with a bare `fe
 
 **Do not recreate** any of these — grep before adding:
 
-- Shared: `app/_components/` — HeaderHeightSync, PromoBanner, Nav, Footer, Container, Hero, ErrorNotice, ProductCard, Chip, CartCount, ChatWidget, VoiceSearchDialog
+- Shared: `app/_components/` — HeaderHeightSync, PromoBanner, Nav, Footer, Container, Hero, ErrorNotice, ProductCard, CartCount, ChatWidget, VoiceSearchDialog
 - Admin: `app/mist-ops/_components/` — AdminSidebar, Badge, DataTable, Pagination, PageHeader, StatCard
 - shadcn: `@/components/ui/*` — add with `npx shadcn add <name>`
 
-**Deleted (do not recreate):** Button.tsx · SectionHeading.tsx · AdminTopbar.tsx
+**Deleted (do not recreate):** Button.tsx · SectionHeading.tsx · AdminTopbar.tsx · Chip.tsx (unused, superseded by `mist-ops/_components/Badge.tsx`)
 
 **Shared product type:** `Product` is defined in `lib/types.ts` — not in a component, so `lib/api` and the hooks do not depend on a `'use client'` module.
 

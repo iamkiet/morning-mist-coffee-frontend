@@ -22,3 +22,37 @@ export async function createProductCategory(
   if (!res.ok) throw new Error('Failed to create product category');
   return res.json();
 }
+
+export interface UpdateProductCategoryPayload {
+  name?: string;
+  parentId?: string | null;
+}
+
+export async function updateProductCategory(
+  id: string,
+  payload: UpdateProductCategoryPayload,
+): Promise<ProductCategory> {
+  const res = await authFetch(`/api/v1/product-categories/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(
+      (body as { message?: string }).message ?? 'Failed to update product category',
+    );
+  }
+  return res.json();
+}
+
+export async function deleteProductCategory(id: string): Promise<void> {
+  const res = await authFetch(`/api/v1/product-categories/${id}`, {
+    method: 'DELETE',
+  });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(
+      (body as { message?: string }).message ?? 'Failed to delete product category',
+    );
+  }
+}

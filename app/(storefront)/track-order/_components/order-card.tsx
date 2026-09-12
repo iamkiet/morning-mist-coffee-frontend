@@ -13,30 +13,15 @@ import {
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { useTemporaryFlag } from '@/hooks/use-temporary-flag';
-import type { Order, OrderStatus } from '@/lib/api/orders';
+import { ORDER_STATUS_VIETNAMESE, type Order, type OrderStatus } from '@/lib/api/orders';
 import { getVariantLabelFromSku } from '@/lib/product-variants';
 
-const STATUS_CONFIG: Record<
-  OrderStatus,
-  { label: string; icon: React.ElementType; className: string }
-> = {
-  pending: {
-    label: 'Chờ xử lý',
-    icon: Clock,
-    className: 'text-muted-foreground',
-  },
-  paid: { label: 'Đã thanh toán', icon: CreditCard, className: 'text-primary' },
-  shipped: { label: 'Đang giao hàng', icon: Truck, className: 'text-primary' },
-  delivered: {
-    label: 'Đã giao',
-    icon: CheckCircle,
-    className: 'text-primary',
-  },
-  cancelled: {
-    label: 'Đã hủy',
-    icon: XCircle,
-    className: 'text-destructive',
-  },
+const STATUS_ICON: Record<OrderStatus, { icon: React.ElementType; className: string }> = {
+  pending: { icon: Clock, className: 'text-muted-foreground' },
+  paid: { icon: CreditCard, className: 'text-primary' },
+  shipped: { icon: Truck, className: 'text-primary' },
+  delivered: { icon: CheckCircle, className: 'text-primary' },
+  cancelled: { icon: XCircle, className: 'text-destructive' },
 };
 
 // A status the API adds later must not blank out the whole page
@@ -51,11 +36,8 @@ interface OrderCardProps {
 }
 
 export function OrderCard({ order }: OrderCardProps) {
-  const {
-    label,
-    icon: Icon,
-    className,
-  } = STATUS_CONFIG[order.status] ?? UNKNOWN_STATUS;
+  const { icon: Icon, className } = STATUS_ICON[order.status] ?? UNKNOWN_STATUS;
+  const label = ORDER_STATUS_VIETNAMESE[order.status] ?? UNKNOWN_STATUS.label;
   const date = new Date(order.createdAt).toLocaleDateString('vi-VN', {
     year: 'numeric',
     month: 'long',
@@ -147,6 +129,7 @@ export function OrderCard({ order }: OrderCardProps) {
                 {order.shippingFullName}
               </p>
               <p>{order.shippingAddress}</p>
+              {order.shippingPhone && <p>{order.shippingPhone}</p>}
             </div>
           </>
         )}

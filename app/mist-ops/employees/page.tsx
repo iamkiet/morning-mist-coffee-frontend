@@ -12,7 +12,8 @@ import {
   Hourglass,
   Plus,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -542,18 +543,37 @@ function ResetPasswordDialog({ employee, onClose }: ResetPasswordDialogProps) {
 const LIMIT = 20;
 
 export default function AdminEmployeesPage() {
+  const router = useRouter();
+  const { user: currentUser, isLoading: authLoading } = useAuth();
+  const isAdmin = currentUser?.role === 'admin';
+
+  useEffect(() => {
+    if (!authLoading && !isAdmin) router.replace('/mist-ops');
+  }, [authLoading, isAdmin, router]);
+
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const debouncedSearch = useDebouncedValue(search);
-  const { data, isLoading, isError } = useEmployees(page, LIMIT, debouncedSearch);
+  const { data, isLoading, isError } = useEmployees(
+    page,
+    LIMIT,
+    debouncedSearch,
+    isAdmin,
+  );
   const [createOpen, setCreateOpen] = useState(false);
   const [editEmployee, setEditEmployee] = useState<AdminEmployee | null>(null);
   const [resetPasswordEmployee, setResetPasswordEmployee] = useState<AdminEmployee | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<AdminEmployee | null>(null);
   const toggleStatus = useUpdateEmployee();
   const deleteMut = useDeleteEmployee();
-  const { user: currentUser } = useAuth();
-  const isAdmin = currentUser?.role === 'admin';
+
+  if (authLoading || !isAdmin) {
+    return (
+      <div className="p-8">
+        <p className="text-muted-foreground">Đang tải...</p>
+      </div>
+    );
+  }
 
   const employees = data?.items ?? [];
   const total = data?.total ?? 0;

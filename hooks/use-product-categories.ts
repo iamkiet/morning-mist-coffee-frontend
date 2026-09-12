@@ -2,6 +2,9 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   fetchProductCategories,
   createProductCategory,
+  updateProductCategory,
+  deleteProductCategory,
+  type UpdateProductCategoryPayload,
 } from '@/lib/api/product-categories';
 
 export function useProductCategories() {
@@ -17,6 +20,32 @@ export function useCreateProductCategory() {
   return useMutation({
     mutationFn: ({ name, parentId }: { name: string; parentId?: string | null }) =>
       createProductCategory(name, parentId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['productCategories'] });
+    },
+  });
+}
+
+export function useUpdateProductCategory() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      id,
+      payload,
+    }: {
+      id: string;
+      payload: UpdateProductCategoryPayload;
+    }) => updateProductCategory(id, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['productCategories'] });
+    },
+  });
+}
+
+export function useDeleteProductCategory() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => deleteProductCategory(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['productCategories'] });
     },

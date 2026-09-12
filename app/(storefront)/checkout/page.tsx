@@ -31,6 +31,7 @@ import { toast } from 'sonner';
 const checkoutSchema = z.object({
   fullName: z.string().min(1, 'Họ và tên là bắt buộc'),
   address: z.string().min(5, 'Vui lòng nhập địa chỉ nhận hàng chi tiết'),
+  phone: z.string().min(8, 'Vui lòng nhập số điện thoại hợp lệ').max(20),
 });
 
 type CheckoutForm = z.infer<typeof checkoutSchema>;
@@ -47,6 +48,7 @@ export default function CheckoutPage() {
     defaultValues: {
       fullName: '',
       address: '',
+      phone: '',
     },
   });
 
@@ -84,6 +86,7 @@ export default function CheckoutPage() {
         })),
         shippingFullName: data.fullName,
         shippingAddress: data.address,
+        shippingPhone: data.phone,
       },
       {
         onSuccess: () => {
@@ -266,6 +269,26 @@ export default function CheckoutPage() {
                         </FormLabel>
                         <FormControl>
                           <Input placeholder="Số nhà, tên đường, phường/xã..." {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="phone"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs uppercase tracking-wider text-muted-foreground">
+                          Số điện thoại
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="tel"
+                            placeholder="09xxxxxxxx"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
