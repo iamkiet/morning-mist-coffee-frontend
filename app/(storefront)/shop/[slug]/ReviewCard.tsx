@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -17,8 +18,9 @@ import {
   FormItem,
   FormMessage,
 } from '@/components/ui/form';
-import { useCreateOrderReviewReply } from '@/hooks/use-order-reviews';
-import type { OrderReview, OrderReviewReply } from '@/lib/types';
+import { useCreateProductReviewReply } from '@/hooks/use-product-reviews';
+import { useAuth } from '@/lib/auth-context';
+import type { ProductReview, ProductReviewReply } from '@/lib/types';
 
 function ReviewStars({ rating }: { rating: number | null }) {
   if (rating === null) return null;
@@ -36,12 +38,12 @@ function ReviewStars({ rating }: { rating: number | null }) {
   );
 }
 
-function replyLabel(reply: OrderReviewReply): string {
+function replyLabel(reply: ProductReviewReply): string {
   if (reply.authorType === 'customer') return reply.authorName || 'Khách hàng';
   return 'Phản hồi từ Morning Mist Coffee';
 }
 
-function ReplyItem({ reply }: { reply: OrderReviewReply }) {
+function ReplyItem({ reply }: { reply: ProductReviewReply }) {
   const date = new Date(reply.createdAt).toLocaleDateString('vi-VN', {
     year: 'numeric',
     month: 'long',
@@ -73,8 +75,9 @@ type ReplyForm = z.infer<typeof replySchema>;
 
 function ReviewReplyForm({ reviewId }: { reviewId: string }) {
   const router = useRouter();
+  const { user } = useAuth();
   const [open, setOpen] = useState(false);
-  const create = useCreateOrderReviewReply();
+  const create = useCreateProductReviewReply();
   const form = useForm<ReplyForm>({
     resolver: zodResolver(replySchema),
     defaultValues: { authorName: '', replyText: '' },
@@ -91,6 +94,19 @@ function ReviewReplyForm({ reviewId }: { reviewId: string }) {
           router.refresh();
         },
       },
+    );
+  }
+
+  if (user?.role !== 'customer') {
+    return (
+      <Button
+        asChild
+        variant="ghost"
+        size="sm"
+        className="text-xs uppercase tracking-wider text-muted-foreground"
+      >
+        <Link href="/customer/login">Đăng nhập để trả lời</Link>
+      </Button>
     );
   }
 
@@ -158,7 +174,7 @@ function ReviewReplyForm({ reviewId }: { reviewId: string }) {
   );
 }
 
-export function ReviewCard({ review }: { review: OrderReview }) {
+export function ReviewCard({ review }: { review: ProductReview }) {
   const date = new Date(review.createdAt).toLocaleDateString('vi-VN', {
     year: 'numeric',
     month: 'long',

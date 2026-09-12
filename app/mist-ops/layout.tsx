@@ -28,13 +28,20 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     ensureSession();
   }, [ensureSession]);
 
+  const isStaffOrAdmin = user?.role === 'admin' || user?.role === 'staff';
+
   useEffect(() => {
-    if (!isLoading && (!user || user.role !== 'admin')) {
+    if (isLoading || isStaffOrAdmin) return;
+    // A customer session (or no session) landed here — clear any leftover
+    // cookies before bouncing to /login so the two areas never mix sessions.
+    if (user) {
+      logout().then(() => router.replace('/login'));
+    } else {
       router.replace('/login');
     }
-  }, [user, isLoading, router]);
+  }, [user, isStaffOrAdmin, isLoading, logout, router]);
 
-  if (isLoading || !user || user.role !== 'admin') {
+  if (isLoading || !isStaffOrAdmin) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <p className="text-muted-foreground">Đang tải...</p>

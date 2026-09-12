@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -8,7 +9,6 @@ import { z } from 'zod';
 import { Star } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import {
   Form,
@@ -19,10 +19,10 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { ErrorNotice } from '@/app/_components/ErrorNotice';
-import { useCreateOrderReview } from '@/hooks/use-order-reviews';
+import { useCreateProductReview } from '@/hooks/use-product-reviews';
+import { useAuth } from '@/lib/auth-context';
 
 const reviewSchema = z.object({
-  orderId: z.string().trim().uuid('Mã đơn hàng không hợp lệ'),
   rating: z.number().int().min(1, 'Vui lòng chọn số sao đánh giá').max(5),
   commentText: z
     .string()
@@ -69,17 +69,17 @@ function RatingInput({
 
 export function ReviewForm({ productId }: { productId: string }) {
   const router = useRouter();
-  const create = useCreateOrderReview();
+  const { user } = useAuth();
+  const create = useCreateProductReview();
   const form = useForm<ReviewForm>({
     resolver: zodResolver(reviewSchema),
-    defaultValues: { orderId: '', rating: 0, commentText: '' },
+    defaultValues: { rating: 0, commentText: '' },
   });
 
   function onSubmit(values: ReviewForm) {
     create.mutate(
       {
         productId,
-        orderId: values.orderId,
         rating: values.rating,
         commentText: values.commentText,
         source: 'app',
@@ -87,10 +87,26 @@ export function ReviewForm({ productId }: { productId: string }) {
       {
         onSuccess: () => {
           toast.success('Cảm ơn bạn đã gửi đánh giá!');
-          form.reset({ orderId: '', rating: 0, commentText: '' });
+          form.reset({ rating: 0, commentText: '' });
           router.refresh();
         },
       },
+    );
+  }
+
+  if (user?.role !== 'customer') {
+    return (
+      <div className="p-6 bg-card rounded-xl border border-border space-y-3">
+        <h4 className="text-foreground text-sm uppercase tracking-widest font-medium">
+          Viết Đánh Giá Của Bạn
+        </h4>
+        <p className="text-sm text-muted-foreground">
+          Vui lòng đăng nhập để gửi đánh giá.
+        </p>
+        <Button asChild size="sm" className="uppercase tracking-wider text-xs">
+          <Link href="/customer/login">Đăng Nhập</Link>
+        </Button>
+      </div>
     );
   }
 
@@ -101,22 +117,6 @@ export function ReviewForm({ productId }: { productId: string }) {
       </h4>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <FormField
-            control={form.control}
-            name="orderId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Mã đơn hàng</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Mã đơn hàng trong email xác nhận đơn"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
           <FormField
             control={form.control}
             name="rating"

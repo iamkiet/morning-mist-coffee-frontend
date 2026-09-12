@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
-import { Menu, ShoppingBag } from 'lucide-react';
+import { Menu, ShoppingBag, User } from 'lucide-react';
 import {
   Sheet,
   SheetContent,
@@ -14,6 +14,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { VoiceSearchDialog } from './VoiceSearchDialog';
 import CartCount from './CartCount';
+import { useAuth } from '@/lib/auth-context';
 
 const links = [
   { href: '/', label: 'Trang chủ' },
@@ -31,6 +32,11 @@ export function Nav({ className }: NavProps = {}) {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const closeMenu = () => setIsOpen(false);
+  // Does not call ensureSession() itself — public pages must not fire an auth
+  // request just for rendering the nav; this only reflects a session another
+  // route (e.g. the profile page) already restored.
+  const { user } = useAuth();
+  const accountHref = user?.role === 'customer' ? '/customer/profile' : '/customer/login';
 
   return (
     <nav className={`w-full bg-background/70 border-b border-border/20 backdrop-blur-xl ${className ?? ''}`}>
@@ -62,6 +68,17 @@ export function Nav({ className }: NavProps = {}) {
 
         <div className="flex items-center gap-1">
           <VoiceSearchDialog />
+
+          <Button
+            asChild
+            variant="ghost"
+            size="icon"
+            className="h-11 w-11 sm:h-12 sm:w-12"
+          >
+            <Link href={accountHref} onClick={closeMenu} aria-label="Tài khoản">
+              <User className="size-5" />
+            </Link>
+          </Button>
 
           <Button
             asChild

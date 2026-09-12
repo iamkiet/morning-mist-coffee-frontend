@@ -31,7 +31,7 @@ export interface Product {
 
 export type ReviewReplyAuthorType = 'admin' | 'customer' | 'ai';
 
-export interface OrderReviewReply {
+export interface ProductReviewReply {
   id: string;
   authorType: ReviewReplyAuthorType;
   authorName: string | null;
@@ -39,11 +39,11 @@ export interface OrderReviewReply {
   createdAt: string;
 }
 
-export interface OrderReview {
+export interface ProductReview {
   id: string;
   rating: number | null;
   commentText: string;
-  replies: OrderReviewReply[];
+  replies: ProductReviewReply[];
   createdAt: string;
 }
 
@@ -61,10 +61,18 @@ export interface ProductProperty {
   dataType: PropertyDataType;
 }
 
-export type UserRole = 'user' | 'admin';
+export type UserRole = 'customer' | 'staff' | 'admin';
+export type EmployeeRole = 'staff' | 'admin';
 export type UserStatus = 'active' | 'inactive' | 'banned';
 
-/** The signed-in account, as returned by /auth/me and /auth/login. */
+/** Which table/endpoint to authenticate against — employees and customers are verified separately. */
+export const ACCOUNT_TYPE = {
+  EMPLOYEE: 'employee',
+  CUSTOMER: 'customer',
+} as const;
+export type AccountType = (typeof ACCOUNT_TYPE)[keyof typeof ACCOUNT_TYPE];
+
+/** The signed-in account, as returned by /auth/me and /auth/login — either an employee or a customer. */
 export interface User {
   id: string;
   firstName: string;
@@ -73,8 +81,28 @@ export interface User {
   role: UserRole;
 }
 
-/** A user row in the admin table — the same account plus admin-only fields. */
-export interface AdminUser extends User {
+/** An employee row in the admin table (`/mist-ops/employees`). */
+export interface AdminEmployee {
+  id: string;
+  firstName: string;
+  lastName: string;
+  companyEmail: string;
+  department: string | null;
+  role: EmployeeRole;
+  status: UserStatus;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/** A customer row in the admin table (`/mist-ops/customers`). */
+export interface AdminCustomer {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string | null;
+  address: string | null;
+  loyaltyPoints: number;
   status: UserStatus;
   createdAt: string;
   updatedAt: string;

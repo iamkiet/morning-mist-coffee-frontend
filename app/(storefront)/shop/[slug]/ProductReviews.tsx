@@ -1,4 +1,4 @@
-import { fetchProductReviews } from '@/lib/api/order-reviews';
+import { fetchProductReviews } from '@/lib/api/product-reviews';
 import { ReviewCard } from './ReviewCard';
 
 export async function ProductReviews({ productId }: { productId: string }) {

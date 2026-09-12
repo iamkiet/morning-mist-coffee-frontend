@@ -84,7 +84,6 @@ export interface CreateOrderItemInput {
 }
 
 export interface CreateOrderPayload {
-  customerEmail: string;
   totalCents: number;
   items: CreateOrderItemInput[];
   currency?: string;

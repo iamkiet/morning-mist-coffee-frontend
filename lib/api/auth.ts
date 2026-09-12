@@ -29,11 +29,25 @@ export async function postRefresh(): Promise<string | null> {
   return data.csrfToken ?? null;
 }
 
-export async function postLogin(
+export async function postEmployeeLogin(
   email: string,
   password: string,
 ): Promise<LoginResult> {
-  const res = await post('/api/v1/auth/login', { email, password });
+  const res = await post('/api/v1/auth/employee-login', { email, password });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(
+      (err as { message?: string }).message ?? 'Invalid email or password',
+    );
+  }
+  return res.json();
+}
+
+export async function postCustomerLogin(
+  email: string,
+  password: string,
+): Promise<LoginResult> {
+  const res = await post('/api/v1/auth/customer-login', { email, password });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     throw new Error(

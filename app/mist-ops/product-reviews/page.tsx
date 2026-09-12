@@ -35,19 +35,19 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import {
-  useCreateAdminOrderReviewReply,
-  useOrderReviews,
-  useUpdateOrderReviewStatus,
-} from '@/hooks/use-order-reviews';
+  useCreateAdminProductReviewReply,
+  useProductReviewsAdmin,
+  useUpdateProductReviewStatus,
+} from '@/hooks/use-product-reviews';
 import { toast } from 'sonner';
 import { ErrorNotice } from '@/app/_components/ErrorNotice';
 import type {
-  AdminOrderReview,
+  AdminProductReview,
   ReviewCategory,
   ReviewSeverity,
   ReviewStatus,
-} from '@/lib/api/order-reviews';
-import type { OrderReviewReply, ReviewReplyAuthorType } from '@/lib/types';
+} from '@/lib/api/product-reviews';
+import type { ProductReviewReply, ReviewReplyAuthorType } from '@/lib/types';
 
 const REPLY_AUTHOR_VIETNAMESE: Record<ReviewReplyAuthorType, string> = {
   admin: 'Admin',
@@ -111,11 +111,11 @@ const statusSchema = z.object({
 type StatusForm = z.infer<typeof statusSchema>;
 
 interface EditReviewDialogProps {
-  review: AdminOrderReview;
+  review: AdminProductReview;
   onClose: () => void;
 }
 
-function ReplyThread({ replies }: { replies: OrderReviewReply[] }) {
+function ReplyThread({ replies }: { replies: ProductReviewReply[] }) {
   if (replies.length === 0) return null;
   return (
     <div className="space-y-3">
@@ -137,10 +137,10 @@ function AdminReplyForm({
   onReplied,
 }: {
   reviewId: string;
-  onReplied: (reply: OrderReviewReply) => void;
+  onReplied: (reply: ProductReviewReply) => void;
 }) {
   const [replyText, setReplyText] = useState('');
-  const createReply = useCreateAdminOrderReviewReply();
+  const createReply = useCreateAdminProductReviewReply();
 
   function handleSubmit() {
     if (!replyText.trim()) return;
@@ -177,8 +177,8 @@ function AdminReplyForm({
 }
 
 function EditReviewDialog({ review, onClose }: EditReviewDialogProps) {
-  const update = useUpdateOrderReviewStatus();
-  const [replies, setReplies] = useState<OrderReviewReply[]>(review.replies);
+  const update = useUpdateProductReviewStatus();
+  const [replies, setReplies] = useState<ProductReviewReply[]>(review.replies);
   const form = useForm<StatusForm>({
     resolver: zodResolver(statusSchema),
     defaultValues: { status: review.status },
@@ -276,12 +276,12 @@ function EditReviewDialog({ review, onClose }: EditReviewDialogProps) {
 const LIMIT = 20;
 const ALL_STATUS_FILTER = 'all';
 
-export default function AdminOrderReviewsPage() {
+export default function AdminProductReviewsPage() {
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<string>(ALL_STATUS_FILTER);
-  const [editReview, setEditReview] = useState<AdminOrderReview | null>(null);
+  const [editReview, setEditReview] = useState<AdminProductReview | null>(null);
 
-  const { data, isLoading, isError } = useOrderReviews(page, LIMIT, {
+  const { data, isLoading, isError } = useProductReviewsAdmin(page, LIMIT, {
     filters: {
       status: statusFilter === ALL_STATUS_FILTER ? undefined : statusFilter,
     },
@@ -292,7 +292,7 @@ export default function AdminOrderReviewsPage() {
   const totalPages = Math.ceil(total / LIMIT);
   const offset = (page - 1) * LIMIT;
 
-  const columns: Column<AdminOrderReview>[] = [
+  const columns: Column<AdminProductReview>[] = [
     {
       key: 'comment',
       header: 'Bình luận',

@@ -2,6 +2,8 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -22,11 +24,11 @@ import { Container } from '@/app/_components/Container';
 import { ErrorNotice } from '@/app/_components/ErrorNotice';
 import { useCart } from '@/lib/cart';
 import { useCreateOrder } from '@/hooks/use-orders';
+import { useAuth } from '@/lib/auth-context';
 import { getVariantLabelFromSku } from '@/lib/product-variants';
 import { toast } from 'sonner';
 
 const checkoutSchema = z.object({
-  email: z.string().email('Vui lòng nhập email hợp lệ'),
   fullName: z.string().min(1, 'Họ và tên là bắt buộc'),
   address: z.string().min(5, 'Vui lòng nhập địa chỉ nhận hàng chi tiết'),
 });
@@ -34,13 +36,15 @@ const checkoutSchema = z.object({
 type CheckoutForm = z.infer<typeof checkoutSchema>;
 
 export default function CheckoutPage() {
+  const router = useRouter();
+  const { user, isLoading: authLoading, ensureSession, logout } = useAuth();
+  const isCustomer = user?.role === 'customer';
   const { items, itemCount, total, updateQuantity, removeItem, clearCart } =
     useCart();
 
   const form = useForm<CheckoutForm>({
     resolver: zodResolver(checkoutSchema),
     defaultValues: {
-      email: '',
       fullName: '',
       address: '',
     },
@@ -48,6 +52,19 @@ export default function CheckoutPage() {
 
   // Only cash-on-pickup is supported today — no payment gateway is integrated
   const createOrder = useCreateOrder();
+
+  useEffect(() => {
+    ensureSession();
+  }, [ensureSession]);
+
+  useEffect(() => {
+    if (authLoading || isCustomer) return;
+    if (user) {
+      logout().then(() => router.replace('/customer/login'));
+    } else {
+      router.replace('/customer/login');
+    }
+  }, [authLoading, isCustomer, user, logout, router]);
 
   const submitError = createOrder.isError
     ? createOrder.error instanceof Error
@@ -58,7 +75,6 @@ export default function CheckoutPage() {
   const onSubmit = (data: CheckoutForm) => {
     createOrder.mutate(
       {
-        customerEmail: data.email,
         totalCents: Math.round(total),
         items: items.map((item) => ({
           productVariantId: item.productVariantId,
@@ -81,6 +97,14 @@ export default function CheckoutPage() {
       },
     );
   };
+
+  if (authLoading || !isCustomer) {
+    return (
+      <Container navOffset className="pb-12 min-h-screen">
+        <p className="text-center text-muted-foreground">Đang tải...</p>
+      </Container>
+    );
+  }
 
   return (
     <Container navOffset className="pb-12 min-h-screen">
@@ -216,26 +240,6 @@ export default function CheckoutPage() {
                 </div>
 
                 <div className="space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-xs uppercase tracking-wider text-muted-foreground">
-                          Email
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            type="email"
-                            placeholder="your@email.com"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
                   <FormField
                     control={form.control}
                     name="fullName"

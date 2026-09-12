@@ -10,7 +10,13 @@ import {
 } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { setCsrfToken, setAuthFailureHandler, fetchMe } from '@/lib/api/client';
-import { postLogin, postLogout, type User } from '@/lib/api/auth';
+import {
+  postEmployeeLogin,
+  postCustomerLogin,
+  postLogout,
+  type User,
+} from '@/lib/api/auth';
+import { ACCOUNT_TYPE, type AccountType } from '@/lib/types';
 
 export type { User };
 
@@ -23,8 +29,9 @@ interface AuthContextValue {
   // `window.location` means it also survives client-side navigation.
   ensureSession: () => void;
   // Returns the signed-in user so callers can branch on role without
-  // waiting for a context re-render
-  login: (email: string, password: string) => Promise<User>;
+  // waiting for a context re-render. `accountType` selects which table/endpoint
+  // to authenticate against — employees and customers are verified separately.
+  login: (email: string, password: string, accountType: AccountType) => Promise<User>;
   logout: () => Promise<void>;
 }
 
@@ -71,14 +78,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
     })();
   }, []);
 
-  const login = useCallback(async (email: string, password: string) => {
-    const { csrfToken, user: signedIn } = await postLogin(email, password);
-    setCsrfToken(csrfToken);
-    setUser(signedIn);
-    restoreStarted.current = true;
-    setStatus('ready');
-    return signedIn;
-  }, []);
+  const login = useCallback(
+    async (email: string, password: string, accountType: AccountType) => {
+      const postLogin =
+        accountType === ACCOUNT_TYPE.EMPLOYEE ? postEmployeeLogin : postCustomerLogin;
+      const { csrfToken, user: signedIn } = await postLogin(email, password);
+      setCsrfToken(csrfToken);
+      setUser(signedIn);
+      restoreStarted.current = true;
+      setStatus('ready');
+      return signedIn;
+    },
+    [],
+  );
 
   const logout = useCallback(async () => {
     await postLogout();

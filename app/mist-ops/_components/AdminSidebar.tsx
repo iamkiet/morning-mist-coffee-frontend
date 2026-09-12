@@ -8,6 +8,7 @@ import {
   Receipt,
   Package,
   Users,
+  UserCog,
   MessageSquareText,
   Settings,
   HelpCircle,
@@ -24,9 +25,10 @@ const nav: { href: string; label: string; icon: LucideIcon }[] = [
   { href: '/mist-ops', label: 'Tổng quan', icon: LayoutDashboard },
   { href: '/mist-ops/analytics', label: 'Phân tích', icon: LineChart },
   { href: '/mist-ops/orders', label: 'Đơn hàng', icon: Receipt },
-  { href: '/mist-ops/order-reviews', label: 'Đánh giá', icon: MessageSquareText },
+  { href: '/mist-ops/product-reviews', label: 'Đánh giá', icon: MessageSquareText },
   { href: '/mist-ops/products', label: 'Kho hàng', icon: Package },
-  { href: '/mist-ops/users', label: 'Thành viên', icon: Users },
+  { href: '/mist-ops/customers', label: 'Khách hàng', icon: Users },
+  { href: '/mist-ops/employees', label: 'Nhân viên', icon: UserCog },
 ];
 
 const footerNav: { href: string; label: string; icon: LucideIcon }[] = [

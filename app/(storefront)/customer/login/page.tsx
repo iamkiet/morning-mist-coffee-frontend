@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useSyncExternalStore } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
@@ -16,19 +16,10 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
 import { ErrorNotice } from '@/app/_components/ErrorNotice';
+import { Container } from '@/app/_components/Container';
 import { useAuth } from '@/lib/auth-context';
 import { ACCOUNT_TYPE } from '@/lib/types';
-
-const REMEMBERED_EMAIL_KEY = 'remembered_email';
-
-// Only this tab writes the remembered email and it rereads it on submit —
-// nothing to subscribe to, so the store never notifies
-function subscribeToRememberedEmail() {
-  return () => {};
-}
 
 const loginSchema = z.object({
   email: z.string().min(1, 'Email là bắt buộc').email('Email không hợp lệ'),
@@ -37,17 +28,7 @@ const loginSchema = z.object({
 
 type LoginForm = z.infer<typeof loginSchema>;
 
-export default function LoginPage() {
-  // The remembered email lives in localStorage, so it is read as an external
-  // store rather than copied into state from an effect.
-  const rememberedEmail = useSyncExternalStore(
-    subscribeToRememberedEmail,
-    () => localStorage.getItem(REMEMBERED_EMAIL_KEY) ?? '',
-    () => '',
-  );
-  const [rememberInput, setRememberMe] = useState<boolean | null>(null);
-  const rememberMe = rememberInput ?? rememberedEmail !== '';
-
+export default function CustomerLoginPage() {
   const [error, setError] = useState('');
   const { login, logout, user, isLoading: authLoading, ensureSession } = useAuth();
   const router = useRouter();
@@ -55,8 +36,6 @@ export default function LoginPage() {
   const form = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
     defaultValues: { email: '', password: '' },
-    values: { email: rememberedEmail, password: '' },
-    resetOptions: { keepDirtyValues: true },
   });
 
   useEffect(() => {
@@ -65,28 +44,22 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (authLoading || !user) return;
-    // Already signed in as staff/admin (session restored via refresh cookie) — skip the form
-    if (user.role === 'admin' || user.role === 'staff') {
-      router.replace('/mist-ops');
+    if (user.role === 'customer') {
+      router.replace('/customer/profile');
       return;
     }
-    // A customer session landed on the admin login page — clear it so the
-    // two areas never mix sessions/cookies.
+    // A staff/admin session landed on the customer login page — clear it so
+    // the two areas never mix sessions/cookies.
     logout();
   }, [user, authLoading, logout, router]);
 
   async function onSubmit(values: LoginForm) {
     setError('');
     try {
-      if (rememberMe) {
-        localStorage.setItem(REMEMBERED_EMAIL_KEY, values.email);
-      } else {
-        localStorage.removeItem(REMEMBERED_EMAIL_KEY);
-      }
-      // /employee-login only ever authenticates against the employees table,
-      // so a customer account can never sign in here.
-      await login(values.email, values.password, ACCOUNT_TYPE.EMPLOYEE);
-      router.replace('/mist-ops');
+      // /customer-login only ever authenticates against the customers table,
+      // so a staff/admin account can never sign in here.
+      await login(values.email, values.password, ACCOUNT_TYPE.CUSTOMER);
+      router.replace('/customer/profile');
     } catch (err) {
       setError(
         err instanceof Error ? err.message : 'Email hoặc mật khẩu không hợp lệ',
@@ -95,12 +68,12 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center px-4 py-12 bg-background">
-      <div className="w-full max-w-[420px] bg-card border border-border rounded-xl p-8 sm:p-10 space-y-6">
+    <Container navOffset size="narrow" className="pb-20">
+      <div className="max-w-[420px] mx-auto bg-card border border-border rounded-xl p-8 sm:p-10 space-y-6">
         <div className="text-center">
           <h1 className="text-2xl font-light text-foreground mb-2">Đăng Nhập</h1>
           <p className="text-sm text-muted-foreground">
-            Yêu cầu quyền truy cập Quản trị
+            Đăng nhập để xem đơn hàng và điểm thân thiết
           </p>
         </div>
 
@@ -115,18 +88,12 @@ export default function LoginPage() {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input
-                      type="email"
-                      autoComplete="email"
-                      placeholder="ten@email.com"
-                      {...field}
-                    />
+                    <Input type="email" autoComplete="email" placeholder="ten@email.com" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-
             <FormField
               control={form.control}
               name="password"
@@ -134,28 +101,12 @@ export default function LoginPage() {
                 <FormItem>
                   <FormLabel>Mật khẩu</FormLabel>
                   <FormControl>
-                    <Input
-                      type="password"
-                      autoComplete="current-password"
-                      placeholder="••••••••"
-                      {...field}
-                    />
+                    <Input type="password" autoComplete="current-password" placeholder="••••••••" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-
-            <Label className="flex items-center gap-2 cursor-pointer select-none font-normal">
-              <Checkbox
-                checked={rememberMe}
-                onCheckedChange={(checked) => setRememberMe(checked === true)}
-              />
-              <span className="text-xs text-muted-foreground normal-case tracking-normal">
-                Ghi nhớ email của tôi
-              </span>
-            </Label>
-
             <Button
               type="submit"
               size="lg"
@@ -168,11 +119,12 @@ export default function LoginPage() {
         </Form>
 
         <div className="text-center text-xs text-muted-foreground">
-          <Link href="/" className="hover:text-foreground transition-colors">
-            Quay lại cửa hàng
+          Chưa có tài khoản?{' '}
+          <Link href="/customer/register" className="text-primary hover:underline">
+            Đăng ký
           </Link>
         </div>
       </div>
-    </main>
+    </Container>
   );
 }

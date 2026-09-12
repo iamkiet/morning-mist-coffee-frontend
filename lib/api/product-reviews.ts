@@ -1,4 +1,4 @@
-import type { OrderReview, OrderReviewReply } from '@/lib/types';
+import type { ProductReview, ProductReviewReply } from '@/lib/types';
 import { authFetch, listQuery, type ListQueryOptions } from './client';
 
 export type ReviewSource = 'app' | 'google' | 'facebook' | 'form';
@@ -12,11 +12,10 @@ export type ReviewStatus =
   | 'escalated'
   | 'resolved';
 
-export interface AdminOrderReview {
+export interface AdminProductReview {
   id: string;
-  productId: string | null;
-  orderId: string | null;
-  customerEmail: string | null;
+  productId: string;
+  customerEmail: string;
   rating: number | null;
   commentText: string;
   source: ReviewSource;
@@ -26,21 +25,21 @@ export interface AdminOrderReview {
   topics: string[] | null;
   suggestedResponse: string | null;
   status: ReviewStatus;
-  replies: OrderReviewReply[];
+  replies: ProductReviewReply[];
   classifiedAt: string | null;
   createdAt: string;
   updatedAt: string;
 }
 
-export interface OrderReviewsPage {
-  items: OrderReview[];
+export interface ProductReviewsPage {
+  items: ProductReview[];
   total: number;
   limit: number;
   offset: number;
 }
 
-export interface AdminOrderReviewsPage {
-  items: AdminOrderReview[];
+export interface AdminProductReviewsPage {
+  items: AdminProductReview[];
   total: number;
   limit: number;
   offset: number;
@@ -50,27 +49,25 @@ export async function fetchProductReviews(
   productId: string,
   limit = 6,
   offset = 0,
-): Promise<OrderReviewsPage> {
+): Promise<ProductReviewsPage> {
   const res = await authFetch(
-    `/api/v1/order-reviews/product/${productId}?${listQuery(limit, offset)}`,
+    `/api/v1/product-reviews/product/${productId}?${listQuery(limit, offset)}`,
   );
   if (!res.ok) throw new Error('Failed to fetch product reviews');
   return res.json();
 }
 
-export interface CreateOrderReviewPayload {
-  productId?: string;
-  orderId: string;
-  customerEmail?: string;
+export interface CreateProductReviewPayload {
+  productId: string;
   rating?: number;
   commentText: string;
   source: ReviewSource;
 }
 
-export async function createOrderReview(
-  payload: CreateOrderReviewPayload,
-): Promise<AdminOrderReview> {
-  const res = await authFetch('/api/v1/order-reviews', {
+export async function createProductReview(
+  payload: CreateProductReviewPayload,
+): Promise<AdminProductReview> {
+  const res = await authFetch('/api/v1/product-reviews', {
     method: 'POST',
     body: JSON.stringify(payload),
   });
@@ -83,28 +80,28 @@ export async function createOrderReview(
   return res.json();
 }
 
-export async function fetchOrderReviews(
+export async function fetchProductReviewsAdmin(
   limit = 20,
   offset = 0,
   opts: ListQueryOptions = {},
-): Promise<AdminOrderReviewsPage> {
+): Promise<AdminProductReviewsPage> {
   const res = await authFetch(
-    `/api/v1/order-reviews?${listQuery(limit, offset, '', opts)}`,
+    `/api/v1/product-reviews?${listQuery(limit, offset, '', opts)}`,
   );
   if (!res.ok) throw new Error('Failed to fetch reviews');
   return res.json();
 }
 
-export interface CreateOrderReviewReplyPayload {
+export interface CreateProductReviewReplyPayload {
   authorName?: string;
   replyText: string;
 }
 
-export async function createOrderReviewReply(
+export async function createProductReviewReply(
   reviewId: string,
-  payload: CreateOrderReviewReplyPayload,
-): Promise<OrderReviewReply> {
-  const res = await authFetch(`/api/v1/order-reviews/${reviewId}/replies`, {
+  payload: CreateProductReviewReplyPayload,
+): Promise<ProductReviewReply> {
+  const res = await authFetch(`/api/v1/product-reviews/${reviewId}/replies`, {
     method: 'POST',
     body: JSON.stringify(payload),
   });
@@ -112,11 +109,11 @@ export async function createOrderReviewReply(
   return res.json();
 }
 
-export async function createAdminOrderReviewReply(
+export async function createAdminProductReviewReply(
   reviewId: string,
-  payload: CreateOrderReviewReplyPayload,
-): Promise<OrderReviewReply> {
-  const res = await authFetch(`/api/v1/order-reviews/${reviewId}/admin-replies`, {
+  payload: CreateProductReviewReplyPayload,
+): Promise<ProductReviewReply> {
+  const res = await authFetch(`/api/v1/product-reviews/${reviewId}/admin-replies`, {
     method: 'POST',
     body: JSON.stringify(payload),
   });
@@ -124,11 +121,11 @@ export async function createAdminOrderReviewReply(
   return res.json();
 }
 
-export async function updateOrderReviewStatus(
+export async function updateProductReviewStatus(
   id: string,
   status: ReviewStatus,
-): Promise<AdminOrderReview> {
-  const res = await authFetch(`/api/v1/order-reviews/${id}/status`, {
+): Promise<AdminProductReview> {
+  const res = await authFetch(`/api/v1/product-reviews/${id}/status`, {
     method: 'PATCH',
     body: JSON.stringify({ status }),
   });
