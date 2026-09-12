@@ -592,6 +592,7 @@ export default function AdminEmployeesPage() {
       width: '15%',
       render: (r) => {
         const canDelete = isAdmin || r.role !== 'admin';
+        const canEdit = isAdmin || r.id === currentUser?.id;
         return (
           <div className="flex justify-end gap-1">
             <Button
@@ -607,8 +608,14 @@ export default function AdminEmployeesPage() {
               variant="ghost"
               size="icon"
               className="size-8 hover:text-destructive"
-              title={r.status === 'banned' ? 'Kích hoạt lại' : 'Vô hiệu hóa'}
-              disabled={toggleStatus.isPending}
+              title={
+                !canEdit
+                  ? 'Chỉ tự chỉnh sửa tài khoản của chính mình'
+                  : r.status === 'banned'
+                    ? 'Kích hoạt lại'
+                    : 'Vô hiệu hóa'
+              }
+              disabled={toggleStatus.isPending || !canEdit}
               onClick={() => {
                 const status = r.status === 'banned' ? 'active' : 'banned';
                 toggleStatus.mutate(
@@ -632,7 +639,8 @@ export default function AdminEmployeesPage() {
               variant="ghost"
               size="icon"
               className="size-8"
-              title="Chỉnh sửa"
+              title={canEdit ? 'Chỉnh sửa' : 'Chỉ tự chỉnh sửa tài khoản của chính mình'}
+              disabled={!canEdit}
               onClick={() => setEditEmployee(r)}
             >
               <Pencil className="size-4" />
