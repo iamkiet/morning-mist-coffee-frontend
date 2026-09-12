@@ -103,6 +103,7 @@ const createCustomerSchema = z.object({
   phone: z.string().optional(),
   address: z.string().optional(),
   password: createPasswordSchema,
+  registrationKey: z.string().min(1, 'Mã đăng ký là bắt buộc'),
 });
 
 type CreateCustomerForm = z.infer<typeof createCustomerSchema>;
@@ -118,6 +119,7 @@ function CreateCustomerDialog({ onClose }: { onClose: () => void }) {
       phone: '',
       address: '',
       password: '',
+      registrationKey: '',
     },
   });
 
@@ -215,6 +217,19 @@ function CreateCustomerDialog({ onClose }: { onClose: () => void }) {
                   <FormLabel>Mật khẩu</FormLabel>
                   <FormControl>
                     <Input type="password" placeholder="Hoa, thường, số, ký tự đặc biệt" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="registrationKey"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Mã đăng ký</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

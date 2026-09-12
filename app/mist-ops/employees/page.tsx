@@ -126,6 +126,7 @@ const createEmployeeSchema = z.object({
   department: z.string().optional(),
   password: passwordSchema,
   role: z.enum(['staff', 'admin']),
+  registrationKey: z.string().min(1, 'Mã đăng ký là bắt buộc'),
 });
 
 type CreateEmployeeForm = z.infer<typeof createEmployeeSchema>;
@@ -141,6 +142,7 @@ function CreateEmployeeDialog({ allowAdminRole, onClose }: CreateEmployeeDialogP
       department: '',
       password: '',
       role: 'staff',
+      registrationKey: '',
     },
   });
 
@@ -253,6 +255,19 @@ function CreateEmployeeDialog({ allowAdminRole, onClose }: CreateEmployeeDialogP
                   <FormLabel>Mật khẩu</FormLabel>
                   <FormControl>
                     <Input type="password" placeholder="Hoa, thường, số, ký tự đặc biệt" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="registrationKey"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Mã đăng ký</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

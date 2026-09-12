@@ -30,14 +30,17 @@ export interface CreateEmployeePayload {
   department?: string;
   password: string;
   role: EmployeeRole;
+  registrationKey: string;
 }
 
 export async function createEmployee(
   payload: CreateEmployeePayload,
 ): Promise<AdminEmployee> {
+  const { registrationKey, ...body } = payload;
   const res = await authFetch('/api/v1/employees', {
     method: 'POST',
-    body: JSON.stringify(payload),
+    headers: { 'X-Employee-Registration-Key': registrationKey },
+    body: JSON.stringify(body),
   });
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));

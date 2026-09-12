@@ -30,14 +30,17 @@ export interface CreateCustomerPayload {
   phone?: string;
   address?: string;
   password: string;
+  registrationKey: string;
 }
 
 export async function createCustomer(
   payload: CreateCustomerPayload,
 ): Promise<AdminCustomer> {
+  const { registrationKey, ...body } = payload;
   const res = await authFetch('/api/v1/customers', {
     method: 'POST',
-    body: JSON.stringify(payload),
+    headers: { 'X-Customer-Registration-Key': registrationKey },
+    body: JSON.stringify(body),
   });
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));

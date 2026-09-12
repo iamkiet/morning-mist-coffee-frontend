@@ -34,6 +34,7 @@ const registerSchema = z.object({
     .regex(/[A-Z]/, 'Mật khẩu cần có chữ hoa')
     .regex(/[0-9]/, 'Mật khẩu cần có chữ số')
     .regex(/[^a-zA-Z0-9]/, 'Mật khẩu cần có ký tự đặc biệt'),
+  registrationKey: z.string().min(1, 'Mã đăng ký là bắt buộc'),
 });
 
 type RegisterForm = z.infer<typeof registerSchema>;
@@ -45,7 +46,13 @@ export default function CustomerRegisterPage() {
 
   const form = useForm<RegisterForm>({
     resolver: zodResolver(registerSchema),
-    defaultValues: { firstName: '', lastName: '', email: '', password: '' },
+    defaultValues: {
+      firstName: '',
+      lastName: '',
+      email: '',
+      password: '',
+      registrationKey: '',
+    },
   });
 
   async function onSubmit(values: RegisterForm) {
@@ -122,6 +129,19 @@ export default function CustomerRegisterPage() {
                   <FormLabel>Mật khẩu</FormLabel>
                   <FormControl>
                     <Input type="password" placeholder="Hoa, thường, số, ký tự đặc biệt" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="registrationKey"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Mã đăng ký</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Mã được cung cấp bởi cửa hàng" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
