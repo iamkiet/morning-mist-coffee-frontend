@@ -1,9 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
+  createAdminOrderReviewReply,
   createOrderReview,
+  createOrderReviewReply,
   fetchOrderReviews,
   updateOrderReviewStatus,
   type CreateOrderReviewPayload,
+  type CreateOrderReviewReplyPayload,
   type ReviewStatus,
 } from '@/lib/api/order-reviews';
 import type { ListQueryOptions } from '@/lib/api/client';
@@ -11,6 +14,34 @@ import type { ListQueryOptions } from '@/lib/api/client';
 export function useCreateOrderReview() {
   return useMutation({
     mutationFn: (payload: CreateOrderReviewPayload) => createOrderReview(payload),
+  });
+}
+
+export function useCreateOrderReviewReply() {
+  return useMutation({
+    mutationFn: ({
+      reviewId,
+      payload,
+    }: {
+      reviewId: string;
+      payload: CreateOrderReviewReplyPayload;
+    }) => createOrderReviewReply(reviewId, payload),
+  });
+}
+
+export function useCreateAdminOrderReviewReply() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      reviewId,
+      payload,
+    }: {
+      reviewId: string;
+      payload: CreateOrderReviewReplyPayload;
+    }) => createAdminOrderReviewReply(reviewId, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['order-reviews'] });
+    },
   });
 }
 

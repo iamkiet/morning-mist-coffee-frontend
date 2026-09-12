@@ -1,4 +1,4 @@
-import type { OrderReview } from '@/lib/types';
+import type { OrderReview, OrderReviewReply } from '@/lib/types';
 import { authFetch, listQuery, type ListQueryOptions } from './client';
 
 export type ReviewSource = 'app' | 'google' | 'facebook' | 'form';
@@ -26,6 +26,7 @@ export interface AdminOrderReview {
   topics: string[] | null;
   suggestedResponse: string | null;
   status: ReviewStatus;
+  replies: OrderReviewReply[];
   classifiedAt: string | null;
   createdAt: string;
   updatedAt: string;
@@ -59,7 +60,7 @@ export async function fetchProductReviews(
 
 export interface CreateOrderReviewPayload {
   productId?: string;
-  orderId?: string;
+  orderId: string;
   customerEmail?: string;
   rating?: number;
   commentText: string;
@@ -73,7 +74,12 @@ export async function createOrderReview(
     method: 'POST',
     body: JSON.stringify(payload),
   });
-  if (!res.ok) throw new Error('Failed to submit review');
+  if (!res.ok) {
+    const body = await res.json().catch(() => null);
+    throw new Error(
+      (body as { message?: string })?.message ?? 'Failed to submit review',
+    );
+  }
   return res.json();
 }
 
@@ -86,6 +92,35 @@ export async function fetchOrderReviews(
     `/api/v1/order-reviews?${listQuery(limit, offset, '', opts)}`,
   );
   if (!res.ok) throw new Error('Failed to fetch reviews');
+  return res.json();
+}
+
+export interface CreateOrderReviewReplyPayload {
+  authorName?: string;
+  replyText: string;
+}
+
+export async function createOrderReviewReply(
+  reviewId: string,
+  payload: CreateOrderReviewReplyPayload,
+): Promise<OrderReviewReply> {
+  const res = await authFetch(`/api/v1/order-reviews/${reviewId}/replies`, {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) throw new Error('Failed to submit reply');
+  return res.json();
+}
+
+export async function createAdminOrderReviewReply(
+  reviewId: string,
+  payload: CreateOrderReviewReplyPayload,
+): Promise<OrderReviewReply> {
+  const res = await authFetch(`/api/v1/order-reviews/${reviewId}/admin-replies`, {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) throw new Error('Failed to submit reply');
   return res.json();
 }
 

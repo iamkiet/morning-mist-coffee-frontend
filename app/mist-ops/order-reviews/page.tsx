@@ -11,6 +11,7 @@ import { Badge } from '../_components/Badge';
 import { DataTable, Pagination, type Column } from '../_components/DataTable';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Textarea } from '@/components/ui/textarea';
 import {
   Dialog,
   DialogContent,
@@ -34,6 +35,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import {
+  useCreateAdminOrderReviewReply,
   useOrderReviews,
   useUpdateOrderReviewStatus,
 } from '@/hooks/use-order-reviews';
@@ -45,6 +47,13 @@ import type {
   ReviewSeverity,
   ReviewStatus,
 } from '@/lib/api/order-reviews';
+import type { OrderReviewReply, ReviewReplyAuthorType } from '@/lib/types';
+
+const REPLY_AUTHOR_VIETNAMESE: Record<ReviewReplyAuthorType, string> = {
+  admin: 'Admin',
+  customer: 'Khách hàng',
+  ai: 'AI tự động',
+};
 
 const ALL_STATUSES: ReviewStatus[] = [
   'pending_classification',
@@ -106,8 +115,70 @@ interface EditReviewDialogProps {
   onClose: () => void;
 }
 
+function ReplyThread({ replies }: { replies: OrderReviewReply[] }) {
+  if (replies.length === 0) return null;
+  return (
+    <div className="space-y-3">
+      {replies.map((reply) => (
+        <div key={reply.id} className="pl-4 border-l-2 border-border space-y-1">
+          <p className="text-xs font-medium text-primary uppercase tracking-wider">
+            {REPLY_AUTHOR_VIETNAMESE[reply.authorType]}
+            {reply.authorName ? ` · ${reply.authorName}` : ''}
+          </p>
+          <p className="text-sm text-muted-foreground">{reply.replyText}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function AdminReplyForm({
+  reviewId,
+  onReplied,
+}: {
+  reviewId: string;
+  onReplied: (reply: OrderReviewReply) => void;
+}) {
+  const [replyText, setReplyText] = useState('');
+  const createReply = useCreateAdminOrderReviewReply();
+
+  function handleSubmit() {
+    if (!replyText.trim()) return;
+    createReply.mutate(
+      { reviewId, payload: { replyText } },
+      {
+        onSuccess: (reply) => {
+          toast.success('Đã gửi phản hồi');
+          setReplyText('');
+          onReplied(reply);
+        },
+      },
+    );
+  }
+
+  return (
+    <div className="space-y-2">
+      <Textarea
+        placeholder="Viết phản hồi của quán..."
+        value={replyText}
+        onChange={(e) => setReplyText(e.target.value)}
+      />
+      <Button
+        type="button"
+        size="sm"
+        className="uppercase tracking-wider text-xs"
+        disabled={createReply.isPending || !replyText.trim()}
+        onClick={handleSubmit}
+      >
+        {createReply.isPending ? 'Đang gửi…' : 'Gửi phản hồi'}
+      </Button>
+    </div>
+  );
+}
+
 function EditReviewDialog({ review, onClose }: EditReviewDialogProps) {
   const update = useUpdateOrderReviewStatus();
+  const [replies, setReplies] = useState<OrderReviewReply[]>(review.replies);
   const form = useForm<StatusForm>({
     resolver: zodResolver(statusSchema),
     defaultValues: { status: review.status },
@@ -142,6 +213,11 @@ function EditReviewDialog({ review, onClose }: EditReviewDialogProps) {
             <p className="text-sm text-muted-foreground line-clamp-3">
               {review.commentText}
             </p>
+            <ReplyThread replies={replies} />
+            <AdminReplyForm
+              reviewId={review.id}
+              onReplied={(reply) => setReplies((prev) => [...prev, reply])}
+            />
             <FormField
               control={form.control}
               name="status"

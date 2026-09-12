@@ -29,10 +29,21 @@ export interface Product {
   categoryIds?: string[];
 }
 
+export type ReviewReplyAuthorType = 'admin' | 'customer' | 'ai';
+
+export interface OrderReviewReply {
+  id: string;
+  authorType: ReviewReplyAuthorType;
+  authorName: string | null;
+  replyText: string;
+  createdAt: string;
+}
+
 export interface OrderReview {
   id: string;
   rating: number | null;
   commentText: string;
+  replies: OrderReviewReply[];
   createdAt: string;
 }
 

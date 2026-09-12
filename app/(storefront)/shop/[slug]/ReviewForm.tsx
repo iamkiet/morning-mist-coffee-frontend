@@ -8,6 +8,7 @@ import { z } from 'zod';
 import { Star } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import {
   Form,
@@ -21,6 +22,7 @@ import { ErrorNotice } from '@/app/_components/ErrorNotice';
 import { useCreateOrderReview } from '@/hooks/use-order-reviews';
 
 const reviewSchema = z.object({
+  orderId: z.string().trim().uuid('Mã đơn hàng không hợp lệ'),
   rating: z.number().int().min(1).max(5),
   commentText: z.string().min(10).max(2000),
 });
@@ -67,13 +69,14 @@ export function ReviewForm({ productId }: { productId: string }) {
   const create = useCreateOrderReview();
   const form = useForm<ReviewForm>({
     resolver: zodResolver(reviewSchema),
-    defaultValues: { rating: 0, commentText: '' },
+    defaultValues: { orderId: '', rating: 0, commentText: '' },
   });
 
   function onSubmit(values: ReviewForm) {
     create.mutate(
       {
         productId,
+        orderId: values.orderId,
         rating: values.rating,
         commentText: values.commentText,
         source: 'app',
@@ -81,7 +84,7 @@ export function ReviewForm({ productId }: { productId: string }) {
       {
         onSuccess: () => {
           toast.success('Cảm ơn bạn đã gửi đánh giá!');
-          form.reset({ rating: 0, commentText: '' });
+          form.reset({ orderId: '', rating: 0, commentText: '' });
           router.refresh();
         },
       },
@@ -95,6 +98,22 @@ export function ReviewForm({ productId }: { productId: string }) {
       </h4>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <FormField
+            control={form.control}
+            name="orderId"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Mã đơn hàng</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Mã đơn hàng trong email xác nhận đơn"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <FormField
             control={form.control}
             name="rating"
@@ -126,7 +145,7 @@ export function ReviewForm({ productId }: { productId: string }) {
           />
           {create.isError && (
             <ErrorNotice className="mb-0">
-              Không thể gửi đánh giá. Vui lòng thử lại.
+              {create.error.message || 'Không thể gửi đánh giá. Vui lòng thử lại.'}
             </ErrorNotice>
           )}
           <Button
