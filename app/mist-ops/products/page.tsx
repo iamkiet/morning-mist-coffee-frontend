@@ -68,6 +68,7 @@ import {
 import { useDebouncedValue } from '@/hooks/use-debounced-value';
 import { toast } from 'sonner';
 import { ErrorNotice } from '@/app/_components/ErrorNotice';
+import { sortCategoryTree, CATEGORY_INDENT_PX } from '@/lib/product-categories';
 import {
   getDefaultVariant,
   getPriceRange,
@@ -104,16 +105,6 @@ const productSchema = z.object({
 
 type ProductForm = z.infer<typeof productSchema>;
 
-function categoryLabel(
-  category: ProductCategory,
-  all: ProductCategory[],
-): string {
-  const parent = category.parentId
-    ? all.find((c) => c.id === category.parentId)
-    : undefined;
-  return parent ? `${parent.name} / ${category.name}` : category.name;
-}
-
 interface CategoryCheckboxListProps {
   categories: ProductCategory[];
   selected: string[];
@@ -132,10 +123,11 @@ function CategoryCheckboxList({
   }
   return (
     <div className="max-h-40 overflow-y-auto space-y-2 border border-border rounded-lg p-3">
-      {categories.map((c) => (
+      {sortCategoryTree(categories).map((c) => (
         <label
           key={c.id}
           className="flex items-center gap-2 text-sm cursor-pointer"
+          style={{ paddingLeft: c.depth * CATEGORY_INDENT_PX }}
         >
           <Checkbox
             checked={selected.includes(c.id)}
@@ -147,7 +139,7 @@ function CategoryCheckboxList({
               )
             }
           />
-          {categoryLabel(c, categories)}
+          {c.name}
         </label>
       ))}
     </div>
@@ -226,9 +218,9 @@ function CategoryCreateForm({ categories }: CategoryCreateFormProps) {
                 </FormControl>
                 <SelectContent>
                   <SelectItem value={NO_PARENT}>Không có</SelectItem>
-                  {categories.map((c) => (
+                  {sortCategoryTree(categories).map((c) => (
                     <SelectItem key={c.id} value={c.id}>
-                      {categoryLabel(c, categories)}
+                      <span style={{ paddingLeft: c.depth * CATEGORY_INDENT_PX }}>{c.name}</span>
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -359,9 +351,13 @@ function ManageTaxonomyDialog({ onClose }: ManageTaxonomyDialogProps) {
               <Skeleton className="h-24 w-full" />
             ) : categories.length > 0 ? (
               <ul className="max-h-32 overflow-y-auto text-sm space-y-1 border border-border rounded-lg p-3">
-                {categories.map((c) => (
-                  <li key={c.id} className="text-foreground">
-                    {categoryLabel(c, categories)}
+                {sortCategoryTree(categories).map((c) => (
+                  <li
+                    key={c.id}
+                    className="text-foreground"
+                    style={{ paddingLeft: c.depth * CATEGORY_INDENT_PX }}
+                  >
+                    {c.name}
                   </li>
                 ))}
               </ul>

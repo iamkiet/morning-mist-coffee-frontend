@@ -54,6 +54,8 @@ import { toast } from 'sonner';
 import { ErrorNotice } from '@/app/_components/ErrorNotice';
 import { useDebouncedValue } from '@/hooks/use-debounced-value';
 import type { AdminCustomer, UserStatus } from '@/lib/types';
+import { passwordSchema } from '@/lib/validation';
+import { getInitials } from '@/lib/utils';
 
 const statusStyle: Record<UserStatus, 'success' | 'neutral' | 'error'> = {
   active: 'success',
@@ -79,7 +81,7 @@ interface UserAvatarProps {
 }
 
 function UserAvatar({ firstName, lastName }: UserAvatarProps) {
-  const initials = `${firstName[0] ?? ''}${lastName[0] ?? ''}`.toUpperCase();
+  const initials = getInitials(firstName, lastName);
   return (
     <div className="size-10 rounded-full bg-muted flex items-center justify-center text-xs font-semibold text-muted-foreground shrink-0">
       {initials}
@@ -87,22 +89,13 @@ function UserAvatar({ firstName, lastName }: UserAvatarProps) {
   );
 }
 
-const createPasswordSchema = z
-  .string()
-  .min(8, 'Mật khẩu tối thiểu 8 ký tự')
-  .max(128)
-  .regex(/[a-z]/, 'Mật khẩu cần có chữ thường')
-  .regex(/[A-Z]/, 'Mật khẩu cần có chữ hoa')
-  .regex(/[0-9]/, 'Mật khẩu cần có chữ số')
-  .regex(/[^a-zA-Z0-9]/, 'Mật khẩu cần có ký tự đặc biệt');
-
 const createCustomerSchema = z.object({
   firstName: z.string().min(1, 'Họ là bắt buộc'),
   lastName: z.string().min(1, 'Tên là bắt buộc'),
   email: z.string().min(1, 'Email là bắt buộc').email('Email không hợp lệ'),
   phone: z.string().optional(),
   address: z.string().optional(),
-  password: createPasswordSchema,
+  password: passwordSchema,
   registrationKey: z.string().min(1, 'Mã đăng ký là bắt buộc'),
 });
 
@@ -430,16 +423,7 @@ interface ResetPasswordDialogProps {
   onClose: () => void;
 }
 
-const resetPasswordSchema = z.object({
-  password: z
-    .string()
-    .min(8, 'Mật khẩu tối thiểu 8 ký tự')
-    .max(128)
-    .regex(/[a-z]/, 'Mật khẩu cần có chữ thường')
-    .regex(/[A-Z]/, 'Mật khẩu cần có chữ hoa')
-    .regex(/[0-9]/, 'Mật khẩu cần có chữ số')
-    .regex(/[^a-zA-Z0-9]/, 'Mật khẩu cần có ký tự đặc biệt'),
-});
+const resetPasswordSchema = z.object({ password: passwordSchema });
 
 type ResetPasswordForm = z.infer<typeof resetPasswordSchema>;
 

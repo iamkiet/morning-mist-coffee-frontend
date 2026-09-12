@@ -16,6 +16,7 @@ import { ProductCard } from '@/app/_components/ProductCard';
 import { ProductGridSkeleton } from './product-grid-skeleton';
 import { useProducts } from '@/hooks/use-products';
 import { useProductCategories } from '@/hooks/use-product-categories';
+import { sortCategoryTree, CATEGORY_INDENT_PX } from '@/lib/product-categories';
 import {
   ALL_VALUE,
   DEFAULT_SORT_KEY,
@@ -120,7 +121,14 @@ export function ShopContent() {
             value={category || ALL_VALUE}
             placeholder="Tất cả danh mục"
             onChange={(v) => applyFilter('category', v === ALL_VALUE ? null : v)}
-            options={categories.map((c) => ({ value: c.id, label: c.name }))}
+            options={sortCategoryTree(categories).map((c) => ({
+              value: c.id,
+              label: (
+                <span style={{ paddingLeft: c.depth * CATEGORY_INDENT_PX }}>
+                  {c.name}
+                </span>
+              ),
+            }))}
           />
           <FilterSelect
             label="Vùng trồng"
@@ -204,7 +212,7 @@ interface FilterSelectProps {
   value: string;
   placeholder: string;
   onChange: (value: string) => void;
-  options: Array<{ value: string; label: string }>;
+  options: Array<{ value: string; label: React.ReactNode }>;
   includeAll?: boolean;
 }
 

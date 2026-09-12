@@ -1,7 +1,12 @@
-import type { AdminEmployee, EmployeeRole, UserStatus } from '@/lib/types';
+import type {
+  AdminEmployee,
+  EmployeeDepartment,
+  EmployeeRole,
+  UserStatus,
+} from '@/lib/types';
 import { authFetch, listQuery, type ListQueryOptions } from './client';
 
-export type { AdminEmployee, EmployeeRole, UserStatus };
+export type { AdminEmployee, EmployeeDepartment, EmployeeRole, UserStatus };
 
 export interface EmployeesPage {
   items: AdminEmployee[];
@@ -27,7 +32,7 @@ export interface CreateEmployeePayload {
   firstName: string;
   lastName: string;
   companyEmail: string;
-  department?: string;
+  department?: EmployeeDepartment;
   password: string;
   role: EmployeeRole;
   registrationKey: string;
@@ -52,7 +57,7 @@ export async function createEmployee(
 }
 
 export interface UpdateEmployeePayload {
-  department?: string;
+  department?: EmployeeDepartment;
   role?: EmployeeRole;
   status?: UserStatus;
 }

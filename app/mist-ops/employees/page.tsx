@@ -56,7 +56,15 @@ import { toast } from 'sonner';
 import { ErrorNotice } from '@/app/_components/ErrorNotice';
 import { useDebouncedValue } from '@/hooks/use-debounced-value';
 import { useAuth } from '@/lib/auth-context';
-import type { AdminEmployee, EmployeeRole, UserStatus } from '@/lib/types';
+import {
+  EMPLOYEE_DEPARTMENTS,
+  type AdminEmployee,
+  type EmployeeDepartment,
+  type EmployeeRole,
+  type UserStatus,
+} from '@/lib/types';
+import { passwordSchema } from '@/lib/validation';
+import { getInitials } from '@/lib/utils';
 
 const roleStyle: Record<EmployeeRole, 'primary' | 'neutral'> = {
   admin: 'primary',
@@ -86,7 +94,7 @@ interface UserAvatarProps {
 }
 
 function UserAvatar({ firstName, lastName }: UserAvatarProps) {
-  const initials = `${firstName[0] ?? ''}${lastName[0] ?? ''}`.toUpperCase();
+  const initials = getInitials(firstName, lastName);
   return (
     <div className="size-10 rounded-full bg-muted flex items-center justify-center text-xs font-semibold text-muted-foreground shrink-0">
       {initials}
@@ -105,14 +113,8 @@ const STATUS_OPTIONS: { value: UserStatus; label: string }[] = [
   { value: 'banned', label: 'Bị khóa' },
 ];
 
-const passwordSchema = z
-  .string()
-  .min(8, 'Mật khẩu tối thiểu 8 ký tự')
-  .max(128)
-  .regex(/[a-z]/, 'Mật khẩu cần có chữ thường')
-  .regex(/[A-Z]/, 'Mật khẩu cần có chữ hoa')
-  .regex(/[0-9]/, 'Mật khẩu cần có chữ số')
-  .regex(/[^a-zA-Z0-9]/, 'Mật khẩu cần có ký tự đặc biệt');
+const DEPARTMENT_OPTIONS: { value: EmployeeDepartment; label: string }[] =
+  EMPLOYEE_DEPARTMENTS.map((d) => ({ value: d, label: d }));
 
 interface CreateEmployeeDialogProps {
   allowAdminRole: boolean;
@@ -123,7 +125,7 @@ const createEmployeeSchema = z.object({
   firstName: z.string().min(1, 'Họ là bắt buộc'),
   lastName: z.string().min(1, 'Tên là bắt buộc'),
   companyEmail: z.string().min(1, 'Email là bắt buộc').email('Email không hợp lệ'),
-  department: z.string().optional(),
+  department: z.enum(EMPLOYEE_DEPARTMENTS).optional(),
   password: passwordSchema,
   role: z.enum(['staff', 'admin']),
   registrationKey: z.string().min(1, 'Mã đăng ký là bắt buộc'),
@@ -139,7 +141,7 @@ function CreateEmployeeDialog({ allowAdminRole, onClose }: CreateEmployeeDialogP
       firstName: '',
       lastName: '',
       companyEmail: '',
-      department: '',
+      department: undefined,
       password: '',
       role: 'staff',
       registrationKey: '',
@@ -216,9 +218,20 @@ function CreateEmployeeDialog({ allowAdminRole, onClose }: CreateEmployeeDialogP
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Phòng ban</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Vd: Vận hành" {...field} />
-                  </FormControl>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Chọn phòng ban" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {DEPARTMENT_OPTIONS.map((o) => (
+                        <SelectItem key={o.value} value={o.value}>
+                          {o.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
@@ -599,7 +612,8 @@ export default function AdminEmployeesPage() {
               variant="ghost"
               size="icon"
               className="size-8"
-              title="Đặt lại Mật khẩu"
+              title={canEdit ? 'Đặt lại Mật khẩu' : 'Chỉ tự đặt lại mật khẩu của chính mình'}
+              disabled={!canEdit}
               onClick={() => setResetPasswordEmployee(r)}
             >
               <KeyRound className="size-4" />

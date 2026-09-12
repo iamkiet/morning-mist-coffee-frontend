@@ -14,6 +14,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { AdminSidebar } from './_components/AdminSidebar';
 import { useAuth } from '@/lib/auth-context';
+import { getInitials } from '@/lib/utils';
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -88,7 +89,23 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         </div>
 
         {/* Desktop Header */}
-        <div className="hidden lg:flex sticky top-0 z-20 bg-card border-b border-border/30 px-6 py-3 items-center justify-end">
+        <div className="hidden lg:flex sticky top-0 z-20 bg-card border-b border-border/30 px-6 py-3 items-center justify-end gap-4">
+          {user && (
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-muted border border-border/30 flex items-center justify-center text-[10px] font-semibold text-muted-foreground flex-shrink-0">
+                {getInitials(user.firstName, user.lastName)}
+              </div>
+              <div className="text-right leading-tight">
+                <p className="text-xs font-medium text-foreground">
+                  {`${user.firstName} ${user.lastName}`.trim()}
+                </p>
+                <p className="text-[10px] text-muted-foreground uppercase tracking-widest">
+                  {user.role === 'admin' ? 'Quản trị viên' : 'Nhân viên'}
+                </p>
+              </div>
+            </div>
+          )}
+          <div className="w-px h-8 bg-border/50" />
           <Button
             size="sm"
             variant="outline"

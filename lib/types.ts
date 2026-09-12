@@ -65,6 +65,16 @@ export type UserRole = 'customer' | 'staff' | 'admin';
 export type EmployeeRole = 'staff' | 'admin';
 export type UserStatus = 'active' | 'inactive' | 'banned';
 
+export const EMPLOYEE_DEPARTMENTS = [
+  'Vận hành',
+  'Pha chế',
+  'Kho',
+  'Marketing',
+  'CSKH',
+  'Kế toán',
+] as const;
+export type EmployeeDepartment = (typeof EMPLOYEE_DEPARTMENTS)[number];
+
 /** Which table/endpoint to authenticate against — employees and customers are verified separately. */
 export const ACCOUNT_TYPE = {
   EMPLOYEE: 'employee',
@@ -87,7 +97,7 @@ export interface AdminEmployee {
   firstName: string;
   lastName: string;
   companyEmail: string;
-  department: string | null;
+  department: EmployeeDepartment | null;
   role: EmployeeRole;
   status: UserStatus;
   createdAt: string;

@@ -16,6 +16,7 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
+import { getInitials } from '@/lib/utils';
 
 interface AdminSidebarProps {
   onClose?: () => void;
@@ -43,9 +44,7 @@ export function AdminSidebar({ onClose }: AdminSidebarProps) {
     onClose?.();
   };
 
-  const initials = user
-    ? `${user.firstName[0] ?? ''}${user.lastName[0] ?? ''}`.toUpperCase()
-    : '??';
+  const initials = user ? getInitials(user.firstName, user.lastName) : '??';
 
   return (
     <aside className="h-full lg:h-screen w-full lg:w-64 lg:fixed lg:left-0 lg:top-0 lg:border-r border-border/30 bg-sidebar flex flex-col p-6 space-y-6 z-40">

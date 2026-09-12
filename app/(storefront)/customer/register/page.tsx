@@ -21,19 +21,13 @@ import { Container } from '@/app/_components/Container';
 import { useAuth } from '@/lib/auth-context';
 import { createCustomer } from '@/lib/api/customers';
 import { ACCOUNT_TYPE } from '@/lib/types';
+import { passwordSchema } from '@/lib/validation';
 
 const registerSchema = z.object({
   firstName: z.string().min(1, 'Họ là bắt buộc'),
   lastName: z.string().min(1, 'Tên là bắt buộc'),
   email: z.string().min(1, 'Email là bắt buộc').email('Email không hợp lệ'),
-  password: z
-    .string()
-    .min(8, 'Mật khẩu tối thiểu 8 ký tự')
-    .max(128)
-    .regex(/[a-z]/, 'Mật khẩu cần có chữ thường')
-    .regex(/[A-Z]/, 'Mật khẩu cần có chữ hoa')
-    .regex(/[0-9]/, 'Mật khẩu cần có chữ số')
-    .regex(/[^a-zA-Z0-9]/, 'Mật khẩu cần có ký tự đặc biệt'),
+  password: passwordSchema,
   registrationKey: z.string().min(1, 'Mã đăng ký là bắt buộc'),
 });
 
