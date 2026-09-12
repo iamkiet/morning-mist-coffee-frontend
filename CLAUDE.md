@@ -13,7 +13,7 @@ npx tsc --noEmit     # type-check
 
 ## Tech Stack
 
-Next.js 16.2.4 · React 19 · TypeScript 5 (strict) · Tailwind CSS 4 · shadcn/ui (radix-nova) · TanStack Query v5 · react-hook-form + zod · framer-motion · lucide-react · npm
+Next.js 16.2.4 · React 19 · TypeScript 6 (strict) · Tailwind CSS 4 · shadcn/ui (radix-nova) · TanStack Query v5 · react-hook-form + zod · framer-motion · lucide-react · npm
 
 ## API reference
 
