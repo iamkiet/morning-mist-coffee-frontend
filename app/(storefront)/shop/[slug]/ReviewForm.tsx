@@ -23,8 +23,11 @@ import { useCreateOrderReview } from '@/hooks/use-order-reviews';
 
 const reviewSchema = z.object({
   orderId: z.string().trim().uuid('Mã đơn hàng không hợp lệ'),
-  rating: z.number().int().min(1).max(5),
-  commentText: z.string().min(10).max(2000),
+  rating: z.number().int().min(1, 'Vui lòng chọn số sao đánh giá').max(5),
+  commentText: z
+    .string()
+    .min(10, 'Vui lòng nhập tối thiểu 10 ký tự')
+    .max(2000, 'Tối đa 2000 ký tự'),
 });
 
 type ReviewForm = z.infer<typeof reviewSchema>;

@@ -28,11 +28,8 @@ export interface Order {
   status: OrderStatus;
   totalCents: number;
   currency: string;
-  shippingFirstName: string | null;
-  shippingLastName: string | null;
+  shippingFullName: string | null;
   shippingAddress: string | null;
-  shippingCity: string | null;
-  shippingPostalCode: string | null;
   items: OrderItem[];
   createdAt: string;
   updatedAt: string;
@@ -91,11 +88,8 @@ export interface CreateOrderPayload {
   totalCents: number;
   items: CreateOrderItemInput[];
   currency?: string;
-  shippingFirstName: string;
-  shippingLastName: string;
+  shippingFullName: string;
   shippingAddress: string;
-  shippingCity: string;
-  shippingPostalCode: string;
 }
 
 export async function createOrder(payload: CreateOrderPayload): Promise<Order> {

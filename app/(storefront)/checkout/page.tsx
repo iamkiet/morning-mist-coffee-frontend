@@ -29,8 +29,6 @@ const checkoutSchema = z.object({
   email: z.string().email('Vui lòng nhập email hợp lệ'),
   fullName: z.string().min(1, 'Họ và tên là bắt buộc'),
   address: z.string().min(5, 'Vui lòng nhập địa chỉ nhận hàng chi tiết'),
-  city: z.string().min(1, 'Tỉnh / Thành phố là bắt buộc'),
-  postalCode: z.string().min(3, 'Mã bưu chính là bắt buộc'),
 });
 
 type CheckoutForm = z.infer<typeof checkoutSchema>;
@@ -45,8 +43,6 @@ export default function CheckoutPage() {
       email: '',
       fullName: '',
       address: '',
-      city: '',
-      postalCode: '',
     },
   });
 
@@ -60,10 +56,6 @@ export default function CheckoutPage() {
     : '';
 
   const onSubmit = (data: CheckoutForm) => {
-    const nameParts = data.fullName.trim().split(/\s+/);
-    const shippingLastName = nameParts.pop() ?? data.fullName;
-    const shippingFirstName = nameParts.join(' ') || shippingLastName;
-
     createOrder.mutate(
       {
         customerEmail: data.email,
@@ -74,11 +66,8 @@ export default function CheckoutPage() {
           priceCents: Math.round(item.price),
           quantity: item.quantity,
         })),
-        shippingFirstName,
-        shippingLastName,
+        shippingFullName: data.fullName,
         shippingAddress: data.address,
-        shippingCity: data.city,
-        shippingPostalCode: data.postalCode,
       },
       {
         onSuccess: () => {
@@ -226,12 +215,12 @@ export default function CheckoutPage() {
                   </h2>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-4">
                   <FormField
                     control={form.control}
                     name="email"
                     render={({ field }) => (
-                      <FormItem className="sm:col-span-2">
+                      <FormItem>
                         <FormLabel className="text-xs uppercase tracking-wider text-muted-foreground">
                           Email
                         </FormLabel>
@@ -251,7 +240,7 @@ export default function CheckoutPage() {
                     control={form.control}
                     name="fullName"
                     render={({ field }) => (
-                      <FormItem className="sm:col-span-2">
+                      <FormItem>
                         <FormLabel className="text-xs uppercase tracking-wider text-muted-foreground">
                           Họ và Tên
                         </FormLabel>
@@ -267,44 +256,12 @@ export default function CheckoutPage() {
                     control={form.control}
                     name="address"
                     render={({ field }) => (
-                      <FormItem className="sm:col-span-2">
+                      <FormItem>
                         <FormLabel className="text-xs uppercase tracking-wider text-muted-foreground">
                           Địa chỉ nhận hàng
                         </FormLabel>
                         <FormControl>
                           <Input placeholder="Số nhà, tên đường, phường/xã..." {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="city"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-xs uppercase tracking-wider text-muted-foreground">
-                          Tỉnh / Thành phố
-                        </FormLabel>
-                        <FormControl>
-                          <Input placeholder="Tên Tỉnh hoặc Thành phố" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="postalCode"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-xs uppercase tracking-wider text-muted-foreground">
-                          Mã bưu chính
-                        </FormLabel>
-                        <FormControl>
-                          <Input placeholder="Mã bưu điện" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

@@ -144,12 +144,9 @@ export function OrderCard({ order }: OrderCardProps) {
                 Giao đến
               </p>
               <p className="text-foreground font-medium">
-                {order.shippingFirstName} {order.shippingLastName}
+                {order.shippingFullName}
               </p>
-              <p>
-                {order.shippingAddress}, {order.shippingCity}
-                {order.shippingPostalCode ? ` ${order.shippingPostalCode}` : ''}
-              </p>
+              <p>{order.shippingAddress}</p>
             </div>
           </>
         )}

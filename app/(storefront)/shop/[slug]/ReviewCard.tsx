@@ -62,8 +62,11 @@ function ReplyItem({ reply }: { reply: OrderReviewReply }) {
 }
 
 const replySchema = z.object({
-  authorName: z.string().max(100).optional(),
-  replyText: z.string().min(2).max(1000),
+  authorName: z.string().max(100, 'Tối đa 100 ký tự').optional(),
+  replyText: z
+    .string()
+    .min(2, 'Vui lòng nhập tối thiểu 2 ký tự')
+    .max(1000, 'Tối đa 1000 ký tự'),
 });
 
 type ReplyForm = z.infer<typeof replySchema>;
