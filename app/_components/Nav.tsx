@@ -12,7 +12,6 @@ import {
   SheetDescription,
 } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
-import { VoiceSearchDialog } from './VoiceSearchDialog';
 import CartCount from './CartCount';
 import { useAuth } from '@/lib/auth-context';
 
@@ -67,8 +66,6 @@ export function Nav({ className }: NavProps = {}) {
         </div>
 
         <div className="flex items-center gap-1">
-          <VoiceSearchDialog />
-
           <Button
             asChild
             variant="ghost"

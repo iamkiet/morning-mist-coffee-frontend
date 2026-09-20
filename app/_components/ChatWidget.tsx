@@ -3,16 +3,28 @@
 import { useState, ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageCircle, X, Send } from 'lucide-react';
+import { MessageCircle, X, Send, Mic } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useChat } from '@/hooks/use-chat';
+import { ProductCard } from './ProductCard';
 
 export function ChatWidget() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
-  const { messages, input, setInput, sendMessage, isLoading } = useChat();
+  const {
+    messages,
+    input,
+    setInput,
+    sendMessage,
+    isLoading,
+    isRecording,
+    recorderError,
+    secondsRemaining,
+    startRecording,
+    stopRecording,
+  } = useChat();
 
   const isAdminPage = pathname?.startsWith('/mist-ops') || pathname?.startsWith('/login');
 
@@ -54,34 +66,42 @@ export function ChatWidget() {
             {/* Chat Area */}
             <div className="h-80 overflow-y-auto p-4 flex flex-col gap-3 bg-background">
               {messages.map((msg) => (
-                <div 
-                  key={msg.id} 
-                  className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div 
-                    className={`max-w-[85%] rounded-xl px-4 py-2 text-sm ${
-                      msg.role === 'user' 
-                        ? 'bg-primary text-primary-foreground rounded-tr-sm' 
-                        : 'bg-muted text-foreground rounded-tl-sm'
-                    }`}
+                <div key={msg.id} className="flex flex-col gap-2">
+                  <div
+                    className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                   >
-                    {msg.role === 'user' ? (
-                      msg.content
-                    ) : (
-                      <ReactMarkdown
-                        components={{
-                          p: ({ children }: { children?: ReactNode }) => <p className="mb-2 last:mb-0 leading-relaxed">{children}</p>,
-                          ul: ({ children }: { children?: ReactNode }) => <ul className="list-disc pl-4 mb-2 space-y-1">{children}</ul>,
-                          ol: ({ children }: { children?: ReactNode }) => <ol className="list-decimal pl-4 mb-2 space-y-1">{children}</ol>,
-                          li: ({ children }: { children?: ReactNode }) => <li className="text-xs leading-normal">{children}</li>,
-                          strong: ({ children }: { children?: ReactNode }) => <strong className="font-semibold text-primary">{children}</strong>,
-                          em: ({ children }: { children?: ReactNode }) => <em className="italic">{children}</em>,
-                        }}
-                      >
-                        {msg.content}
-                      </ReactMarkdown>
-                    )}
+                    <div
+                      className={`max-w-[85%] rounded-xl px-4 py-2 text-sm ${
+                        msg.role === 'user'
+                          ? 'bg-primary text-primary-foreground rounded-tr-sm'
+                          : 'bg-muted text-foreground rounded-tl-sm'
+                      }`}
+                    >
+                      {msg.role === 'user' ? (
+                        msg.content
+                      ) : (
+                        <ReactMarkdown
+                          components={{
+                            p: ({ children }: { children?: ReactNode }) => <p className="mb-2 last:mb-0 leading-relaxed">{children}</p>,
+                            ul: ({ children }: { children?: ReactNode }) => <ul className="list-disc pl-4 mb-2 space-y-1">{children}</ul>,
+                            ol: ({ children }: { children?: ReactNode }) => <ol className="list-decimal pl-4 mb-2 space-y-1">{children}</ol>,
+                            li: ({ children }: { children?: ReactNode }) => <li className="text-xs leading-normal">{children}</li>,
+                            strong: ({ children }: { children?: ReactNode }) => <strong className="font-semibold text-primary">{children}</strong>,
+                            em: ({ children }: { children?: ReactNode }) => <em className="italic">{children}</em>,
+                          }}
+                        >
+                          {msg.content}
+                        </ReactMarkdown>
+                      )}
+                    </div>
                   </div>
+                  {msg.role === 'assistant' && msg.items && msg.items.length > 0 && (
+                    <div className="grid grid-cols-2 gap-2 pl-1">
+                      {msg.items.map((p) => (
+                        <ProductCard key={p.id} product={p} />
+                      ))}
+                    </div>
+                  )}
                 </div>
               ))}
               {isLoading && (
@@ -95,21 +115,36 @@ export function ChatWidget() {
               )}
             </div>
 
+            {recorderError && (
+              <p className="px-3 pt-2 text-xs text-destructive bg-card">{recorderError}</p>
+            )}
+
             {/* Input Area */}
             <form onSubmit={sendMessage} className="p-3 bg-card border-t border-border flex gap-2">
               <Input
                 type="text"
-                value={input}
+                value={isRecording ? `Đang nghe... (${secondsRemaining}s)` : input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Hỏi về sản phẩm..."
                 className="flex-1 bg-muted rounded-full border-none"
-                disabled={isLoading}
+                disabled={isLoading || isRecording}
               />
+              <Button
+                type="button"
+                size="icon"
+                variant={isRecording ? 'default' : 'outline'}
+                aria-label={isRecording ? 'Dừng ghi âm' : 'Hỏi bằng giọng nói'}
+                disabled={isLoading}
+                onClick={() => (isRecording ? stopRecording() : void startRecording())}
+                className={`shrink-0 rounded-full ${isRecording ? 'animate-pulse' : ''}`}
+              >
+                <Mic className="size-3.5" />
+              </Button>
               <Button
                 type="submit"
                 size="icon"
                 aria-label="Gửi tin nhắn"
-                disabled={!input.trim() || isLoading}
+                disabled={!input.trim() || isLoading || isRecording}
                 className="shrink-0 rounded-full"
               >
                 <Send className="size-3.5" />

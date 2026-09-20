@@ -49,7 +49,7 @@ function transformVariant(v: BackendProductVariant): ProductVariant {
   };
 }
 
-function transform(p: BackendProduct): Product {
+export function transform(p: BackendProduct): Product {
   return {
     id: p.id,
     slug: p.slug,
@@ -202,30 +202,3 @@ export async function setVariantPropertyValues(
   if (!res.ok) throw new Error('Failed to set variant properties');
 }
 
-export interface VoiceSearchResult {
-  message: string;
-  items: Product[];
-  transcript: string | null;
-}
-
-export async function searchProductsByVoice(
-  audio: Blob,
-): Promise<VoiceSearchResult> {
-  const formData = new FormData();
-  formData.append('audio', audio, 'query');
-
-  const res = await authFetch('/api/v1/search/voice', {
-    method: 'POST',
-    body: formData,
-  });
-  if (!res.ok) {
-    const body = await res.json().catch(() => null);
-    throw new Error(body?.message ?? 'Voice search failed');
-  }
-  const data = await res.json();
-  return {
-    message: data.message,
-    items: data.items.map(transform),
-    transcript: data.transcript,
-  };
-}

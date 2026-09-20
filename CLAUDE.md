@@ -28,8 +28,7 @@ app/
                             (Auth is inside Query so logout can clear the cache)
   globals.css             — Tailwind 4 global styles
   _components/            — shared: HeaderHeightSync, PromoBanner, Nav, Footer,
-                            Container, Hero, ProductCard, CartCount,
-                            ChatWidget, VoiceSearchDialog
+                            Container, Hero, ProductCard, CartCount, ChatWidget
   _data/                  — static data constants
   (storefront)/           — public storefront routes (layout has Header + Footer)
                             each route's own intro block (e.g. ShopIntro,
@@ -54,14 +53,15 @@ lib/
                             fetchMe(), listQuery()
   api/auth.ts             — postLogin(), postLogout(), postRefresh()
   api/products.ts         — fetchProducts(), fetchProduct() (by slug),
-                            updateProduct(), searchProductsByVoice(),
-                            createProductVariant()/updateProductVariant()/
-                            deleteProductVariant(), setProductCategories()
+                            updateProduct(), createProductVariant()/
+                            updateProductVariant()/deleteProductVariant(),
+                            setProductCategories(), transform() (exported for
+                            reuse by api/chat.ts)
   api/product-categories.ts — fetchProductCategories(), createProductCategory()
   api/orders.ts           — fetchOrders(), updateOrderStatus(), createOrder(),
                             lookupOrders(code) — order ID only, no email
   api/users.ts            — fetchUsers(), updateUser()
-  api/chat.ts             — sendChatMessage()
+  api/chat.ts             — sendChatMessage(), sendChatVoiceMessage()
 hooks/
   use-products.ts         — useProducts(), useUpdateProduct(), useCreateProduct(),
                             useDeleteProduct(), useCreateProductVariant(),
@@ -71,8 +71,9 @@ hooks/
                             useLookupOrders()
   use-users.ts            — useUsers(), useUpdateUser()
   use-product-categories.ts — useProductCategories()
-  use-chat.ts             — useChat()
-  use-voice-search.ts     — useVoiceSearch()
+  use-chat.ts             — useChat(): text + voice in one conversation
+                            (MediaRecorder lifecycle for voice lives here too,
+                            same pattern the old use-voice-search.ts used)
   use-temporary-flag.ts   — useTemporaryFlag(): self-clearing "Đã thêm" confirmations
   use-debounced-value.ts  — useDebouncedValue(): one request per typing pause
 ```
@@ -81,7 +82,7 @@ hooks/
 
 **No `fetch`/`authFetch` in components or hooks.** Every network call goes through a `lib/api/*` module; hooks wrap it in `useQuery`/`useMutation`. Hand-rolled `useState` loading/error state for a network call is a bug, not a style choice.
 
-**Browser-API state stays local.** `useVoiceSearch` keeps the `MediaRecorder` lifecycle (`isRecording`, countdown, stream refs) in `useState`/`useRef` and hands only the resulting `Blob` to `useMutation` — Query owns the request, not the device.
+**Browser-API state stays local.** `useChat` keeps the `MediaRecorder` lifecycle (`isRecording`, countdown, stream refs) in `useState`/`useRef` and hands only the resulting `Blob` to `useMutation` — Query owns the request, not the device.
 
 **Global staleTime:** `providers.tsx` sets `staleTime: 60_000` on the `QueryClient`. Do not restate it per hook. Override only when the value genuinely differs from the global, and add a comment saying why (see `use-product-categories.ts`).
 
@@ -101,7 +102,7 @@ All auth endpoints live in `lib/api/auth.ts` — never call them with a bare `fe
 
 **Do not recreate** any of these — grep before adding:
 
-- Shared: `app/_components/` — HeaderHeightSync, PromoBanner, Nav, Footer, Container, Hero, ErrorNotice, ProductCard, CartCount, ChatWidget, VoiceSearchDialog
+- Shared: `app/_components/` — HeaderHeightSync, PromoBanner, Nav, Footer, Container, Hero, ErrorNotice, ProductCard, CartCount, ChatWidget
 - Admin: `app/mist-ops/_components/` — AdminSidebar, Badge, DataTable, Pagination, PageHeader, StatCard
 - shadcn: `@/components/ui/*` — add with `npx shadcn add <name>`
 
@@ -113,7 +114,7 @@ All auth endpoints live in `lib/api/auth.ts` — never call them with a bare `fe
 
 **Products are variant-based, not flat.** `Product` only carries identity/copy (`slug`, `name`, `description`, `image`); price, SKU, stock and expiry live on `Product.variants: ProductVariant[]`. There is no more `origin`/`tastingNotes`/`price`/`stockQuantity`/`productTypeId` on `Product` — the backend dropped them along with the `product_type` concept in favor of `product_categories` (hierarchical) and an EAV `product_properties` model. Use `lib/product-variants.ts` helpers (`getDefaultVariant`, `getPriceRange`, `getTotalStock`) instead of reading a single price/stock field. The API does not return a product's assigned `categoryIds` on `GET` (only accepts them on create/`PUT .../categories`), so the admin edit dialog cannot safely re-display or preserve existing category assignments — category selection only happens at product creation until the backend adds that field to the read response.
 
-**Variant `propertyValues` are real EAV data, not inferred.** `ProductVariant.propertyValues: VariantPropertyValue[]` (`{ propertyId, propertyName, value }`) comes from `GET /products`, `/products/slug/:slug`, `/products/:id`, and voice search — sourced from `product_variant_property_values` in the DB. Use `getPropertyValue(variant, propertyName)` to read one (e.g. `getPropertyValue(variant, 'Mức rang')`). It's absent (empty array) on the admin variant-mutation endpoints (create/update variant, stock adjust), which don't attach it. There used to be a `lib/product-attributes.ts` stopgap that guessed roast level/process method from the product name — it's gone; that data lives in the DB now.
+**Variant `propertyValues` are real EAV data, not inferred.** `ProductVariant.propertyValues: VariantPropertyValue[]` (`{ propertyId, propertyName, value }`) comes from `GET /products`, `/products/slug/:slug`, `/products/:id`, and chat (text or voice) — sourced from `product_variant_property_values` in the DB. Use `getPropertyValue(variant, propertyName)` to read one (e.g. `getPropertyValue(variant, 'Mức rang')`). It's absent (empty array) on the admin variant-mutation endpoints (create/update variant, stock adjust), which don't attach it. There used to be a `lib/product-attributes.ts` stopgap that guessed roast level/process method from the product name — it's gone; that data lives in the DB now.
 
 **A variant's customer-facing weight label is parsed from its SKU, not a DB field.** `getVariantLabel(variant)` / `getVariantLabelFromSku(sku)` in `lib/product-variants.ts` strip the trailing weight token off the SKU (`CF-0001-500G` → `500g`) — this is a stopgap, same spirit as the old `product-attributes.ts` one, because there's no weight column on `ProductVariant` (weight is only present as a `Trọng lượng` EAV property, which isn't wired into these helpers). Never show `variant.sku` raw to a customer (storefront cart, checkout, product page) — always go through one of these two functions. Admin surfaces (the products table, `VariantsEditor`) are the one place raw SKU is intentionally shown, since staff need it for inventory.
 
