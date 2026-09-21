@@ -498,7 +498,7 @@ const variantFormSchema = z.object({
 type VariantForm = z.infer<typeof variantFormSchema>;
 
 const VARIANT_ROW_CLASS =
-  'grid grid-cols-[1fr_1fr_1fr_auto_auto] gap-2 items-start';
+  'grid grid-cols-[1.4fr_1fr_0.8fr_auto_auto] gap-2 items-start';
 
 interface VariantPropertiesFormProps {
   variant: ProductVariant;
@@ -553,7 +553,7 @@ function VariantPropertiesForm({ variant, properties }: VariantPropertiesFormPro
           type="submit"
           variant="outline"
           size="default"
-          className="text-xs uppercase tracking-wider"
+          className="text-xs uppercase tracking-wider col-span-2 sm:col-span-4"
           disabled={setPropertyValues.isPending}
         >
           Lưu thuộc tính
@@ -879,7 +879,7 @@ function ProductDialog({ product, onClose }: ProductDialogProps) {
 
   return (
     <Dialog open onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-[28rem] max-h-[85vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[40rem] max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-sm uppercase tracking-widest font-medium">
             {isEdit ? 'Chỉnh sửa Sản phẩm' : 'Thêm sản phẩm mới'}

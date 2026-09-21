@@ -2,7 +2,12 @@ import type { ProductReview, ProductReviewReply } from '@/lib/types';
 import { authFetch, listQuery, type ListQueryOptions } from './client';
 
 export type ReviewSource = 'app' | 'google' | 'facebook' | 'form';
-export type ReviewCategory = 'complaint' | 'compliment' | 'suggestion' | 'spam';
+export type ReviewCategory =
+  | 'complaint'
+  | 'compliment'
+  | 'suggestion'
+  | 'spam'
+  | 'unclassified';
 export type ReviewSeverity = 'low' | 'medium' | 'high';
 export type ReviewSentiment = 'positive' | 'negative' | 'neutral';
 export type ReviewStatus =

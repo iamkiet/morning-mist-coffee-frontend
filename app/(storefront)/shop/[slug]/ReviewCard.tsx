@@ -3,6 +3,20 @@
 import { Star } from 'lucide-react';
 import type { ProductReview, ProductReviewReply } from '@/lib/types';
 
+function formatReviewDate(iso: string): string {
+  const date = new Date(iso);
+  const day = date.toLocaleDateString('vi-VN', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+  const time = date.toLocaleTimeString('vi-VN', {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+  return `${day}, ${time}`;
+}
+
 function ReviewStars({ rating }: { rating: number | null }) {
   if (rating === null) return null;
   return (
@@ -20,11 +34,7 @@ function ReviewStars({ rating }: { rating: number | null }) {
 }
 
 function ReplyItem({ reply }: { reply: ProductReviewReply }) {
-  const date = new Date(reply.createdAt).toLocaleDateString('vi-VN', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
+  const date = formatReviewDate(reply.createdAt);
 
   return (
     <div className="pl-4 border-l-2 border-border space-y-1">
@@ -40,11 +50,7 @@ function ReplyItem({ reply }: { reply: ProductReviewReply }) {
 }
 
 export function ReviewCard({ review }: { review: ProductReview }) {
-  const date = new Date(review.createdAt).toLocaleDateString('vi-VN', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
+  const date = formatReviewDate(review.createdAt);
 
   return (
     <div className="p-6 bg-card rounded-xl border border-border space-y-3">

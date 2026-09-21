@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { MoreHorizontal, MessageSquareText, AlertTriangle, CheckCircle2 } from 'lucide-react';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { PageHeader } from '../_components/PageHeader';
@@ -80,6 +80,7 @@ const CATEGORY_VIETNAMESE: Record<ReviewCategory, string> = {
   compliment: 'Khen ngợi',
   suggestion: 'Góp ý',
   spam: 'Spam',
+  unclassified: 'Chưa phân loại',
 };
 
 const SEVERITY_VIETNAMESE: Record<ReviewSeverity, string> = {
@@ -178,6 +179,10 @@ function EditReviewDialog({ review, onClose }: EditReviewDialogProps) {
     resolver: zodResolver(statusSchema),
     defaultValues: { status: review.status },
   });
+  const currentStatus = useWatch({ control: form.control, name: 'status' });
+  // A review already has its one allowed reply once auto_responded/resolved —
+  // offering the form there would just 409 (max 1 reply per review).
+  const canReply = currentStatus === 'pending_classification' || currentStatus === 'pending_reply';
 
   function onSubmit(values: StatusForm) {
     if (values.status === review.status) {
@@ -209,10 +214,17 @@ function EditReviewDialog({ review, onClose }: EditReviewDialogProps) {
               {review.commentText}
             </p>
             <ReplyThread replies={replies} />
-            <AdminReplyForm
-              reviewId={review.id}
-              onReplied={(reply) => setReplies((prev) => [...prev, reply])}
-            />
+            {canReply && (
+              <AdminReplyForm
+                reviewId={review.id}
+                onReplied={(reply) => {
+                  setReplies((prev) => [...prev, reply]);
+                  // Matches the backend: creating a reply while pending_reply
+                  // auto-transitions the review straight to resolved.
+                  form.setValue('status', 'resolved');
+                }}
+              />
+            )}
             <FormField
               control={form.control}
               name="status"
