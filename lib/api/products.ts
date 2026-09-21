@@ -25,6 +25,7 @@ interface BackendProduct {
   imageUrl: string | null;
   variants: BackendProductVariant[];
   categoryIds?: string[];
+  categoryNames?: string[];
   createdAt: string;
   updatedAt: string;
 }
@@ -58,6 +59,7 @@ export function transform(p: BackendProduct): Product {
     imageUrl: p.imageUrl ?? DEFAULT_PRODUCT_IMAGE,
     variants: p.variants.map(transformVariant),
     categoryIds: p.categoryIds ?? [],
+    categoryNames: p.categoryNames ?? [],
   };
 }
 

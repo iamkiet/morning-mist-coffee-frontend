@@ -26,6 +26,7 @@ export interface Product {
   imageUrl: string;
   variants: ProductVariant[];
   categoryIds?: string[];
+  categoryNames?: string[];
 }
 
 export type ReviewReplyAuthorType = 'admin' | 'customer' | 'ai';

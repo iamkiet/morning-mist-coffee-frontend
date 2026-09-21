@@ -17,6 +17,7 @@ export function ProductCard({ product }: ProductCardProps) {
   const { addItem } = useCart();
   const [added, flashAdded] = useTemporaryFlag();
   const variant = getDefaultVariant(product);
+  const coffeeLine = product.categoryNames?.[0];
 
   function handleAddToBag() {
     if (!variant) return;
@@ -37,6 +38,11 @@ export function ProductCard({ product }: ProductCardProps) {
           />
         </div>
         <div className="text-center px-4 mb-3">
+          {coffeeLine && (
+            <p className="text-[11px] uppercase tracking-widest text-primary/70 mb-1">
+              {coffeeLine}
+            </p>
+          )}
           <h3 className="text-base text-foreground mb-2 font-medium line-clamp-2 min-h-12">
             {product.name}
           </h3>
