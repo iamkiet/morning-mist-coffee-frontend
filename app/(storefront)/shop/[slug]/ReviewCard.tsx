@@ -1,25 +1,6 @@
 'use client';
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { Star } from 'lucide-react';
-import { toast } from 'sonner';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from '@/components/ui/form';
-import { useCreateProductReviewReply } from '@/hooks/use-product-reviews';
-import { useAuth } from '@/lib/auth-context';
 import type { ProductReview, ProductReviewReply } from '@/lib/types';
 
 function ReviewStars({ rating }: { rating: number | null }) {
@@ -38,11 +19,6 @@ function ReviewStars({ rating }: { rating: number | null }) {
   );
 }
 
-function replyLabel(reply: ProductReviewReply): string {
-  if (reply.authorType === 'customer') return reply.authorName || 'Khách hàng';
-  return 'Phản hồi từ Morning Mist Coffee';
-}
-
 function ReplyItem({ reply }: { reply: ProductReviewReply }) {
   const date = new Date(reply.createdAt).toLocaleDateString('vi-VN', {
     year: 'numeric',
@@ -53,124 +29,13 @@ function ReplyItem({ reply }: { reply: ProductReviewReply }) {
   return (
     <div className="pl-4 border-l-2 border-border space-y-1">
       <p className="text-xs font-medium text-primary uppercase tracking-wider">
-        {replyLabel(reply)}
+        {reply.authorName || 'Phản hồi từ Morning Mist Coffee'}
       </p>
       <p className="text-muted-foreground text-sm leading-relaxed">
         {reply.replyText}
       </p>
       <p className="text-xs text-muted-foreground/70">{date}</p>
     </div>
-  );
-}
-
-const replySchema = z.object({
-  authorName: z.string().max(100, 'Tối đa 100 ký tự').optional(),
-  replyText: z
-    .string()
-    .min(2, 'Vui lòng nhập tối thiểu 2 ký tự')
-    .max(1000, 'Tối đa 1000 ký tự'),
-});
-
-type ReplyForm = z.infer<typeof replySchema>;
-
-function ReviewReplyForm({ reviewId }: { reviewId: string }) {
-  const router = useRouter();
-  const { user } = useAuth();
-  const [open, setOpen] = useState(false);
-  const create = useCreateProductReviewReply();
-  const form = useForm<ReplyForm>({
-    resolver: zodResolver(replySchema),
-    defaultValues: { authorName: '', replyText: '' },
-  });
-
-  function onSubmit(values: ReplyForm) {
-    create.mutate(
-      { reviewId, payload: values },
-      {
-        onSuccess: () => {
-          toast.success('Đã gửi phản hồi của bạn');
-          form.reset({ authorName: '', replyText: '' });
-          setOpen(false);
-          router.refresh();
-        },
-      },
-    );
-  }
-
-  if (user?.role !== 'customer') {
-    return (
-      <Button
-        asChild
-        variant="ghost"
-        size="sm"
-        className="text-xs uppercase tracking-wider text-muted-foreground"
-      >
-        <Link href="/customer/login">Đăng nhập để trả lời</Link>
-      </Button>
-    );
-  }
-
-  if (!open) {
-    return (
-      <Button
-        variant="ghost"
-        size="sm"
-        className="text-xs uppercase tracking-wider text-muted-foreground"
-        onClick={() => setOpen(true)}
-      >
-        Trả lời
-      </Button>
-    );
-  }
-
-  return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2 pt-1">
-        <FormField
-          control={form.control}
-          name="authorName"
-          render={({ field }) => (
-            <FormItem>
-              <FormControl>
-                <Input placeholder="Tên của bạn (không bắt buộc)" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="replyText"
-          render={({ field }) => (
-            <FormItem>
-              <FormControl>
-                <Textarea placeholder="Viết phản hồi..." {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <div className="flex gap-2">
-          <Button
-            type="submit"
-            size="sm"
-            className="uppercase tracking-wider text-xs"
-            disabled={create.isPending}
-          >
-            {create.isPending ? 'Đang gửi…' : 'Gửi'}
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            className="uppercase tracking-wider text-xs"
-            onClick={() => setOpen(false)}
-          >
-            Hủy
-          </Button>
-        </div>
-      </form>
-    </Form>
   );
 }
 
@@ -196,8 +61,6 @@ export function ReviewCard({ review }: { review: ProductReview }) {
           ))}
         </div>
       )}
-
-      <ReviewReplyForm reviewId={review.id} />
     </div>
   );
 }

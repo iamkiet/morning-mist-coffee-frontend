@@ -51,31 +51,27 @@ import type { ProductReviewReply, ReviewReplyAuthorType } from '@/lib/types';
 
 const REPLY_AUTHOR_VIETNAMESE: Record<ReviewReplyAuthorType, string> = {
   admin: 'Admin',
-  customer: 'Khách hàng',
   ai: 'AI tự động',
 };
 
 const ALL_STATUSES: ReviewStatus[] = [
   'pending_classification',
-  'pending_review',
+  'pending_reply',
   'auto_responded',
-  'escalated',
   'resolved',
 ];
 
 const STATUS_VIETNAMESE: Record<ReviewStatus, string> = {
   pending_classification: 'Chờ phân loại',
-  pending_review: 'Chờ duyệt',
+  pending_reply: 'Chờ phản hồi',
   auto_responded: 'Tự động phản hồi',
-  escalated: 'Đã báo cáo',
   resolved: 'Đã xử lý',
 };
 
 const STATUS_BADGE: Record<ReviewStatus, 'neutral' | 'warning' | 'info' | 'error' | 'success'> = {
   pending_classification: 'neutral',
-  pending_review: 'warning',
+  pending_reply: 'warning',
   auto_responded: 'info',
-  escalated: 'error',
   resolved: 'success',
 };
 
@@ -101,9 +97,8 @@ const SEVERITY_BADGE: Record<ReviewSeverity, 'neutral' | 'warning' | 'error'> = 
 const statusSchema = z.object({
   status: z.enum([
     'pending_classification',
-    'pending_review',
+    'pending_reply',
     'auto_responded',
-    'escalated',
     'resolved',
   ]),
 });
@@ -399,11 +394,11 @@ export default function AdminProductReviewsPage() {
           tone="primary"
         />
         <StatCard
-          label="Chờ duyệt"
+          label="Chờ phản hồi"
           value={
             isLoading
               ? '—'
-              : String(reviews.filter((r) => r.status === 'pending_review').length)
+              : String(reviews.filter((r) => r.status === 'pending_reply').length)
           }
           delta="Trên trang này"
           icon={AlertTriangle}

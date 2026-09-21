@@ -11,21 +11,17 @@ export async function fetchProductCategories(): Promise<ProductCategoryListRespo
   return res.json();
 }
 
-export async function createProductCategory(
-  name: string,
-  parentId?: string | null,
-): Promise<ProductCategory> {
+export async function createProductCategory(name: string): Promise<ProductCategory> {
   const res = await authFetch('/api/v1/product-categories', {
     method: 'POST',
-    body: JSON.stringify({ name, parentId }),
+    body: JSON.stringify({ name }),
   });
   if (!res.ok) throw new Error('Failed to create product category');
   return res.json();
 }
 
 export interface UpdateProductCategoryPayload {
-  name?: string;
-  parentId?: string | null;
+  name: string;
 }
 
 export async function updateProductCategory(

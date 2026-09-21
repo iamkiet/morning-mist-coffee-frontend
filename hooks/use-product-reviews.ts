@@ -2,7 +2,6 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   createAdminProductReviewReply,
   createProductReview,
-  createProductReviewReply,
   fetchProductReviewsAdmin,
   updateProductReviewStatus,
   type CreateProductReviewPayload,
@@ -14,18 +13,6 @@ import type { ListQueryOptions } from '@/lib/api/client';
 export function useCreateProductReview() {
   return useMutation({
     mutationFn: (payload: CreateProductReviewPayload) => createProductReview(payload),
-  });
-}
-
-export function useCreateProductReviewReply() {
-  return useMutation({
-    mutationFn: ({
-      reviewId,
-      payload,
-    }: {
-      reviewId: string;
-      payload: CreateProductReviewReplyPayload;
-    }) => createProductReviewReply(reviewId, payload),
   });
 }
 

@@ -72,7 +72,6 @@ import {
 import { useDebouncedValue } from '@/hooks/use-debounced-value';
 import { toast } from 'sonner';
 import { ErrorNotice } from '@/app/_components/ErrorNotice';
-import { sortCategoryTree, CATEGORY_INDENT_PX } from '@/lib/product-categories';
 import {
   getDefaultVariant,
   getPriceRange,
@@ -127,12 +126,8 @@ function CategoryCheckboxList({
   }
   return (
     <div className="max-h-40 overflow-y-auto space-y-2 border border-border rounded-lg p-3">
-      {sortCategoryTree(categories).map((c) => (
-        <label
-          key={c.id}
-          className="flex items-center gap-2 text-sm cursor-pointer"
-          style={{ paddingLeft: c.depth * CATEGORY_INDENT_PX }}
-        >
+      {categories.map((c) => (
+        <label key={c.id} className="flex items-center gap-2 text-sm cursor-pointer">
           <Checkbox
             checked={selected.includes(c.id)}
             onCheckedChange={(checked) =>
@@ -170,9 +165,8 @@ function CategoryCreateForm() {
   });
 
   function onSubmit(values: CategoryForm) {
-    // Categories are flat (one level) — no parent to pick.
     createCategory.mutate(
-      { name: values.name.trim(), parentId: null },
+      { name: values.name.trim() },
       {
         onSuccess: () => {
           toast.success('Đã thêm danh mục');

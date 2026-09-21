@@ -18,8 +18,7 @@ export function useProductCategories() {
 export function useCreateProductCategory() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ name, parentId }: { name: string; parentId?: string | null }) =>
-      createProductCategory(name, parentId),
+    mutationFn: ({ name }: { name: string }) => createProductCategory(name),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['productCategories'] });
     },

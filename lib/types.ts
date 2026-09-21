@@ -29,7 +29,7 @@ export interface Product {
   categoryNames?: string[];
 }
 
-export type ReviewReplyAuthorType = 'admin' | 'customer' | 'ai';
+export type ReviewReplyAuthorType = 'admin' | 'ai';
 
 export interface ProductReviewReply {
   id: string;
@@ -50,7 +50,6 @@ export interface ProductReview {
 export interface ProductCategory {
   id: string;
   name: string;
-  parentId: string | null;
 }
 
 export type PropertyDataType = 'text' | 'number' | 'enum';

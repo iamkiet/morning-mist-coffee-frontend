@@ -86,6 +86,20 @@ async function resyncCsrfToken(): Promise<boolean> {
   return Boolean(data.csrfToken);
 }
 
+// The backend's CSRF middleware always throws this exact message — every other
+// 403 (wrong registration key, role checks, ...) uses a different message, so
+// checking it keeps the /me resync from firing on unrelated 403s.
+const CSRF_FAILURE_MESSAGE = 'Invalid or missing CSRF token';
+
+async function isCsrfFailure(res: Response): Promise<boolean> {
+  try {
+    const data = await res.clone().json();
+    return data?.message === CSRF_FAILURE_MESSAGE;
+  } catch {
+    return false;
+  }
+}
+
 export type OnAuthFailure = () => void;
 let onAuthFailure: OnAuthFailure | null = null;
 
@@ -108,7 +122,7 @@ export async function authFetch(
     res = await request(path, options);
   }
 
-  if (res.status === 403) {
+  if (res.status === 403 && (await isCsrfFailure(res))) {
     const resynced = await resyncCsrfToken();
     if (resynced) res = await request(path, options);
   }

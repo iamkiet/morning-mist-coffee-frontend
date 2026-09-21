@@ -7,9 +7,8 @@ export type ReviewSeverity = 'low' | 'medium' | 'high';
 export type ReviewSentiment = 'positive' | 'negative' | 'neutral';
 export type ReviewStatus =
   | 'pending_classification'
-  | 'pending_review'
+  | 'pending_reply'
   | 'auto_responded'
-  | 'escalated'
   | 'resolved';
 
 export interface AdminProductReview {
@@ -97,23 +96,13 @@ export interface CreateProductReviewReplyPayload {
   replyText: string;
 }
 
-export async function createProductReviewReply(
-  reviewId: string,
-  payload: CreateProductReviewReplyPayload,
-): Promise<ProductReviewReply> {
-  const res = await authFetch(`/api/v1/product-reviews/${reviewId}/replies`, {
-    method: 'POST',
-    body: JSON.stringify(payload),
-  });
-  if (!res.ok) throw new Error('Failed to submit reply');
-  return res.json();
-}
-
+// Admin/staff only — the backend has no customer-facing reply endpoint
+// (a customer who wants to say more writes a new review, or asks Chat).
 export async function createAdminProductReviewReply(
   reviewId: string,
   payload: CreateProductReviewReplyPayload,
 ): Promise<ProductReviewReply> {
-  const res = await authFetch(`/api/v1/product-reviews/${reviewId}/admin-replies`, {
+  const res = await authFetch(`/api/v1/product-reviews/${reviewId}/replies`, {
     method: 'POST',
     body: JSON.stringify(payload),
   });
