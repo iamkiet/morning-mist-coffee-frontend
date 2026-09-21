@@ -30,17 +30,13 @@ type LoginForm = z.infer<typeof loginSchema>;
 
 export default function CustomerLoginPage() {
   const [error, setError] = useState('');
-  const { login, logout, user, isLoading: authLoading, ensureSession } = useAuth();
+  const { login, logout, user, isLoading: authLoading } = useAuth();
   const router = useRouter();
 
   const form = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
     defaultValues: { email: '', password: '' },
   });
-
-  useEffect(() => {
-    ensureSession();
-  }, [ensureSession]);
 
   useEffect(() => {
     if (authLoading || !user) return;

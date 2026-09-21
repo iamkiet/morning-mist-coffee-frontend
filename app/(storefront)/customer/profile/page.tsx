@@ -35,7 +35,7 @@ const profileSchema = z.object({
 type ProfileForm = z.infer<typeof profileSchema>;
 
 export default function CustomerProfilePage() {
-  const { user, isLoading: authLoading, ensureSession, logout } = useAuth();
+  const { user, isLoading: authLoading, logout } = useAuth();
   const router = useRouter();
   const isCustomer = user?.role === 'customer';
   const { data: account, isLoading, isError } = useMyAccount(isCustomer);
@@ -58,10 +58,6 @@ export default function CustomerProfilePage() {
         }
       : undefined,
   });
-
-  useEffect(() => {
-    ensureSession();
-  }, [ensureSession]);
 
   useEffect(() => {
     if (authLoading || isCustomer) return;

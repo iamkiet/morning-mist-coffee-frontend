@@ -31,9 +31,6 @@ export function Nav({ className }: NavProps = {}) {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const closeMenu = () => setIsOpen(false);
-  // Does not call ensureSession() itself — public pages must not fire an auth
-  // request just for rendering the nav; this only reflects a session another
-  // route (e.g. the profile page) already restored.
   const { user } = useAuth();
   const accountHref = user?.role === 'customer' ? '/customer/profile' : '/customer/login';
 
@@ -73,7 +70,7 @@ export function Nav({ className }: NavProps = {}) {
             className="h-11 w-11 sm:h-12 sm:w-12"
           >
             <Link href={accountHref} onClick={closeMenu} aria-label="Tài khoản">
-              <User className="size-5" />
+              <User className="size-5" fill={user ? 'currentColor' : 'none'} />
             </Link>
           </Button>
 

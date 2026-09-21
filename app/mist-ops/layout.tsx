@@ -22,12 +22,8 @@ interface AdminLayoutProps {
 
 export default function AdminLayout({ children }: AdminLayoutProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const { user, isLoading, logout, ensureSession } = useAuth();
+  const { user, isLoading, logout } = useAuth();
   const router = useRouter();
-
-  useEffect(() => {
-    ensureSession();
-  }, [ensureSession]);
 
   const isStaffOrAdmin = user?.role === 'admin' || user?.role === 'staff';
 

@@ -38,7 +38,7 @@ type CheckoutForm = z.infer<typeof checkoutSchema>;
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { user, isLoading: authLoading, ensureSession, logout } = useAuth();
+  const { user, isLoading: authLoading, logout } = useAuth();
   const isCustomer = user?.role === 'customer';
   const { items, itemCount, total, updateQuantity, removeItem, clearCart } =
     useCart();
@@ -54,10 +54,6 @@ export default function CheckoutPage() {
 
   // Only cash-on-pickup is supported today — no payment gateway is integrated
   const createOrder = useCreateOrder();
-
-  useEffect(() => {
-    ensureSession();
-  }, [ensureSession]);
 
   useEffect(() => {
     if (authLoading || isCustomer) return;

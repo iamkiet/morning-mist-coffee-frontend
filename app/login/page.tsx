@@ -49,7 +49,7 @@ export default function LoginPage() {
   const rememberMe = rememberInput ?? rememberedEmail !== '';
 
   const [error, setError] = useState('');
-  const { login, logout, user, isLoading: authLoading, ensureSession } = useAuth();
+  const { login, logout, user, isLoading: authLoading } = useAuth();
   const router = useRouter();
 
   const form = useForm<LoginForm>({
@@ -58,10 +58,6 @@ export default function LoginPage() {
     values: { email: rememberedEmail, password: '' },
     resetOptions: { keepDirtyValues: true },
   });
-
-  useEffect(() => {
-    ensureSession();
-  }, [ensureSession]);
 
   useEffect(() => {
     if (authLoading || !user) return;

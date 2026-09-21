@@ -23,10 +23,10 @@ export type { User };
 interface AuthContextValue {
   user: User | null;
   isLoading: boolean;
-  // Restores the session from the refresh cookie. Idempotent — the routes that
-  // need a session (admin, login) call this on mount, so public pages never
-  // fire an auth request. Keeping the decision here rather than sniffing
-  // `window.location` means it also survives client-side navigation.
+  // Restores the session from the refresh cookie. Idempotent — AuthProvider
+  // itself calls this once on mount for every page. Exposed so a route can
+  // still call it explicitly (e.g. right after a redirect) without waiting
+  // on a re-render.
   ensureSession: () => void;
   // Returns the signed-in user so callers can branch on role without
   // waiting for a context re-render. `accountType` selects which table/endpoint
@@ -43,7 +43,7 @@ interface AuthProviderProps {
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
-  // 'idle' until a route asks for a session; 'ready' once an attempt settled
+  // 'idle' until the mount-time ensureSession() call below starts; 'ready' once it settles
   const [status, setStatus] = useState<'idle' | 'loading' | 'ready'>('idle');
   const queryClient = useQueryClient();
   const restoreStarted = useRef(false);
@@ -64,9 +64,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     restoreStarted.current = true;
     setStatus('loading');
 
-    // The access token lives in an httpOnly cookie now, so it survives a
-    // reload — fetchMe() (via authFetch) transparently refreshes on 401 if
-    // it turns out to be expired, so a single call covers both cases.
     (async () => {
       try {
         setUser(await fetchMe());
@@ -77,6 +74,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
       }
     })();
   }, []);
+
+  // Runs once on mount for every page, not just auth-gated ones, so the
+  // signed-in state (e.g. the account icon in Nav) is correct even on a
+  // hard reload of a public page — the access-token cookie can't be read
+  // by JS to decide this locally, so a single /me check on load is the
+  // only way to know.
+  useEffect(() => {
+    ensureSession();
+  }, [ensureSession]);
 
   const login = useCallback(
     async (email: string, password: string, accountType: AccountType) => {
