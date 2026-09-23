@@ -41,7 +41,7 @@ export function ChatWidget() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.3, ease: 'easeOut' }}
-            className="mb-4 w-[calc(100vw-2rem)] sm:w-96 rounded-xl overflow-hidden shadow-2xl border border-border bg-card"
+            className="mb-4 w-[calc(100vw-2rem)] sm:w-[28rem] rounded-xl overflow-hidden shadow-2xl border border-border bg-card"
             style={{ 
               boxShadow: '0 20px 40px rgba(85, 98, 84, 0.08)'
             }}
@@ -64,7 +64,7 @@ export function ChatWidget() {
             </div>
 
             {/* Chat Area */}
-            <div className="h-80 overflow-y-auto p-4 flex flex-col gap-3 bg-background">
+            <div className="h-[28rem] overflow-y-auto p-4 flex flex-col gap-3 bg-background">
               {messages.map((msg) => (
                 <div key={msg.id} className="flex flex-col gap-2">
                   <div
