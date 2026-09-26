@@ -13,7 +13,7 @@ export interface ChatReply {
 }
 
 export async function sendChatMessage(messages: ChatMessage[]): Promise<ChatReply> {
-  const res = await authFetch('/api/v1/chat', {
+  const res = await authFetch('/api/v1/chat/text', {
     method: 'POST',
     body: JSON.stringify({ messages }),
   });
