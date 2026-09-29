@@ -266,7 +266,7 @@ export default function AdminOrdersPage() {
               <Button
                 variant="outline"
                 size="sm"
-                className="text-[10px] uppercase tracking-wider h-7"
+                className="text-xs uppercase tracking-wider"
                 disabled={updateStatus.isPending}
                 onClick={() => updateStatus.mutate({ id: r.id, status: next })}
               >
@@ -276,7 +276,6 @@ export default function AdminOrdersPage() {
             <Button
               variant="ghost"
               size="icon"
-              className="size-8"
               onClick={() => setEditOrder(r)}
             >
               <MoreHorizontal className="size-4" />
@@ -382,12 +381,14 @@ export default function AdminOrdersPage() {
                   <p className="text-xs uppercase tracking-widest text-muted-foreground">
                     Đơn hàng #{order.id.slice(0, 8).toUpperCase()} · Sản phẩm
                   </p>
-                  <button
+                  <Button
+                    variant="ghost"
+                    size="sm"
                     onClick={() => setExpandedId(null)}
-                    className="text-xs text-muted-foreground hover:text-foreground transition-colors uppercase tracking-widest"
+                    className="text-xs uppercase tracking-wider"
                   >
                     Đóng
-                  </button>
+                  </Button>
                 </div>
                 {(order.items || []).length === 0 ? (
                   <p className="text-sm text-muted-foreground">

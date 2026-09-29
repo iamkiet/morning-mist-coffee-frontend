@@ -631,7 +631,6 @@ export default function AdminEmployeesPage() {
             <Button
               variant="ghost"
               size="icon"
-              className="size-8"
               title={canEdit ? 'Đặt lại Mật khẩu' : 'Chỉ tự đặt lại mật khẩu của chính mình'}
               disabled={!canEdit}
               onClick={() => setResetPasswordEmployee(r)}
@@ -641,7 +640,7 @@ export default function AdminEmployeesPage() {
             <Button
               variant="ghost"
               size="icon"
-              className="size-8 hover:text-destructive"
+              className="hover:text-destructive"
               title={
                 !canEdit
                   ? 'Chỉ tự chỉnh sửa tài khoản của chính mình'
@@ -672,7 +671,6 @@ export default function AdminEmployeesPage() {
             <Button
               variant="ghost"
               size="icon"
-              className="size-8"
               title={canEdit ? 'Chỉnh sửa' : 'Chỉ tự chỉnh sửa tài khoản của chính mình'}
               disabled={!canEdit}
               onClick={() => setEditEmployee(r)}
@@ -683,7 +681,7 @@ export default function AdminEmployeesPage() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="size-8 hover:text-destructive"
+                className="hover:text-destructive"
                 title="Xóa"
                 onClick={() => setDeleteConfirm(r)}
               >

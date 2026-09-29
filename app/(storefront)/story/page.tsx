@@ -11,10 +11,10 @@ export default function StoryPage() {
         imageClassName="object-cover opacity-80 scale-105"
         overlayClassName="bg-gradient-to-b from-transparent via-background/20 to-background"
       >
-        <span className="text-xs uppercase tracking-[0.3em] text-primary mb-6 block">
+        <span className="text-xs uppercase tracking-widest text-primary mb-6 block">
           Khởi Nguồn
         </span>
-        <h1 className="text-3xl sm:text-4xl font-light text-foreground mb-6 sm:mb-8">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-light text-foreground mb-6 sm:mb-8">
           Nơi đất trời thở nhẹ <br className="hidden md:block" /> và thời gian
           trôi chậm lại.
         </h1>
@@ -31,7 +31,7 @@ export default function StoryPage() {
             <span className="text-xs uppercase tracking-widest text-primary">
               Triết Lý
             </span>
-            <h2 className="text-2xl font-light text-foreground leading-tight">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-light text-foreground leading-tight">
               Nghệ Thuật Từ <br className="hidden md:block" /> Nghi Thức Thưởng Thức Chậm Rãi
             </h2>
             <div className="w-12 h-px bg-accent" />
@@ -64,7 +64,7 @@ export default function StoryPage() {
           <span className="text-xs uppercase tracking-widest text-primary block mb-4">
             Nghệ Thuật Thủ Công
           </span>
-          <h2 className="text-2xl font-light text-foreground">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-light text-foreground">
             Sự Tỉ Mỉ Và Chính Xác Thủ Công
           </h2>
         </Container>
@@ -114,7 +114,7 @@ export default function StoryPage() {
           <span className="text-xs uppercase tracking-widest text-primary block mb-6">
             Cam Kết Của Chúng Tôi
           </span>
-          <h2 className="text-4xl font-light text-foreground mb-8">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-light text-foreground mb-8">
             Sự thuần khiết thay vì tốc độ. <br className="hidden md:block" /> Giá trị thủ công
             vượt trên thương mại.
           </h2>

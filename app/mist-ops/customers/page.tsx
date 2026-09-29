@@ -567,7 +567,6 @@ export default function AdminCustomersPage() {
           <Button
             variant="ghost"
             size="icon"
-            className="size-8"
             title="Đặt lại Mật khẩu"
             onClick={() => setResetPasswordCustomer(r)}
           >
@@ -576,7 +575,7 @@ export default function AdminCustomersPage() {
           <Button
             variant="ghost"
             size="icon"
-            className="size-8 hover:text-destructive"
+            className="hover:text-destructive"
             title={r.status === 'banned' ? 'Kích hoạt lại' : 'Vô hiệu hóa'}
             disabled={toggleStatus.isPending}
             onClick={() => {
@@ -601,7 +600,6 @@ export default function AdminCustomersPage() {
           <Button
             variant="ghost"
             size="icon"
-            className="size-8"
             title="Chỉnh sửa"
             onClick={() => setEditCustomer(r)}
           >

@@ -38,8 +38,7 @@ function PageArrow({ href, label, children }: PageArrowProps) {
     return (
       <Button
         variant="outline"
-        size="icon"
-        className="rounded-lg size-9"
+        size="icon-lg"
         aria-label={label}
         disabled
       >
@@ -48,7 +47,7 @@ function PageArrow({ href, label, children }: PageArrowProps) {
     );
   }
   return (
-    <Button variant="outline" size="icon" className="rounded-lg size-9" asChild>
+    <Button variant="outline" size="icon-lg" asChild>
       <Link href={href} aria-label={label}>
         {children}
       </Link>

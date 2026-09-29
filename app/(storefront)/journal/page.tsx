@@ -49,7 +49,7 @@ export default function JournalPage() {
         <span className="text-xs text-primary mb-4 block uppercase tracking-widest font-medium">
           Câu Chuyện Nổi Bật
         </span>
-        <h1 className="text-3xl sm:text-4xl md:text-5xl text-foreground mb-6 tracking-tight font-light">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl text-foreground mb-6 font-light">
           Nghi Thức Nguồn Cung
         </h1>
         <p className="text-base sm:text-lg text-muted-foreground mb-8 leading-relaxed font-light">
@@ -67,25 +67,23 @@ export default function JournalPage() {
       {/* Filter Bar */}
       <Container as="section" className="w-full py-12 sm:py-16 flex flex-col md:flex-row justify-between items-end gap-8 border-b border-border">
         <div>
-          <h2 className="text-2xl sm:text-3xl text-foreground font-light">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl text-foreground font-light">
             Tạp Chí (Journal)
           </h2>
           <p className="text-sm text-muted-foreground mt-2 italic font-light">
             Nơi lưu giữ những suy tư chậm rãi và những quan sát giác quan sâu sắc.
           </p>
         </div>
-        <div className="flex gap-6 sm:gap-8 overflow-x-auto pb-2 md:pb-0 no-scrollbar">
+        <div className="flex gap-2 overflow-x-auto pb-2 md:pb-0 no-scrollbar">
           {filters.map((f, i) => (
-            <button
+            <Button
               key={f}
-              className={`text-xs uppercase tracking-widest pb-1 transition-colors cursor-pointer whitespace-nowrap ${
-                i === 0
-                  ? 'text-foreground border-b border-foreground'
-                  : 'text-muted-foreground hover:text-foreground'
-              }`}
+              size="sm"
+              variant={i === 0 ? 'default' : 'outline'}
+              className="text-xs uppercase tracking-wider shrink-0"
             >
               {f}
-            </button>
+            </Button>
           ))}
         </div>
       </Container>
@@ -134,7 +132,7 @@ export default function JournalPage() {
             <span className="text-xs text-primary mb-4 block uppercase tracking-widest font-medium">
               Kết Nối Với Chúng Tôi
             </span>
-            <h2 className="text-2xl sm:text-3xl mb-4 font-light">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl mb-4 font-light">
               Đăng Ký Nhận Bản Tin
             </h2>
             <p className="text-base sm:text-lg text-muted-foreground font-light leading-relaxed">

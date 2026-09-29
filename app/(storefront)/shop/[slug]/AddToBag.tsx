@@ -100,7 +100,7 @@ export function AddToBag({ product }: AddToBagProps) {
       </div>
       <Button
         size="lg"
-        className="w-full tracking-[0.2em] gap-2"
+        className="w-full uppercase tracking-wider text-xs gap-2"
         onClick={handleAdd}
         disabled={added || outOfStock}
       >

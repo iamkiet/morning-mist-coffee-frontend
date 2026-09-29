@@ -111,19 +111,19 @@ export default function AdminOverviewPage() {
         <Card className="lg:col-span-3">
           <CardContent className="p-4 sm:p-6">
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-base font-medium">Xu hướng doanh số</h3>
+              <h3 className="text-sm uppercase tracking-widest font-medium">Xu hướng doanh số</h3>
               <div className="flex gap-1">
                 <Button
                   variant="outline"
                   size="sm"
-                  className="text-[10px] uppercase tracking-wider h-7"
+                  className="text-xs uppercase tracking-wider"
                 >
                   Hàng ngày
                 </Button>
                 <Button
                   variant="default"
                   size="sm"
-                  className="text-[10px] uppercase tracking-wider h-7"
+                  className="text-xs uppercase tracking-wider"
                 >
                   Hàng tuần
                 </Button>
@@ -159,7 +159,7 @@ export default function AdminOverviewPage() {
 
         <Card className="lg:col-span-2">
           <CardContent className="p-4 sm:p-6">
-            <h3 className="text-base font-medium mb-6">Hoạt động gần đây</h3>
+            <h3 className="text-sm uppercase tracking-widest font-medium mb-6">Hoạt động gần đây</h3>
             <div className="space-y-6">
               {activity.map((a, i) => {
                 const Icon = a.icon;
@@ -175,7 +175,7 @@ export default function AdminOverviewPage() {
                     </div>
                     <div>
                       <p className="text-sm">{a.body}</p>
-                      <p className="text-[11px] text-muted-foreground uppercase tracking-widest mt-1">
+                      <p className="text-[10px] text-muted-foreground uppercase tracking-widest mt-1">
                         {a.when}
                       </p>
                     </div>
@@ -219,7 +219,7 @@ export default function AdminOverviewPage() {
             <Button
               variant="outline"
               size="sm"
-              className="uppercase tracking-wider rounded-full"
+              className="text-xs uppercase tracking-wider"
             >
               Xem phân tích
             </Button>

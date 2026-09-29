@@ -144,7 +144,6 @@ export function Pagination({
           <Button
             variant="outline"
             size="icon"
-            className="size-8 rounded-lg"
             aria-label="Trang trước"
             disabled={page === 1}
             onClick={() => onPageChange(page - 1)}
@@ -157,7 +156,6 @@ export function Pagination({
           <Button
             variant="outline"
             size="icon"
-            className="size-8 rounded-lg"
             aria-label="Trang sau"
             disabled={page >= totalPages}
             onClick={() => onPageChange(page + 1)}

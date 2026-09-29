@@ -149,40 +149,43 @@ export default function CheckoutPage() {
                             {item.name} — {getVariantLabelFromSku(item.sku)}
                           </p>
                           <div className="flex items-center gap-1 mt-1">
-                            <button
+                            <Button
+                              variant="outline"
+                              size="icon-xs"
                               onClick={() =>
                                 updateQuantity(item.productVariantId, item.quantity - 1)
                               }
-                              className="size-5 flex items-center justify-center border border-border rounded-lg text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                               aria-label="Decrease quantity"
                             >
-                              <Minus className="size-3" />
-                            </button>
+                              <Minus />
+                            </Button>
                             <span className="text-xs text-muted-foreground w-5 text-center">
                               {item.quantity}
                             </span>
-                            <button
+                            <Button
+                              variant="outline"
+                              size="icon-xs"
                               onClick={() =>
                                 updateQuantity(item.productVariantId, item.quantity + 1)
                               }
-                              className="size-5 flex items-center justify-center border border-border rounded-lg text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                               aria-label="Increase quantity"
                             >
-                              <Plus className="size-3" />
-                            </button>
+                              <Plus />
+                            </Button>
                           </div>
                         </div>
                         <div className="flex flex-col items-end gap-1 shrink-0">
                           <span className="text-sm font-medium text-primary">
                             {(item.price * item.quantity).toLocaleString('vi-VN')} ₫
                           </span>
-                          <button
+                          <Button
+                            variant="ghost"
+                            size="icon-xs"
                             onClick={() => removeItem(item.productVariantId)}
-                            className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                             aria-label={`Remove ${item.name}`}
                           >
-                            <Trash2 className="size-3.5" />
-                          </button>
+                            <Trash2 />
+                          </Button>
                         </div>
                       </div>
                     ))}
@@ -217,7 +220,7 @@ export default function CheckoutPage() {
         {/* Checkout Form - right on desktop, bottom on mobile */}
         <div className="lg:col-span-7 order-last space-y-8">
           <div>
-            <h1 className="text-3xl sm:text-4xl text-primary mb-2 font-light">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl text-primary mb-2 font-light">
               Thanh Toán
             </h1>
           </div>
@@ -314,7 +317,7 @@ export default function CheckoutPage() {
                 <Button
                   type="submit"
                   disabled={createOrder.isPending || itemCount === 0}
-                  className="w-full uppercase tracking-wider h-12"
+                  className="w-full uppercase tracking-wider text-xs"
                   size="lg"
                 >
                   {createOrder.isPending

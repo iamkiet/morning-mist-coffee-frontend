@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Camera, Globe, Video } from 'lucide-react';
+import { Container } from './Container';
 
 const sitemapLinks = [
   { label: 'Cửa hàng', href: '/shop' },
@@ -23,7 +24,7 @@ const legalLinks = [
 export function Footer() {
   return (
     <footer className="w-full bg-muted border-t border-border/30 pt-8 md:pt-10 pb-4 md:pb-6">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-gutter">
+      <Container>
         {/* Main grid: single col on mobile, 12-col on desktop */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-x-8 gap-y-6 md:gap-10 mb-6 md:mb-8">
           {/* Brand — col 4 */}
@@ -51,7 +52,7 @@ export function Footer() {
 
           {/* Sitemap — col 3 */}
           <div className="md:col-span-3">
-            <h5 className="text-xs text-primary tracking-[0.2em] uppercase mb-3 font-medium">
+            <h5 className="text-xs text-primary tracking-widest uppercase mb-3 font-medium">
               Khám phá
             </h5>
             <ul className="flex flex-col space-y-1.5">
@@ -59,7 +60,7 @@ export function Footer() {
                 <li key={label}>
                   <Link
                     href={href}
-                    className="text-[13px] uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors"
+                    className="text-xs uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors"
                   >
                     {label}
                   </Link>
@@ -70,12 +71,12 @@ export function Footer() {
 
           {/* Locations — col 2 */}
           <div className="md:col-span-2">
-            <h5 className="text-xs text-primary tracking-[0.2em] uppercase mb-3 font-medium">
+            <h5 className="text-xs text-primary tracking-widest uppercase mb-3 font-medium">
               Địa điểm
             </h5>
             <div className="flex flex-col space-y-3">
               <div>
-                <p className="text-[11px] uppercase tracking-[0.1em] text-foreground mb-1">
+                <p className="text-[10px] uppercase tracking-widest text-foreground mb-1">
                   Việt Nam
                 </p>
                 <p className="text-sm text-muted-foreground font-light leading-normal">
@@ -89,7 +90,7 @@ export function Footer() {
 
           {/* Inquiries — col 3 */}
           <div className="md:col-span-3">
-            <h5 className="text-xs text-primary tracking-[0.2em] uppercase mb-3 font-medium">
+            <h5 className="text-xs text-primary tracking-widest uppercase mb-3 font-medium">
               Liên hệ
             </h5>
             <div className="flex flex-col space-y-1.5">
@@ -103,7 +104,7 @@ export function Footer() {
                 +1 234 567 890
               </p>
               <div className="pt-0.5">
-                <p className="text-[11px] uppercase tracking-widest text-muted-foreground/70 leading-normal">
+                <p className="text-[10px] uppercase tracking-widest text-muted-foreground/70 leading-normal">
                   Giờ hỗ trợ:
                   <br />
                   Thứ 2—Thứ 6, 9:00—17:00
@@ -115,7 +116,7 @@ export function Footer() {
 
         {/* Bottom bar */}
         <div className="pt-4 md:pt-5 border-t border-border/30 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-          <p className="text-[11px] uppercase tracking-widest text-muted-foreground/60">
+          <p className="text-[10px] uppercase tracking-widest text-muted-foreground/60">
             © 2026 Morning Mist Coffee
           </p>
           <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 sm:gap-x-8">
@@ -123,14 +124,14 @@ export function Footer() {
               <a
                 key={label}
                 href={href}
-                className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground hover:text-primary transition-colors"
+                className="text-[10px] uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors"
               >
                 {label}
               </a>
             ))}
           </div>
         </div>
-      </div>
+      </Container>
     </footer>
   );
 }

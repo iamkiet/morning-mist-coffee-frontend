@@ -22,6 +22,7 @@ Companion to `design-tokens` (colors). This covers everything else: control heig
 | `Button` | `size="icon"` | `size-8` (32×32) | icon-only actions (edit/delete in tables) |
 | `Button` | `size="icon-sm"` | `size-7` | |
 | `Button` | `size="icon-lg"` | `size-9` | |
+| `Button` | `size="icon-xl"` | `size-11` (44×44) | Nav icons only: mobile touch target, never override `h-*`/`w-*` by hand |
 | `Badge` | (only one size) | `h-5` | |
 
 **The rule that actually matters:** when an `Input`/`SelectTrigger`/`Button` sit inline in the same row (a form row, a search bar, an inline "add" form), every control in that row must resolve to the same height. Default `Input`/`SelectTrigger` is `h-8` → pair with `Button size="default"` (also `h-8`), not `size="sm"` (`h-7`). Never force alignment with a manual height override (`className="h-9"`) — that drifts from every other control in the app, which all use unmodified defaults.

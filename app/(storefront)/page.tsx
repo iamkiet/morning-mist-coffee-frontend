@@ -14,7 +14,7 @@ export default function HomePage() {
         imageClassName="object-cover opacity-70"
       >
         <div className="py-12 sm:py-16 md:py-20">
-          <span className="text-primary tracking-[0.3em] mb-4 sm:mb-6 block uppercase text-xs sm:text-sm font-medium">
+          <span className="text-primary tracking-widest mb-4 sm:mb-6 block uppercase text-xs sm:text-sm font-medium">
             Nuôi Dưỡng Trong Tĩnh Lặng
           </span>
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-foreground mb-6 sm:mb-8 leading-tight font-light">
@@ -36,7 +36,7 @@ export default function HomePage() {
       {/* Featured Collections */}
       <Container as="section" className="py-12 sm:py-16 md:py-20">
         <div className="flex flex-col mb-8 sm:mb-12 md:mb-20">
-          <span className="text-primary tracking-[0.2em] mb-2 sm:mb-4 uppercase text-xs font-medium">
+          <span className="text-primary tracking-widest mb-2 sm:mb-4 uppercase text-xs font-medium">
             Tác Phẩm Tuyển Chọn
           </span>
           <h2 className="text-2xl sm:text-3xl md:text-4xl text-foreground font-light">
@@ -123,10 +123,10 @@ export default function HomePage() {
             <div className="absolute -bottom-6 sm:-bottom-8 md:-bottom-10 -right-6 sm:-right-8 md:-right-10 w-32 sm:w-40 md:w-48 h-32 sm:h-40 md:h-48 bg-accent/20 blur-3xl" />
           </div>
           <div className="flex flex-col space-y-6 sm:space-y-8 order-1 md:order-2">
-            <span className="text-primary tracking-[0.2em] uppercase text-xs font-medium">
+            <span className="text-primary tracking-widest uppercase text-xs font-medium">
               Triết Lý Của Chúng Tôi
             </span>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-foreground font-light">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl text-foreground font-light">
               Kiến Tạo <br /> Những Khoảnh Khắc Tĩnh Lặng.
             </h2>
             <p className="text-base sm:text-lg text-muted-foreground font-light leading-relaxed">
@@ -174,7 +174,7 @@ export default function HomePage() {
                 <div className="w-12 h-12 bg-accent flex items-center justify-center mb-8 sm:mb-10 shrink-0 rounded-lg">
                   <Icon className="size-6 text-white" />
                 </div>
-                <h4 className="text-base sm:text-lg md:text-xl uppercase tracking-[0.15em] text-foreground mb-4 sm:mb-6 font-normal">
+                <h4 className="text-base sm:text-lg md:text-xl uppercase tracking-widest text-foreground mb-4 sm:mb-6 font-normal">
                   {title}
                 </h4>
                 <div className="w-8 h-px bg-accent mb-4 sm:mb-6" />

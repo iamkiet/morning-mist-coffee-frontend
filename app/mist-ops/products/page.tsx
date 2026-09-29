@@ -260,7 +260,6 @@ function CategoryRow({ category }: CategoryRowProps) {
         <Button
           type="button"
           size="icon"
-          className="size-8"
           disabled={updateCategory.isPending}
           onClick={handleRename}
         >
@@ -270,7 +269,6 @@ function CategoryRow({ category }: CategoryRowProps) {
           type="button"
           variant="ghost"
           size="icon"
-          className="size-8"
           onClick={() => {
             setIsEditing(false);
             setName(category.name);
@@ -289,8 +287,7 @@ function CategoryRow({ category }: CategoryRowProps) {
         <Button
           type="button"
           variant="ghost"
-          size="icon"
-          className="size-7"
+          size="icon-sm"
           title="Đổi tên"
           onClick={() => setIsEditing(true)}
         >
@@ -299,8 +296,8 @@ function CategoryRow({ category }: CategoryRowProps) {
         <Button
           type="button"
           variant="ghost"
-          size="icon"
-          className="size-7 hover:text-destructive"
+          size="icon-sm"
+          className="hover:text-destructive"
           title="Xoá"
           disabled={deleteCategory.isPending}
           onClick={handleDelete}
@@ -543,7 +540,7 @@ function VariantPropertiesForm({ variant, properties }: VariantPropertiesFormPro
                   {p.name}
                 </FormLabel>
                 <FormControl>
-                  <Input {...field} className="h-8" />
+                  <Input {...field} />
                 </FormControl>
               </FormItem>
             )}
@@ -651,7 +648,7 @@ function VariantRow({ variant, properties, deletable }: VariantRowProps) {
             type="button"
             variant="ghost"
             size="icon"
-            className="size-8 hover:text-destructive"
+            className="hover:text-destructive"
             disabled={deleteVariant.isPending || !deletable}
             title={
               deletable ? undefined : 'Sản phẩm phải có ít nhất một phân loại'
@@ -1145,7 +1142,6 @@ export default function AdminProductsPage() {
           <Button
             variant="ghost"
             size="icon"
-            className="size-8"
             onClick={() => setEditProduct(r)}
           >
             <Pencil className="size-4" />
@@ -1153,7 +1149,7 @@ export default function AdminProductsPage() {
           <Button
             variant="ghost"
             size="icon"
-            className="size-8 hover:text-destructive"
+            className="hover:text-destructive"
             onClick={() => setDeleteProductConfirm(r)}
           >
             <Trash2 className="size-4" />

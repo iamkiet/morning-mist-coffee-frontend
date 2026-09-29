@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import CartCount from './CartCount';
+import { Container } from './Container';
 import { useAuth } from '@/lib/auth-context';
 
 const links = [
@@ -36,7 +37,7 @@ export function Nav({ className }: NavProps = {}) {
 
   return (
     <nav className={`w-full bg-background/70 border-b border-border/20 backdrop-blur-xl ${className ?? ''}`}>
-      <div className="flex justify-between items-center px-4 sm:px-6 md:px-gutter py-3 sm:py-4 max-w-7xl mx-auto">
+      <Container className="flex justify-between items-center py-3 sm:py-4">
         <Link
           href="/"
           onClick={closeMenu}
@@ -66,8 +67,7 @@ export function Nav({ className }: NavProps = {}) {
           <Button
             asChild
             variant="ghost"
-            size="icon"
-            className="h-11 w-11 sm:h-12 sm:w-12"
+            size="icon-xl"
           >
             <Link href={accountHref} onClick={closeMenu} aria-label="Tài khoản">
               <User className="size-5" fill={user ? 'currentColor' : 'none'} />
@@ -77,8 +77,8 @@ export function Nav({ className }: NavProps = {}) {
           <Button
             asChild
             variant="ghost"
-            size="icon"
-            className="relative h-11 w-11 sm:h-12 sm:w-12"
+            size="icon-xl"
+            className="relative"
           >
             <Link
               href="/checkout"
@@ -95,8 +95,8 @@ export function Nav({ className }: NavProps = {}) {
             <SheetTrigger asChild>
               <Button
                 variant="ghost"
-                size="icon"
-                className="lg:hidden h-11 w-11 sm:h-12 sm:w-12"
+                size="icon-xl"
+                className="lg:hidden"
                 aria-label="Toggle menu"
               >
                 <Menu className="size-6" />
@@ -113,7 +113,7 @@ export function Nav({ className }: NavProps = {}) {
                     key={l.label}
                     href={l.href}
                     onClick={closeMenu}
-                    className={`text-2xl sm:text-3xl font-light uppercase tracking-[0.3em] transition-colors ${
+                    className={`text-2xl sm:text-3xl font-light uppercase tracking-widest transition-colors ${
                       pathname === l.href
                         ? 'text-accent'
                         : 'text-muted-foreground hover:text-primary'
@@ -126,7 +126,7 @@ export function Nav({ className }: NavProps = {}) {
             </SheetContent>
           </Sheet>
         </div>
-      </div>
+      </Container>
     </nav>
   );
 }

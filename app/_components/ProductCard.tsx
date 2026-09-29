@@ -39,7 +39,7 @@ export function ProductCard({ product }: ProductCardProps) {
         </div>
         <div className="text-center px-4 mb-3">
           {coffeeLine && (
-            <p className="text-[11px] uppercase tracking-widest text-primary/70 mb-1">
+            <p className="text-[10px] uppercase tracking-widest text-primary/70 mb-1">
               {coffeeLine}
             </p>
           )}

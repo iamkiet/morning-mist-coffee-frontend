@@ -361,7 +361,6 @@ export default function AdminProductReviewsPage() {
         <Button
           variant="ghost"
           size="icon"
-          className="size-8"
           onClick={() => setEditReview(r)}
         >
           <MoreHorizontal className="size-4" />

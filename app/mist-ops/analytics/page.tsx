@@ -65,7 +65,7 @@ export default function AdminAnalyticsPage() {
               <span>30 ngày qua</span>
               <ChevronDown className="size-4" />
             </div>
-            <Button>
+            <Button className="text-xs uppercase tracking-wider">
               <Plus className="size-4" />
               Mẻ rang mới
             </Button>

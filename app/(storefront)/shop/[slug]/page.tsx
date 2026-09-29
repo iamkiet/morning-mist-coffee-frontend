@@ -59,10 +59,10 @@ export default async function ProductPage(props: {
 
         <div className="lg:col-span-5 flex flex-col justify-center">
           <header className="mb-6">
-            <span className="text-primary tracking-[0.2em] mb-2 block uppercase text-xs">
+            <span className="text-primary tracking-widest mb-2 block uppercase text-xs">
               Bộ Sưu Tập Đặc Sản (Reserve)
             </span>
-            <h1 className="text-4xl md:text-5xl text-foreground mb-1">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-light text-foreground mb-1">
               {product.name}
             </h1>
           </header>
