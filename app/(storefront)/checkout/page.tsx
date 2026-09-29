@@ -38,8 +38,8 @@ type CheckoutForm = z.infer<typeof checkoutSchema>;
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { user, isLoading: authLoading, logout } = useAuth();
-  const isCustomer = user?.role === 'customer';
+  const { user, isLoading: authLoading } = useAuth();
+  const isSignedIn = !!user;
   const { items, itemCount, total, updateQuantity, removeItem, clearCart } =
     useCart();
 
@@ -56,13 +56,9 @@ export default function CheckoutPage() {
   const createOrder = useCreateOrder();
 
   useEffect(() => {
-    if (authLoading || isCustomer) return;
-    if (user) {
-      logout().then(() => router.replace('/customer/login'));
-    } else {
-      router.replace('/customer/login');
-    }
-  }, [authLoading, isCustomer, user, logout, router]);
+    if (authLoading || isSignedIn) return;
+    router.replace('/customer/login');
+  }, [authLoading, isSignedIn, router]);
 
   const submitError = createOrder.isError
     ? createOrder.error instanceof Error
@@ -97,7 +93,7 @@ export default function CheckoutPage() {
     );
   };
 
-  if (authLoading || !isCustomer) {
+  if (authLoading || !isSignedIn) {
     return (
       <Container navOffset className="pb-12 min-h-screen">
         <p className="text-center text-muted-foreground">Đang tải...</p>

@@ -1,18 +1,23 @@
 import { API_URL } from '@/lib/config';
 import type { User } from '@/lib/types';
 import { postRefresh } from './auth';
+import { areaApiPath, currentAuthArea } from '@/lib/auth-area';
 
-const CSRF_STORAGE_KEY = 'morning-mist-csrf-token';
+const CSRF_STORAGE_KEY_PREFIX = 'morning-mist-csrf-token';
+
+function csrfStorageKey(): string {
+  return `${CSRF_STORAGE_KEY_PREFIX}-${currentAuthArea()}`;
+}
 
 function getCsrfToken(): string | null {
   if (typeof window === 'undefined') return null;
-  return localStorage.getItem(CSRF_STORAGE_KEY);
+  return localStorage.getItem(csrfStorageKey());
 }
 
 export function setCsrfToken(token: string | null) {
   if (typeof window === 'undefined') return;
-  if (token) localStorage.setItem(CSRF_STORAGE_KEY, token);
-  else localStorage.removeItem(CSRF_STORAGE_KEY);
+  if (token) localStorage.setItem(csrfStorageKey(), token);
+  else localStorage.removeItem(csrfStorageKey());
 }
 
 export interface ListQueryOptions {
@@ -55,7 +60,7 @@ function request(path: string, options: RequestInit = {}): Promise<Response> {
     if (csrfToken) headers['X-CSRF-Token'] = csrfToken;
   }
 
-  return fetch(`${API_URL}${path}`, {
+  return fetch(`${API_URL}${areaApiPath(path)}`, {
     ...options,
     credentials: 'include',
     headers,

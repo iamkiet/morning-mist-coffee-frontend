@@ -17,6 +17,7 @@ import {
   type User,
 } from '@/lib/api/auth';
 import { ACCOUNT_TYPE, type AccountType } from '@/lib/types';
+import type { AuthArea } from '@/lib/auth-area';
 
 export type { User };
 
@@ -37,16 +38,25 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
+const AUTH_CHANNEL_NAME_PREFIX = 'morning-mist-auth';
+
+function openAuthChannel(area: AuthArea): BroadcastChannel | null {
+  if (typeof window === 'undefined' || typeof BroadcastChannel === 'undefined') return null;
+  return new BroadcastChannel(`${AUTH_CHANNEL_NAME_PREFIX}-${area}`);
+}
+
 interface AuthProviderProps {
+  area: AuthArea;
   children: React.ReactNode;
 }
 
-export function AuthProvider({ children }: AuthProviderProps) {
+export function AuthProvider({ area, children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
   // 'idle' until the mount-time ensureSession() call below starts; 'ready' once it settles
   const [status, setStatus] = useState<'idle' | 'loading' | 'ready'>('idle');
   const queryClient = useQueryClient();
   const restoreStarted = useRef(false);
+  const channelRef = useRef<BroadcastChannel | null>(null);
 
   const clearSession = useCallback(() => {
     setCsrfToken(null);
@@ -75,6 +85,21 @@ export function AuthProvider({ children }: AuthProviderProps) {
     })();
   }, []);
 
+  useEffect(() => {
+    const channel = openAuthChannel(area);
+    if (!channel) return;
+    channelRef.current = channel;
+    channel.onmessage = () => {
+      queryClient.clear();
+      restoreStarted.current = false;
+      ensureSession();
+    };
+    return () => {
+      channel.close();
+      channelRef.current = null;
+    };
+  }, [area, queryClient, ensureSession]);
+
   // Runs once on mount for every page, not just auth-gated ones, so the
   // signed-in state (e.g. the account icon in Nav) is correct even on a
   // hard reload of a public page — the access-token cookie can't be read
@@ -89,18 +114,21 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const postLogin =
         accountType === ACCOUNT_TYPE.EMPLOYEE ? postEmployeeLogin : postCustomerLogin;
       const { csrfToken, user: signedIn } = await postLogin(email, password);
+      queryClient.clear();
       setCsrfToken(csrfToken);
       setUser(signedIn);
       restoreStarted.current = true;
       setStatus('ready');
+      channelRef.current?.postMessage('changed');
       return signedIn;
     },
-    [],
+    [queryClient],
   );
 
   const logout = useCallback(async () => {
     await postLogout();
     clearSession();
+    channelRef.current?.postMessage('changed');
   }, [clearSession]);
 
   return (

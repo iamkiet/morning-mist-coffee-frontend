@@ -25,20 +25,14 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const { user, isLoading, logout } = useAuth();
   const router = useRouter();
 
-  const isStaffOrAdmin = user?.role === 'admin' || user?.role === 'staff';
+  const isSignedIn = !!user;
 
   useEffect(() => {
-    if (isLoading || isStaffOrAdmin) return;
-    // A customer session (or no session) landed here — clear any leftover
-    // cookies before bouncing to /login so the two areas never mix sessions.
-    if (user) {
-      logout().then(() => router.replace('/login'));
-    } else {
-      router.replace('/login');
-    }
-  }, [user, isStaffOrAdmin, isLoading, logout, router]);
+    if (isLoading || isSignedIn) return;
+    router.replace('/login');
+  }, [isSignedIn, isLoading, router]);
 
-  if (isLoading || !isStaffOrAdmin) {
+  if (isLoading || !isSignedIn) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <p className="text-muted-foreground">Đang tải...</p>

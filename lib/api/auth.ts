@@ -1,5 +1,6 @@
 import { API_URL } from '@/lib/config';
 import type { User } from '@/lib/types';
+import { areaApiPath } from '@/lib/auth-area';
 
 export type { User };
 
@@ -8,12 +9,12 @@ export interface LoginResult {
   csrfToken: string;
 }
 
-// `/api/v1/auth/*` is CSRF-exempt server-side, so these plain `fetch` calls
+// `/api/v1/{admin,store}/auth/*` login/refresh/logout are CSRF-exempt server-side, so these plain `fetch` calls
 // don't need to attach X-CSRF-Token. They avoid `authFetch` on purpose: they
 // either run before a session exists or must not trigger its 401→refresh
 // retry (which would recurse through `postRefresh`).
 function post(path: string, body: unknown = {}): Promise<Response> {
-  return fetch(`${API_URL}${path}`, {
+  return fetch(`${API_URL}${areaApiPath(path)}`, {
     method: 'POST',
     credentials: 'include',
     headers: { 'Content-Type': 'application/json' },

@@ -37,14 +37,14 @@ type ProfileForm = z.infer<typeof profileSchema>;
 export default function CustomerProfilePage() {
   const { user, isLoading: authLoading, logout } = useAuth();
   const router = useRouter();
-  const isCustomer = user?.role === 'customer';
-  const { data: account, isLoading, isError } = useMyAccount(isCustomer);
+  const isSignedIn = !!user;
+  const { data: account, isLoading, isError } = useMyAccount(isSignedIn);
   const update = useUpdateMyAccount();
   const {
     data: ordersPage,
     isLoading: ordersLoading,
     isError: ordersError,
-  } = useMyOrders(1, 10, isCustomer);
+  } = useMyOrders(1, 10, isSignedIn);
   const orders = ordersPage?.items ?? [];
 
   const form = useForm<ProfileForm>({
@@ -60,15 +60,9 @@ export default function CustomerProfilePage() {
   });
 
   useEffect(() => {
-    if (authLoading || isCustomer) return;
-    // A staff/admin session (or no session) landed here — clear any leftover
-    // cookies before bouncing to /customer/login.
-    if (user) {
-      logout().then(() => router.replace('/customer/login'));
-    } else {
-      router.replace('/customer/login');
-    }
-  }, [authLoading, isCustomer, user, logout, router]);
+    if (authLoading || isSignedIn) return;
+    router.replace('/customer/login');
+  }, [authLoading, isSignedIn, router]);
 
   function onSubmit(values: ProfileForm) {
     update.mutate(values, {
@@ -76,7 +70,7 @@ export default function CustomerProfilePage() {
     });
   }
 
-  if (authLoading || !isCustomer) {
+  if (authLoading || !isSignedIn) {
     return (
       <Container navOffset size="narrow" className="pb-20">
         <p className="text-center text-muted-foreground">Đang tải...</p>

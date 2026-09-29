@@ -49,7 +49,7 @@ export default function LoginPage() {
   const rememberMe = rememberInput ?? rememberedEmail !== '';
 
   const [error, setError] = useState('');
-  const { login, logout, user, isLoading: authLoading } = useAuth();
+  const { login, user, isLoading: authLoading } = useAuth();
   const router = useRouter();
 
   const form = useForm<LoginForm>({
@@ -61,15 +61,8 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (authLoading || !user) return;
-    // Already signed in as staff/admin (session restored via refresh cookie) — skip the form
-    if (user.role === 'admin' || user.role === 'staff') {
-      router.replace('/mist-ops');
-      return;
-    }
-    // A customer session landed on the admin login page — clear it so the
-    // two areas never mix sessions/cookies.
-    logout();
-  }, [user, authLoading, logout, router]);
+    router.replace('/mist-ops');
+  }, [user, authLoading, router]);
 
   async function onSubmit(values: LoginForm) {
     setError('');

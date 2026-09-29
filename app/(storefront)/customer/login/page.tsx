@@ -30,7 +30,7 @@ type LoginForm = z.infer<typeof loginSchema>;
 
 export default function CustomerLoginPage() {
   const [error, setError] = useState('');
-  const { login, logout, user, isLoading: authLoading } = useAuth();
+  const { login, user, isLoading: authLoading } = useAuth();
   const router = useRouter();
 
   const form = useForm<LoginForm>({
@@ -40,14 +40,8 @@ export default function CustomerLoginPage() {
 
   useEffect(() => {
     if (authLoading || !user) return;
-    if (user.role === 'customer') {
-      router.replace('/customer/profile');
-      return;
-    }
-    // A staff/admin session landed on the customer login page — clear it so
-    // the two areas never mix sessions/cookies.
-    logout();
-  }, [user, authLoading, logout, router]);
+    router.replace('/customer/profile');
+  }, [user, authLoading, router]);
 
   async function onSubmit(values: LoginForm) {
     setError('');
